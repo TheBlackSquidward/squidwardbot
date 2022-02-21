@@ -23,7 +23,7 @@ public class SquidwardBot {
         //TODO make this not hard coded
         String version = "1.0-SNAPSHOT";
         LOGGER.info("Starting SquidwardBot v{}", version);
-        JDA jda = JDABuilder.createDefault(DOTENV.get("TOKEN"))
+        JDA jda = JDABuilder.createDefault(DOTENV.get("DISCORD_BOT_TOKEN"))
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .setActivity(Activity.playing("SquidwardBot | /help"))
                 .build();

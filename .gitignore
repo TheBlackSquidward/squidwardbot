@@ -1,0 +1,13 @@
+# Gradle
+build
+.gradle
+
+# Secrets
+src/main/resources/.env
+
+# IntelliJ IDEA
+out
+*.ipr
+*.iws
+*.iml
+.idea

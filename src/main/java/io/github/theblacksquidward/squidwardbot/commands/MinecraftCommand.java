@@ -3,6 +3,7 @@ package io.github.theblacksquidward.squidwardbot.commands;
 import com.github.kaktushose.jda.commands.annotations.Command;
 import com.github.kaktushose.jda.commands.annotations.CommandController;
 import com.github.kaktushose.jda.commands.dispatching.CommandEvent;
+import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
@@ -12,7 +13,7 @@ public class MinecraftCommand {
 
     static final EmbedBuilder minecraftHelpEmbed = new EmbedBuilder()
             .setTitle("Minecraft Commands")
-            .setColor(Color.GREEN)
+            .setColor(ColorConstants.MINECRAFT_COLOR)
             .appendDescription("Here all the commands from the Minecraft module of the SquidwardBot")
             .addField("Commands",
                     """

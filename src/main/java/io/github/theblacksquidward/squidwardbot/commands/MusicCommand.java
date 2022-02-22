@@ -4,6 +4,8 @@ import com.github.kaktushose.jda.commands.annotations.Command;
 import com.github.kaktushose.jda.commands.annotations.CommandController;
 import com.github.kaktushose.jda.commands.dispatching.CommandEvent;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
+import io.github.theblacksquidward.squidwardbot.utils.GuildUtils;
+import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 
@@ -14,7 +16,7 @@ import java.util.Arrays;
 public class MusicCommand {
 
     static final EmbedBuilder musicHelpEmbed = new EmbedBuilder()
-            .setColor(Color.MAGENTA)
+            .setColor(ColorConstants.MUSIC_COLOR)
             .setTitle("Music Module")
             .setDescription("Here are all the commands from the Music module of SquidwardBot.")
             .addField("Commands",
@@ -74,9 +76,11 @@ public class MusicCommand {
             event.getGuild().getAudioManager().setSelfDeafened(true);
             event.getGuild().getAudioManager().openAudioConnection(memberVoiceState.getChannel());
         }else{
-            //TODO will give null pointer as not implemented
-            // If channel give
-            VoiceChannel targetVoiceChannel = null;
+            VoiceChannel targetVoiceChannel = GuildUtils.matchVoiceChannel(guild, string);
+            if(targetVoiceChannel == null) {
+                event.reply("Could not find the given voice channel.");
+                return;
+            }
             event.reply("Successfully connected to " + targetVoiceChannel.getName());
             event.getGuild().getAudioManager().setSelfDeafened(true);
             event.getGuild().getAudioManager().openAudioConnection(targetVoiceChannel);

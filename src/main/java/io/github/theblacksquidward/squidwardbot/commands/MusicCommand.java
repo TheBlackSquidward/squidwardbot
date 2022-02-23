@@ -3,13 +3,13 @@ package io.github.theblacksquidward.squidwardbot.commands;
 import com.github.kaktushose.jda.commands.annotations.Command;
 import com.github.kaktushose.jda.commands.annotations.CommandController;
 import com.github.kaktushose.jda.commands.dispatching.CommandEvent;
+import io.github.theblacksquidward.squidwardbot.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.utils.GuildUtils;
 import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 
-import java.awt.*;
 import java.util.Arrays;
 
 @CommandController("music")
@@ -22,6 +22,10 @@ public class MusicCommand {
             .addField("Commands",
                     """
                             `help` - Returns the help information for the Music module.\s
+                            `disconnect` - Disconnects the bot from the channel it is currently in.\s
+                            `skip` - Skips the currently playing track to the next track in the queue.\s
+                            `connect <channeL_name>` - Connects the bot to the channel you are currently in or the channel specified.\s
+                            `play` - Plays the given song or adds it to the queue if a song is currently playing.\s
                             """, false)
             .setFooter("Coded by TheBlackSquidward", "https://avatars.githubusercontent.com/u/65785034?v=4");
 
@@ -99,7 +103,17 @@ public class MusicCommand {
 
     @Command(value="clear")
     public void onMusicClearCommand(CommandEvent event) {
-
+        Guild guild = event.getGuild();
+        if(!SquidwardBot.AUDIO_MANAGER.hasPlayer(guild)) {
+            event.reply("Could not find a player for this guild.");
+            return;
+        }
+        if(SquidwardBot.AUDIO_MANAGER.getTrackScheduler(event.getGuild()).isQueueEmpty()) {
+            event.reply("The music queue is empty...");
+        }else{
+            SquidwardBot.AUDIO_MANAGER.reset(guild);
+            event.reply("Successfully cleared the music queue.");
+        }
     }
 
     @Command(value="nowplaying")

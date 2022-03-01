@@ -2,7 +2,7 @@ package io.github.theblacksquidward.squidwardbot;
 
 import com.github.kaktushose.jda.commands.JDACommands;
 import io.github.cdimascio.dotenv.Dotenv;
-import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
+import io.github.theblacksquidward.squidwardbot.audio.GuildAudioManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -25,7 +25,7 @@ public class SquidwardBot {
 
     public static SpotifyApi SPOTIFY_API;
 
-    public static AudioManager AUDIO_MANAGER;
+    private static GuildAudioManager GUILD_AUDIO_MANAGER;
 
     public static void main(String[] args) throws LoginException {
         //TODO make this not hard coded
@@ -43,7 +43,11 @@ public class SquidwardBot {
             e.printStackTrace();
         }
 
-        AUDIO_MANAGER = new AudioManager();
+        GUILD_AUDIO_MANAGER = new GuildAudioManager();
+    }
+
+    public static GuildAudioManager getGuildAudioManager() {
+        return GUILD_AUDIO_MANAGER;
     }
 
     private static SpotifyApi initializeSpotify() throws IOException, ParseException, SpotifyWebApiException {

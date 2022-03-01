@@ -4,7 +4,8 @@ import com.github.kaktushose.jda.commands.annotations.Command;
 import com.github.kaktushose.jda.commands.annotations.CommandController;
 import com.github.kaktushose.jda.commands.dispatching.CommandEvent;
 import io.github.theblacksquidward.squidwardbot.SquidwardBot;
-import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
+import io.github.theblacksquidward.squidwardbot.audio.GuildAudioManager;
+import io.github.theblacksquidward.squidwardbot.utils.AudioUtils;
 import io.github.theblacksquidward.squidwardbot.utils.GuildUtils;
 import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -52,7 +53,7 @@ public class MusicCommand {
 
     @Command(value="skip")
     public void onMusicSkipCommand(CommandEvent event) {
-        AudioManager.skipTrack(event.getGuild());
+        AudioUtils.skipTrack(event.getGuild());
         event.reply("Skipping track...");
     }
 
@@ -111,7 +112,7 @@ public class MusicCommand {
         if(SquidwardBot.AUDIO_MANAGER.getTrackScheduler(event.getGuild()).isQueueEmpty()) {
             event.reply("The music queue is empty...");
         }else{
-            SquidwardBot.AUDIO_MANAGER.reset(guild);
+            SquidwardBot.AUDIO_MANAGER.removePlayer(guild);
             event.reply("Successfully cleared the music queue.");
         }
     }
@@ -125,7 +126,7 @@ public class MusicCommand {
         Guild guild = event.getGuild();
         String[] args = ((CommandEvent) event.getCommandContext().getArguments().get(0)).getCommandContext().getInput();
         var string = String.join(" ", Arrays.stream(args).toList());
-        AudioManager.loadAndPlay(guild, args[0]);
+        AudioUtils.loadAndPlay(guild, args[0]);
         guild.getAudioManager().openAudioConnection(guild.getAudioManager().getConnectedChannel());
     }
 

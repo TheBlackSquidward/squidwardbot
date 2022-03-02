@@ -1,17 +1,12 @@
 package io.github.theblacksquidward.squidwardbot.audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import io.github.theblacksquidward.squidwardbot.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.audio.source.AudioSourceManagers;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +44,7 @@ public class GuildAudioManager {
         return players.get(guild.getId()).getValue();
     }
 
+    //TODO log that
     public void removePlayer(Guild guild) {
         players.remove(guild.getId());
         getPlayer(guild).destroy();
@@ -56,6 +52,14 @@ public class GuildAudioManager {
         guild.getAudioManager().closeAudioConnection();
     }
 
+    //TODO log that
+    public void openAudioConnection(Guild guild, VoiceChannel voiceChannel) {
+        getPlayer(guild);
+        guild.getAudioManager().setSelfDeafened(true);
+        guild.getAudioManager().openAudioConnection(voiceChannel);
+    }
+
+    //TODO log that
     private AudioPlayer createPlayer(Guild guild) {
         AudioPlayer audioPlayer = audioPlayerManager.createPlayer();
         TrackScheduler trackScheduler = new TrackScheduler(audioPlayer);

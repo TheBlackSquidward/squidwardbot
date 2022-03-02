@@ -3,8 +3,8 @@ package io.github.theblacksquidward.squidwardbot.commands;
 import com.github.kaktushose.jda.commands.annotations.Command;
 import com.github.kaktushose.jda.commands.annotations.CommandController;
 import com.github.kaktushose.jda.commands.dispatching.CommandEvent;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.theblacksquidward.squidwardbot.SquidwardBot;
-import io.github.theblacksquidward.squidwardbot.audio.GuildAudioManager;
 import io.github.theblacksquidward.squidwardbot.utils.AudioUtils;
 import io.github.theblacksquidward.squidwardbot.utils.GuildUtils;
 import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
@@ -78,8 +78,7 @@ public class MusicCommand {
             Member member = guild.getMember(user);
             GuildVoiceState memberVoiceState = member.getVoiceState();
             event.reply("Successfully connected to " + memberVoiceState.getChannel().getName());
-            event.getGuild().getAudioManager().setSelfDeafened(true);
-            event.getGuild().getAudioManager().openAudioConnection(memberVoiceState.getChannel());
+            SquidwardBot.getGuildAudioManager().openAudioConnection(guild, memberVoiceState.getChannel());
         }else{
             VoiceChannel targetVoiceChannel = GuildUtils.matchVoiceChannel(guild, string);
             if(targetVoiceChannel == null) {
@@ -87,14 +86,20 @@ public class MusicCommand {
                 return;
             }
             event.reply("Successfully connected to " + targetVoiceChannel.getName());
-            event.getGuild().getAudioManager().setSelfDeafened(true);
-            event.getGuild().getAudioManager().openAudioConnection(targetVoiceChannel);
+            SquidwardBot.getGuildAudioManager().openAudioConnection(guild, targetVoiceChannel);
         }
     }
 
+    //TODO add msgs
     @Command(value="stop")
     public void onMusicStopCommand(CommandEvent event) {
-
+        Guild guild = event.getGuild();
+        if(SquidwardBot.getGuildAudioManager().hasPlayer(guild)) {
+            SquidwardBot.getGuildAudioManager().removePlayer(guild);
+            event.reply("");
+        } else {
+            event.reply("");
+        }
     }
 
     @Command(value="queue")
@@ -105,29 +110,37 @@ public class MusicCommand {
     @Command(value="clear")
     public void onMusicClearCommand(CommandEvent event) {
         Guild guild = event.getGuild();
-        if(!SquidwardBot.AUDIO_MANAGER.hasPlayer(guild)) {
+        if(!SquidwardBot.getGuildAudioManager().hasPlayer(guild)) {
             event.reply("Could not find a player for this guild.");
             return;
         }
-        if(SquidwardBot.AUDIO_MANAGER.getTrackScheduler(event.getGuild()).isQueueEmpty()) {
+        if(SquidwardBot.getGuildAudioManager().getTrackScheduler(event.getGuild()).isQueueEmpty()) {
             event.reply("The music queue is empty...");
         }else{
-            SquidwardBot.AUDIO_MANAGER.removePlayer(guild);
+            SquidwardBot.getGuildAudioManager().removePlayer(guild);
             event.reply("Successfully cleared the music queue.");
         }
     }
 
     @Command(value="nowplaying")
     public void onMusicNowPlayingCommand(CommandEvent event) {
+        Guild guild = event.getGuild();
+        if(AudioUtils.getCurrentAudioTrack(guild) == null) {
+            event.reply("There is no audio track currently playing.");
+            return;
+        }
+        AudioTrack audioTrack = AudioUtils.getCurrentAudioTrack(guild);
+        //TODO this is a proof of concept this should return a more pretty embed
+        event.reply(audioTrack.getInfo().title);
     }
 
     @Command(value="play")
     public void onMusicPlayCommand(CommandEvent event) {
+        //TODO here music play should check if the bot is in a channel and join one if not
         Guild guild = event.getGuild();
         String[] args = ((CommandEvent) event.getCommandContext().getArguments().get(0)).getCommandContext().getInput();
         var string = String.join(" ", Arrays.stream(args).toList());
         AudioUtils.loadAndPlay(guild, args[0]);
-        guild.getAudioManager().openAudioConnection(guild.getAudioManager().getConnectedChannel());
     }
 
 }

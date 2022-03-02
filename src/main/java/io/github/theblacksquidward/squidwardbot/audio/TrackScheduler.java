@@ -31,6 +31,9 @@ public class TrackScheduler extends AudioEventAdapter {
         }
     }
 
+    public void queueTrack(AudioTrack audioTrack) {
+    }
+
     public void clearQueue() {
         queue.clear();
     }
@@ -54,6 +57,9 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        if(!endReason.mayStartNext) {
+            //TODO log that
+        }
         nextTrack();
     }
 

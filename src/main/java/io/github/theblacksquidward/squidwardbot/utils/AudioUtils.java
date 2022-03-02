@@ -1,8 +1,5 @@
 package io.github.theblacksquidward.squidwardbot.utils;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.theblacksquidward.squidwardbot.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.audio.AudioLoadResult;
@@ -28,7 +25,7 @@ public class AudioUtils {
      */
     public static void loadAndPlay(Guild guild, String identifier) {
         //TODO verify and move
-        SquidwardBot.AUDIO_MANAGER.getPlayer(guild);
+        SquidwardBot.getGuildAudioManager().getPlayer(guild);
 
         GuildAudioManager guildAudioManager = SquidwardBot.getGuildAudioManager();
         TrackScheduler trackScheduler = guildAudioManager.getTrackScheduler(guild);

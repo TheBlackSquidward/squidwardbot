@@ -18,7 +18,7 @@ public class AudioSourceManagers {
     public static void registerRemoteSources(AudioPlayerManager playerManager) {
         playerManager.registerSourceManager(new YoutubeAudioSourceManager(true));
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager(SquidwardBot.SPOTIFY_API));
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager(SquidwardBot.SPOTIFY_API, playerManager));
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
         playerManager.registerSourceManager(new VimeoAudioSourceManager());
         playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());

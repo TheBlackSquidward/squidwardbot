@@ -3,6 +3,7 @@ package io.github.theblacksquidward.squidwardbot.audio.source.spotify;
 import com.neovisionaries.i18n.CountryCode;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
@@ -59,7 +60,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                 case "playlist" -> this.getPlaylist(identifier);
                 case "album" -> this.getAlbum(identifier);
                 case "artist" -> this.getArtist(identifier);
-                //TODO idk if i want this to be like that.
                 default -> throw new IllegalArgumentException();
             };
         } catch (IOException | ParseException | SpotifyWebApiException e) {
@@ -100,17 +100,19 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
     @Override
     public boolean isTrackEncodable(AudioTrack track) {
-        return false;
+        return true;
     }
 
     @Override
     public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
-        throw new UnsupportedOperationException("This track can not be encoded.");
+        SpotifyAudioTrack spotifyAudioTrack = (SpotifyAudioTrack) track;
+        DataFormatTools.writeNullableText(output, spotifyAudioTrack.getISRC());
+        DataFormatTools.writeNullableText(output, spotifyAudioTrack.getArtworkUrl());
     }
 
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
-        throw new UnsupportedOperationException("This track can not be decoded.");
+        return new SpotifyAudioTrack(trackInfo, DataFormatTools.readNullableText(input), DataFormatTools.readNullableText(input), this);
     }
 
     @Override

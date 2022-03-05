@@ -2,6 +2,7 @@ package io.github.theblacksquidward.squidwardbot.audio.source.applemusic;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -12,6 +13,16 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class AppleMusicSourceManager implements AudioSourceManager {
+
+    private final AudioPlayerManager audioPlayerManager;
+
+    public AppleMusicSourceManager(AudioPlayerManager audioPlayerManager) {
+        this.audioPlayerManager = audioPlayerManager;
+    }
+
+    public AudioPlayerManager getAudioPlayerManager() {
+        return audioPlayerManager;
+    }
 
     @Override
     public String getSourceName() {
@@ -25,7 +36,7 @@ public class AppleMusicSourceManager implements AudioSourceManager {
 
     @Override
     public boolean isTrackEncodable(AudioTrack audioTrack) {
-        return false;
+        return true;
     }
 
     @Override
@@ -35,7 +46,7 @@ public class AppleMusicSourceManager implements AudioSourceManager {
 
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo audioTrackInfo, DataInput dataInput) throws IOException {
-        return null;
+        return new AppleMusicTrack(audioTrackInfo, DataFormatTools.readNullableText(dataInput), DataFormatTools.readNullableText(dataInput), this);
     }
 
     @Override

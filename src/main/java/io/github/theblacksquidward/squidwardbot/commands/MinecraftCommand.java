@@ -6,8 +6,6 @@ import com.github.kaktushose.jda.commands.dispatching.CommandEvent;
 import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.awt.*;
-
 @CommandController(value = {"minecraft", "mc"})
 public class MinecraftCommand {
 

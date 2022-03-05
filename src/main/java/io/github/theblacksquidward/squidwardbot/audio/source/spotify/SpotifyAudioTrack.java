@@ -20,7 +20,6 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
     private final String isrc;
     private final String artworkUrl;
 
-
     public SpotifyAudioTrack(AudioTrackInfo trackInfo, String isrc, String artworkUrl, SpotifyAudioSourceManager sourceManager) {
         super(trackInfo);
         this.sourceManager = sourceManager;

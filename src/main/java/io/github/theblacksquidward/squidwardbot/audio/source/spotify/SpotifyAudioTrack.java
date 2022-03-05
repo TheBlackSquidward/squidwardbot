@@ -14,7 +14,6 @@ import java.util.concurrent.CompletableFuture;
 public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioTrack.class);
-    private static final String test = "";
 
     private final SpotifyAudioSourceManager sourceManager;
     private final String isrc;
@@ -49,10 +48,9 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
         return result;
     }
 
-    //TODO clean
     @Override
     public void process(LocalAudioTrackExecutor localAudioTrackExecutor) throws Exception {
-        AudioItem track = null;
+        AudioItem track;
         String provider = "";
 
         if(this.isrc != null) {

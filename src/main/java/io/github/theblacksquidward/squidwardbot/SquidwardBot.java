@@ -23,7 +23,7 @@ public class SquidwardBot {
     public static final Logger LOGGER = LoggerFactory.getLogger(SquidwardBot.class);
     private static final Dotenv DOTENV = Dotenv.load();
 
-    public static SpotifyApi SPOTIFY_API;
+    private static SpotifyApi SPOTIFY_API;
 
     private static GuildAudioManager GUILD_AUDIO_MANAGER;
 
@@ -38,7 +38,7 @@ public class SquidwardBot {
         JDACommands jdaCommands = JDACommands.start(jda, SquidwardBot.class);
 
         try {
-            SPOTIFY_API = initializeSpotify();
+            SPOTIFY_API = initializeSpotifyAPI();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,7 +50,11 @@ public class SquidwardBot {
         return GUILD_AUDIO_MANAGER;
     }
 
-    private static SpotifyApi initializeSpotify() throws IOException, ParseException, SpotifyWebApiException {
+    public static SpotifyApi getSpotifyAPI() {
+        return SPOTIFY_API;
+    }
+
+    private static SpotifyApi initializeSpotifyAPI() throws IOException, ParseException, SpotifyWebApiException {
         var spotifyApi = new SpotifyApi.Builder()
                 .setClientId(DOTENV.get("SPOTIFY_CLIENT_ID"))
                 .setClientSecret(DOTENV.get("SPOTIFY_CLIENT_SECRET"))

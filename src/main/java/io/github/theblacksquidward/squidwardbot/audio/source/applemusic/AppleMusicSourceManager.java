@@ -31,10 +31,12 @@ public class AppleMusicSourceManager implements AudioSourceManager, HttpConfigur
 
     private final AudioPlayerManager audioPlayerManager;
     private final HttpInterfaceManager httpInterfaceManager;
+    private final AppleMusicAPI appleMusicAPI;
 
     public AppleMusicSourceManager(AudioPlayerManager audioPlayerManager) {
         this.audioPlayerManager = audioPlayerManager;
         this.httpInterfaceManager = HttpClientTools.createDefaultThreadLocalManager();
+        this.appleMusicAPI = new AppleMusicAPI(httpInterfaceManager);
     }
 
     public AudioPlayerManager getAudioPlayerManager() {

@@ -4,8 +4,8 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import io.github.theblacksquidward.squidwardbot.audio.source.AudioSourceManagers;
+import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.VoiceChannel;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,37 +36,38 @@ public class GuildAudioManager {
         return hasPlayer(guild) ? players.get(guild.getId()).getKey() : createPlayer(guild);
     }
 
-    public boolean hasPlayer(Guild guild) {
+    public boolean hasPlayer(@NotNull Guild guild) {
         return players.containsKey(guild.getId());
     }
 
-    public TrackScheduler getTrackScheduler(Guild guild) {
+    public TrackScheduler getTrackScheduler(@NotNull Guild guild) {
         return players.get(guild.getId()).getValue();
     }
 
-    //TODO log that
-    public void removePlayer(Guild guild) {
+    public void removePlayer(@NotNull Guild guild) {
         players.remove(guild.getId());
         getPlayer(guild).destroy();
         getTrackScheduler(guild).clearQueue();
         guild.getAudioManager().closeAudioConnection();
+        LOGGER.info("Closed an audio connection and removed audio player for " + guild.getName());
     }
 
-    //TODO log that
-    public void openAudioConnection(Guild guild, VoiceChannel voiceChannel) {
+    public void openAudioConnection(Guild guild, AudioChannel audioChannel) {
         getPlayer(guild);
         guild.getAudioManager().setSelfDeafened(true);
-        guild.getAudioManager().openAudioConnection(voiceChannel);
+        guild.getAudioManager().openAudioConnection(audioChannel);
+        LOGGER.info("Opened an audio connection for " + guild.getName());
     }
 
-    //TODO log that
-    private AudioPlayer createPlayer(Guild guild) {
+    @NotNull
+    private  AudioPlayer createPlayer(@NotNull Guild guild) {
         AudioPlayer audioPlayer = audioPlayerManager.createPlayer();
         TrackScheduler trackScheduler = new TrackScheduler(audioPlayer);
         audioPlayer.addListener(trackScheduler);
         guild.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(audioPlayer));
         guild.getAudioManager().setSelfDeafened(true);
         players.put(guild.getId(), new AbstractMap.SimpleEntry<>(audioPlayer, trackScheduler));
+        LOGGER.info("Created an audio player for " + guild.getName());
         return audioPlayer;
     }
 

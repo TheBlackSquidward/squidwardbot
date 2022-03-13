@@ -8,7 +8,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -35,7 +37,8 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public void clearQueue() {
-        queue.clear();
+        List<AudioTrack> newQueue = new ArrayList<>();
+        queue.drainTo(newQueue);
     }
 
     public boolean isQueueEmpty() {

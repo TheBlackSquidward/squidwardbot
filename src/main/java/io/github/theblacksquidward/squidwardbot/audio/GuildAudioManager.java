@@ -7,6 +7,7 @@ import io.github.theblacksquidward.squidwardbot.audio.source.AudioSourceManagers
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +33,13 @@ public class GuildAudioManager {
     }
 
     @NotNull
-    public AudioPlayer getPlayer(Guild guild) {
+    public AudioPlayer getOrCreatePlayer(Guild guild) {
         return hasPlayer(guild) ? players.get(guild.getId()).getKey() : createPlayer(guild);
+    }
+
+    @Nullable
+    public AudioPlayer getPlayer(Guild guild) {
+        return hasPlayer(guild) ? players.get(guild.getId()).getKey() : null;
     }
 
     public boolean hasPlayer(@NotNull Guild guild) {
@@ -45,15 +51,15 @@ public class GuildAudioManager {
     }
 
     public void removePlayer(@NotNull Guild guild) {
-        players.remove(guild.getId());
         getPlayer(guild).destroy();
         getTrackScheduler(guild).clearQueue();
+        players.remove(guild.getId());
         guild.getAudioManager().closeAudioConnection();
         LOGGER.info("Closed an audio connection and removed audio player for " + guild.getName());
     }
 
     public void openAudioConnection(Guild guild, AudioChannel audioChannel) {
-        getPlayer(guild);
+        getOrCreatePlayer(guild);
         guild.getAudioManager().setSelfDeafened(true);
         guild.getAudioManager().openAudioConnection(audioChannel);
         LOGGER.info("Opened an audio connection for " + guild.getName());

@@ -1,4 +1,4 @@
 package io.github.theblacksquidward.squidwardbot.commands;
 
-public non-sealed interface IGuildCommand extends ICommand{
+public interface IGuildCommand extends ICommand{
 }

@@ -9,31 +9,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class TrackScheduler extends AudioEventAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
 
     private final AudioPlayer audioPlayer;
-    private final BlockingQueue<AudioTrack> queue;
+    private BlockingDeque<AudioTrack> queue;
 
     public TrackScheduler(AudioPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
-        this.queue = new LinkedBlockingQueue<>();
+        this.queue = new LinkedBlockingDeque<>();
     }
 
     public void queue(AudioTrack track) {
         if(!this.audioPlayer.startTrack(track, true)) {
             this.queue.offer(track);
         }
-    }
-
-    public void queueTrack(AudioTrack audioTrack) {
     }
 
     public void clearQueue() {
@@ -45,12 +41,31 @@ public class TrackScheduler extends AudioEventAdapter {
         return queue.isEmpty();
     }
 
-    public Set<AudioTrack> getQueuedTracks() {
-        return new LinkedHashSet<>(queue);
+    public void shuffleQueue() {
+        List<AudioTrack> tracks = new ArrayList<>(queue);
+        Collections.shuffle(tracks);
+        queue = new LinkedBlockingDeque<>(tracks);
     }
 
-    public void nextTrack() {
+    public int getQueueSize() {
+        return queue.size();
+    }
+
+    public List<AudioTrack> getQueuedTracks() {
+        return new ArrayList<>(queue);
+    }
+
+    public void nextTrack(AudioTrack audioTrack) {
         this.audioPlayer.startTrack(this.queue.poll(), false);
+    }
+
+    public void forcePlayTrack(AudioTrack audioTrack) {
+        addTrackAtHead(audioTrack);
+        audioPlayer.stopTrack();
+    }
+
+    public void addTrackAtHead(AudioTrack audioTrack) {
+        queue.offerFirst(audioTrack);
     }
 
     @Override
@@ -59,11 +74,11 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     @Override
-    public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+    public void onTrackEnd(AudioPlayer player, AudioTrack audioTrack, AudioTrackEndReason endReason) {
         if(!endReason.mayStartNext) {
             //TODO log that
         }
-        nextTrack();
+        nextTrack(audioTrack);
     }
 
     @Override

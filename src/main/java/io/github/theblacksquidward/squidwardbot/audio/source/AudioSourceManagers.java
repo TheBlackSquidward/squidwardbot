@@ -10,16 +10,15 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
-import io.github.theblacksquidward.squidwardbot.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.audio.source.applemusic.AppleMusicSourceManager;
 import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifyAudioSourceManager;
 
 public class AudioSourceManagers {
 
     public static void registerRemoteSources(AudioPlayerManager playerManager) {
-        playerManager.registerSourceManager(new YoutubeAudioSourceManager(true));
+        playerManager.registerSourceManager(new YoutubeAudioSourceManager());
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager(SquidwardBot.getSpotifyAPI(), playerManager));
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager(playerManager));
         playerManager.registerSourceManager(new AppleMusicSourceManager(playerManager));
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
         playerManager.registerSourceManager(new VimeoAudioSourceManager());

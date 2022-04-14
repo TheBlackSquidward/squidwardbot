@@ -103,11 +103,16 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
                 trackDuration.longValue(),
                 identifier,
                 false,
-                "https://open.spotify.com/track/" + identifier), isrc, images.length == 0 ? null : images[0].getUrl(), sourceManager);
+                "https://open.spotify.com/track/" + identifier, images.length == 0 ? null : images[0].getUrl()), isrc, images.length == 0 ? null : images[0].getUrl(), sourceManager);
     }
 
     public static SpotifyAudioTrack createSpotifyTrack(Track track, SpotifyAudioSourceManager sourceManager) {
         return createSpotifyTrack(track.getName(), track.getId(), track.getExternalIds().getExternalIds().getOrDefault("isrc", null), track.getArtists(), track.getAlbum().getImages(), track.getDurationMs(), sourceManager);
+    }
+
+    @Override
+    protected AudioTrack makeShallowClone() {
+        return new SpotifyAudioTrack(trackInfo, isrc, artworkUrl, sourceManager);
     }
 
 }

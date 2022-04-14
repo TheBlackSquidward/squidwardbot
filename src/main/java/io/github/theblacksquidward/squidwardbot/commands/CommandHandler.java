@@ -4,7 +4,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.reflections.Reflections;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class CommandHandler extends ListenerAdapter {
@@ -12,22 +14,29 @@ public class CommandHandler extends ListenerAdapter {
     private static final Map<String, IGuildCommand> GUILD_COMMANDS = new HashMap<>();
     private static final Map<String, IGlobalCommand> GLOBAL_COMMANDS = new HashMap<>();
 
-    public static void registerGuildCommand(IGuildCommand guildCommand) {
+    public static void captureAndRegisterCommands(Reflections reflections) {
+        Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Command.class);
+        annotatedClasses.forEach((annotatedClass) -> {
+            try {
+                ICommand command = (ICommand) annotatedClass.getDeclaredConstructor().newInstance();
+                if(command instanceof IGuildCommand iGuildCommand) {
+                    registerGuildCommand(iGuildCommand);
+                }
+                if(command instanceof IGlobalCommand iGlobalCommand) {
+                    registerGlobalCommand(iGlobalCommand);
+                }
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private static void registerGuildCommand(IGuildCommand guildCommand) {
         GUILD_COMMANDS.putIfAbsent(guildCommand.getName(), guildCommand);
     }
-    public static void registerGuildCommands(IGuildCommand... guildCommands) {
-        Arrays.stream(guildCommands).forEach(CommandHandler::registerGuildCommand);
-    }
 
-    public static void registerGlobalCommand(IGlobalCommand globalCommand) {
+    private static void registerGlobalCommand(IGlobalCommand globalCommand) {
         GLOBAL_COMMANDS.putIfAbsent(globalCommand.getName(), globalCommand);
-    }
-    public static void registerGlobalCommands(IGlobalCommand... globalCommands) {
-        Arrays.stream(globalCommands).forEach(CommandHandler::registerGlobalCommand);
-    }
-
-    public static void registerAllCommands() {
-
     }
 
     @NotNull

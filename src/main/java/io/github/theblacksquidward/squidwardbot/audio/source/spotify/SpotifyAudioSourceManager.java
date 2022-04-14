@@ -8,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.track.*;
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.*;
 
@@ -29,11 +28,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
     private static final Pattern SPOTIFY_URL_PATTERN = Pattern.compile("(https?://)?(www\\.)?open\\.spotify\\.com/(user/[a-zA-Z0-9-_]+/)?(?<type>track|album|playlist|artist)/(?<identifier>[a-zA-Z0-9-_]+)");
 
-    private final SpotifyApi spotifyApi;
+    private final SpotifyAPIOLD spotifyAPI = SpotifyAPIOLD.createSpotifyAPI();
     private final AudioPlayerManager audioPlayerManager;
 
-    public SpotifyAudioSourceManager(SpotifyApi spotifyApi, AudioPlayerManager audioPlayerManager) {
-        this.spotifyApi = spotifyApi;
+    public SpotifyAudioSourceManager(AudioPlayerManager audioPlayerManager) {
         this.audioPlayerManager = audioPlayerManager;
     }
 
@@ -68,12 +66,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     }
 
     private AudioItem getTrack(String identifier) throws IOException, ParseException, SpotifyWebApiException {
-        return SpotifyAudioTrack.createSpotifyTrack(this.spotifyApi.getTrack(identifier).build().execute(), this);
+        return SpotifyAudioTrack.createSpotifyTrack(this.spotifyAPI.getSpotifyAPI().getTrack(identifier).build().execute(), this);
     }
 
     private AudioItem getPlaylist(String identifier) throws IOException, ParseException, SpotifyWebApiException {
-        Playlist playlist = this.spotifyApi.getPlaylist(identifier).build().execute();
-        Paging<PlaylistTrack> playlistTracks = this.spotifyApi.getPlaylistsItems(identifier).limit(PLAYLIST_MAX_PAGE_ITEMS).build().execute();
+        Playlist playlist = this.spotifyAPI.getSpotifyAPI().getPlaylist(identifier).build().execute();
+        Paging<PlaylistTrack> playlistTracks = this.spotifyAPI.getSpotifyAPI().getPlaylistsItems(identifier).limit(PLAYLIST_MAX_PAGE_ITEMS).build().execute();
         List<AudioTrack> tracks = new ArrayList<>();
 
         Arrays.stream(playlistTracks.getItems()).forEach((track) -> tracks.add(SpotifyAudioTrack.createSpotifyTrack((Track) track.getTrack(), this)));
@@ -81,8 +79,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     }
 
     private AudioItem getAlbum(String identifier) throws IOException, ParseException, SpotifyWebApiException {
-        Album album = this.spotifyApi.getAlbum(identifier).build().execute();
-        Paging<TrackSimplified> albumTracks = this.spotifyApi.getAlbumsTracks(identifier).limit(ALBUM_MAX_PAGE_ITEMS).build().execute();
+        Album album = this.spotifyAPI.getSpotifyAPI().getAlbum(identifier).build().execute();
+        Paging<TrackSimplified> albumTracks = this.spotifyAPI.getSpotifyAPI().getAlbumsTracks(identifier).limit(ALBUM_MAX_PAGE_ITEMS).build().execute();
         List<AudioTrack> tracks = new ArrayList<>();
 
         Arrays.stream(albumTracks.getItems()).forEach((trackSimplified) -> tracks.add(SpotifyAudioTrack.createSpotifyTrack(trackSimplified, album, this)));
@@ -90,8 +88,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     }
 
     private AudioItem getArtist(String identifier) throws IOException, ParseException, SpotifyWebApiException {
-        Artist artist = this.spotifyApi.getArtist(identifier).build().execute();
-        Track[] artistTracks = this.spotifyApi.getArtistsTopTracks(identifier, CountryCode.GB).build().execute();
+        Artist artist = this.spotifyAPI.getSpotifyAPI().getArtist(identifier).build().execute();
+        Track[] artistTracks = this.spotifyAPI.getSpotifyAPI().getArtistsTopTracks(identifier, CountryCode.GB).build().execute();
         List<AudioTrack> tracks = new ArrayList<>();
 
         Arrays.stream(artistTracks).toList().forEach((track) -> tracks.add(SpotifyAudioTrack.createSpotifyTrack(track, this)));

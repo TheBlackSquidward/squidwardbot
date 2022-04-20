@@ -3,9 +3,16 @@ package io.github.theblacksquidward.destinyapiwrapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public record DestinyAPIResponse(JsonObject jsonObject) {
+@SuppressWarnings("ClassCanBeRecord")
+public class DestinyAPIResponse{
 
     //TODO document
+
+    private final JsonObject jsonObject;
+
+    public DestinyAPIResponse(JsonObject jsonObject){
+        this.jsonObject = jsonObject;
+    }
 
     public JsonObject getFullResponse() {
         return jsonObject;

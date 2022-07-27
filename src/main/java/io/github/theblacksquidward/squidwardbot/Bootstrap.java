@@ -1,5 +1,6 @@
 package io.github.theblacksquidward.squidwardbot;
 
+import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;

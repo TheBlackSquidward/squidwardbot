@@ -2,7 +2,7 @@ package io.github.theblacksquidward.squidwardbot.commands.audio;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import io.github.theblacksquidward.squidwardbot.SquidwardBot;
+import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.commands.Command;
 import io.github.theblacksquidward.squidwardbot.commands.IGuildCommand;
 import io.github.theblacksquidward.squidwardbot.utils.AudioUtils;

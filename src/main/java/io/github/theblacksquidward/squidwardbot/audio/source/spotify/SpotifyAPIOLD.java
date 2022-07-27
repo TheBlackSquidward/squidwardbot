@@ -1,7 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.audio.source.spotify;
 
 import io.github.theblacksquidward.squidwardbot.Bootstrap;
-import io.github.theblacksquidward.squidwardbot.SquidwardBot;
 import org.apache.hc.core5.http.ParseException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

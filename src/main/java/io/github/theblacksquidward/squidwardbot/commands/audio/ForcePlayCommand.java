@@ -3,7 +3,7 @@ package io.github.theblacksquidward.squidwardbot.commands.audio;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import io.github.theblacksquidward.squidwardbot.SquidwardBot;
+import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
 import io.github.theblacksquidward.squidwardbot.commands.Command;

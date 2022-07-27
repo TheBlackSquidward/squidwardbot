@@ -2,7 +2,7 @@ package io.github.theblacksquidward.squidwardbot.utils;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import io.github.theblacksquidward.squidwardbot.SquidwardBot;
+import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.audio.DefaultAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.GuildAudioManager;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;

@@ -1,4 +1,4 @@
-package io.github.theblacksquidward.squidwardbot;
+package io.github.theblacksquidward.squidwardbot.core;
 
 import io.github.theblacksquidward.squidwardbot.audio.GuildAudioManager;
 import io.github.theblacksquidward.squidwardbot.commands.CommandManager;

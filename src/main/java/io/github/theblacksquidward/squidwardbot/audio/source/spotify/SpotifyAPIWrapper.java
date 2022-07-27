@@ -1,6 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.audio.source.spotify;
 
-import io.github.theblacksquidward.squidwardbot.SquidwardBot;
+import io.github.theblacksquidward.squidwardbot.Bootstrap;
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +24,8 @@ public class SpotifyAPIWrapper {
     @Deprecated
     private SpotifyApi createAPI() throws IOException, ParseException, SpotifyWebApiException {
         var spotifyApi = new SpotifyApi.Builder()
-                .setClientId(SquidwardBot.DOTENV.get("SPOTIFY_CLIENT_ID"))
-                .setClientSecret(SquidwardBot.DOTENV.get("SPOTIFY_CLIENT_SECRET"))
+                .setClientId(Bootstrap.getSpotifyClientId())
+                .setClientSecret(Bootstrap.getSpotifyClientSecret())
                 .build();
         ClientCredentialsRequest.Builder request = new ClientCredentialsRequest.Builder(spotifyApi.getClientId(), spotifyApi.getClientSecret());
         ClientCredentials credentials = request.grant_type("client_credentials").build().execute();

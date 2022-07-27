@@ -8,8 +8,9 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class CommandHandler extends ListenerAdapter {
+public class CommandManager extends ListenerAdapter {
 
     private static final Map<String, IGuildCommand> GUILD_COMMANDS = new HashMap<>();
     private static final Map<String, IGlobalCommand> GLOBAL_COMMANDS = new HashMap<>();
@@ -26,6 +27,7 @@ public class CommandHandler extends ListenerAdapter {
                     registerGlobalCommand(iGlobalCommand);
                 }
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                //TODO log better
                 e.printStackTrace();
             }
         });

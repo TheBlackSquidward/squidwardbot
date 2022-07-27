@@ -1,10 +1,13 @@
 package io.github.theblacksquidward.squidwardbot.commands;
 
+import com.google.common.base.Stopwatch;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -12,11 +15,16 @@ import java.util.stream.Collectors;
 
 public class CommandManager extends ListenerAdapter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
+
     private static final Map<String, IGuildCommand> GUILD_COMMANDS = new HashMap<>();
     private static final Map<String, IGlobalCommand> GLOBAL_COMMANDS = new HashMap<>();
 
     public static void captureAndRegisterCommands(Reflections reflections) {
+        LOGGER.info("Beginning to scan for commands...");
+        final Stopwatch timer = Stopwatch.createStarted();
         Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Command.class);
+        LOGGER.info("Successfully found " + annotatedClasses.size() + " commands, Attempting to register them...");
         annotatedClasses.forEach((annotatedClass) -> {
             try {
                 ICommand command = (ICommand) annotatedClass.getDeclaredConstructor().newInstance();
@@ -31,6 +39,14 @@ public class CommandManager extends ListenerAdapter {
                 e.printStackTrace();
             }
         });
+        LOGGER.debug("Loaded global commands: {}", getGlobalCommands().stream()
+                .map(ICommand::getName)
+                .collect(Collectors.joining("\n\t", "\n\t", "")));
+        LOGGER.debug("Loaded guild commands: {}", getGuildCommands().stream()
+                .map(ICommand::getName)
+                .collect(Collectors.joining("\n\t", "\n\t", "")));
+        timer.stop();
+        LOGGER.info("Finished capturing and registering commands in {}. Successfully registered " + GUILD_COMMANDS.size() + " guild commands and " + GLOBAL_COMMANDS.size() + " global commands.", timer);
     }
 
     private static void registerGuildCommand(IGuildCommand guildCommand) {

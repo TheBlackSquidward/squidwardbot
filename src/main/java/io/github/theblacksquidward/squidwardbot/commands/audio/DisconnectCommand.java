@@ -1,9 +1,9 @@
 package io.github.theblacksquidward.squidwardbot.commands.audio;
 
-import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.commands.Command;
 import io.github.theblacksquidward.squidwardbot.commands.IGuildCommand;
 import io.github.theblacksquidward.squidwardbot.utils.EmbedUtils;
+import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -16,8 +16,9 @@ public class DisconnectCommand implements IGuildCommand {
         if(!guild.getAudioManager().isConnected()) {
             event.replyEmbeds(EmbedUtils.createMusicReply("The bot is currently not in a channel.")).queue();
         }
-        SquidwardBot.getGuildAudioManager().removePlayer(guild);
-        event.replyEmbeds(EmbedUtils.createMusicReply("Successfully disconnected from " + guild.getAudioManager().getConnectedChannel().getName() + ".")).queue();
+        final AudioChannel audioChannel = guild.getAudioManager().getConnectedChannel();
+        guild.getAudioManager().closeAudioConnection();
+        event.replyEmbeds(EmbedUtils.createMusicReply("Successfully disconnected from " + audioChannel.getName() + ".")).queue();
     }
 
     @Override

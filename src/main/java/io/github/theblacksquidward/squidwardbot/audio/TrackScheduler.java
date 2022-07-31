@@ -26,6 +26,16 @@ public class TrackScheduler extends AudioEventAdapter {
         this.queue = new LinkedBlockingDeque<>();
     }
 
+    public int getVolume() {
+        return this.audioPlayer.getVolume();
+    }
+
+    public void setVolume(int volume) {
+        volume = Math.max(0, volume);
+        volume = Math.min(1000, volume);
+        this.audioPlayer.setVolume(volume);
+    }
+
     public void queue(AudioTrack track) {
         if(!this.audioPlayer.startTrack(track, true)) {
             this.queue.offer(track);
@@ -55,8 +65,12 @@ public class TrackScheduler extends AudioEventAdapter {
         return new ArrayList<>(queue);
     }
 
-    public void nextTrack(AudioTrack audioTrack) {
-        this.audioPlayer.startTrack(this.queue.poll(), false);
+    public void nextTrack() {
+        if(!queue.isEmpty()) {
+            this.audioPlayer.startTrack(this.queue.poll(), false);
+        } else {
+            this.audioPlayer.startTrack(null, false);
+        }
     }
 
     public void forcePlayTrack(AudioTrack audioTrack) {
@@ -68,17 +82,21 @@ public class TrackScheduler extends AudioEventAdapter {
         queue.offerFirst(audioTrack);
     }
 
-    @Override
-    public void onTrackStart(AudioPlayer player, AudioTrack track) {
+    public AudioTrack skip() {
+        final AudioTrack currentTrack = getCurrentlyPlayingTrack();
+        nextTrack();
+        return currentTrack;
+    }
 
+    public AudioTrack getCurrentlyPlayingTrack() {
+        return audioPlayer.getPlayingTrack();
     }
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack audioTrack, AudioTrackEndReason endReason) {
-        if(!endReason.mayStartNext) {
-            //TODO log that
+        if(endReason.mayStartNext) {
+            nextTrack();
         }
-        nextTrack(audioTrack);
     }
 
     @Override

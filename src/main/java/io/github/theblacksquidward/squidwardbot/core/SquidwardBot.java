@@ -1,6 +1,5 @@
 package io.github.theblacksquidward.squidwardbot.core;
 
-import io.github.theblacksquidward.squidwardbot.audio.GuildAudioManager;
 import io.github.theblacksquidward.squidwardbot.commands.CommandManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -22,7 +21,6 @@ public class SquidwardBot {
     private static final Reflections REFLECTIONS = new Reflections("io.github.theblacksquidward");
 
     private static SquidwardBot instance;
-    private static GuildAudioManager GUILD_AUDIO_MANAGER;
 
     private final JDA jda;
     private final String version;
@@ -40,14 +38,9 @@ public class SquidwardBot {
                 .addEventListeners(new CommandManager())
                 .build()
                 .awaitReady();
-        GUILD_AUDIO_MANAGER = new GuildAudioManager();
 
         //TODO based on if its in dev or not
         registerDevCommands(jda);
-    }
-
-    public static GuildAudioManager getGuildAudioManager() {
-        return GUILD_AUDIO_MANAGER;
     }
 
     //TODO to move

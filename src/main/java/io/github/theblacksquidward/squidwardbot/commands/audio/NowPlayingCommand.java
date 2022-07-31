@@ -2,10 +2,9 @@ package io.github.theblacksquidward.squidwardbot.commands.audio;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
+import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.commands.Command;
 import io.github.theblacksquidward.squidwardbot.commands.IGuildCommand;
-import io.github.theblacksquidward.squidwardbot.utils.AudioUtils;
 import io.github.theblacksquidward.squidwardbot.utils.EmbedUtils;
 import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -20,11 +19,15 @@ public class NowPlayingCommand implements IGuildCommand {
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
-        if(!SquidwardBot.getGuildAudioManager().hasPlayer(guild)) {
-            event.replyEmbeds(EmbedUtils.createMusicReply("This guild does not have a player...")).queue();
+        if(!event.getMember().getVoiceState().inAudioChannel()) {
+            event.replyEmbeds(EmbedUtils.createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
-        AudioTrack currentTrack = AudioUtils.getCurrentAudioTrack(guild);
+        if(!event.getGuild().getAudioManager().isConnected()) {
+            event.replyEmbeds(EmbedUtils.createMusicReply("The bot must be connected to a voice channel to get the currently playing track.")).queue();
+            return;
+        }
+        final AudioTrack currentTrack = AudioManager.getCurrentlyPlayingTrack(guild);
         if(currentTrack == null) {
             event.replyEmbeds(EmbedUtils.createMusicReply("There is no song currently playing...")).queue();
             return;
@@ -42,6 +45,7 @@ public class NowPlayingCommand implements IGuildCommand {
         return "Returns the currently playing song.";
     }
 
+    //TODO more info
     private MessageEmbed getCurrentTrackEmbed(Guild guild, AudioTrack currentTrack) {
         AudioTrackInfo currentTrackInfo = currentTrack.getInfo();
         return new EmbedBuilder()

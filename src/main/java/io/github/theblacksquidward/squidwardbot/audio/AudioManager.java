@@ -30,7 +30,7 @@ public class AudioManager {
         return GUILD_AUDIO_MANAGERS.get(guild.getIdLong());
     }
 
-    public static void requeueTrack(Guild guild) {
+    public static void repeatTrack(Guild guild) {
         getOrCreate(guild).getTrackScheduler().addTrackAtHead(getCurrentlyPlayingTrack(guild).makeClone());
     }
 

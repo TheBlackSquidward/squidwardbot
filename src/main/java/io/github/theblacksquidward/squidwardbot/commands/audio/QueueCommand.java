@@ -2,12 +2,13 @@ package io.github.theblacksquidward.squidwardbot.commands.audio;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.commands.Command;
 import io.github.theblacksquidward.squidwardbot.commands.IGuildCommand;
-import io.github.theblacksquidward.squidwardbot.utils.AudioUtils;
 import io.github.theblacksquidward.squidwardbot.utils.EmbedUtils;
 import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -22,14 +23,24 @@ public class QueueCommand implements IGuildCommand {
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
-        if(!AudioUtils.hasPlayer(guild)) {
-            event.replyEmbeds(EmbedUtils.createMusicReply("This guild does not have a player...")).queue();
+        if(!event.getMember().getVoiceState().inAudioChannel()) {
+            event.replyEmbeds(EmbedUtils.createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
-        if(AudioUtils.isQueueEmpty(guild)) {
-            event.replyEmbeds(EmbedUtils.createMusicReply("The queue is currently empty.")).queue();
+        final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
+        if(!event.getGuild().getAudioManager().isConnected()) {
+            event.replyEmbeds(EmbedUtils.createMusicReply("The bot must be connected to a voice channel to view the queue.")).queue();
             return;
         }
+        if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
+            event.replyEmbeds(EmbedUtils.createMusicReply("You must be in the same voice channel as the bot to view the queue.")).queue();
+            return;
+        }
+        if(AudioManager.isQueueEmpty(guild)) {
+            event.replyEmbeds(EmbedUtils.createMusicReply("Could not view the queue as it is currently empty.")).queue();
+            return;
+        }
+        //TODO redo with pagnation
         event.replyEmbeds(getQueueEmbed(guild)).queue();
     }
 
@@ -54,8 +65,8 @@ public class QueueCommand implements IGuildCommand {
 
     private String getQueueAsString(Guild guild) {
         StringBuilder stringBuilder = new StringBuilder();
-        int trackCount = Math.min(AudioUtils.getQueueSize(guild), MAX_TRACKS_ON_PAGE);
-        List<AudioTrack> tracks = AudioUtils.getQueuedTracks(guild);
+        int trackCount = Math.min(AudioManager.getQueueSize(guild), MAX_TRACKS_ON_PAGE);
+        List<AudioTrack> tracks = AudioManager.getQueuedTracks(guild);
 
         for(int i = 0; i < trackCount; i++) {
             AudioTrack track = tracks.get(i);
@@ -67,7 +78,8 @@ public class QueueCommand implements IGuildCommand {
                     .append(" by ")
                     .append(trackInfo.author)
                     .append("`  [`")
-                    .append(AudioUtils.formatTrackTimeDuration(track.getDuration()))
+                    //TODO i dont like this
+                    .append(AudioManager.formatTrackTimeDuration(track.getDuration()))
                     .append("`]\n");
         }
         if(tracks.size() > trackCount) {

@@ -3,12 +3,11 @@ package io.github.theblacksquidward.squidwardbot.commands.audio;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
+import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
 import io.github.theblacksquidward.squidwardbot.commands.Command;
 import io.github.theblacksquidward.squidwardbot.commands.IGuildCommand;
-import io.github.theblacksquidward.squidwardbot.utils.AudioUtils;
 import io.github.theblacksquidward.squidwardbot.utils.EmbedUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -24,6 +23,7 @@ public class ForcePlayCommand implements IGuildCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
+        //TODO this needs redoing with the new logic
         Guild guild = event.getGuild();
         if(!guild.getAudioManager().isConnected()) {
             User user = event.getUser();
@@ -33,9 +33,9 @@ public class ForcePlayCommand implements IGuildCommand {
                 return;
             }
             GuildVoiceState memberVoiceState = member.getVoiceState();
-            SquidwardBot.getGuildAudioManager().openAudioConnection(guild, memberVoiceState.getChannel());
+            guild.getAudioManager().openAudioConnection(memberVoiceState.getChannel());
         }
-        AudioUtils.loadAndPlay(guild, event.getOption("identifier").getAsString(), new AudioLoadResultImpl(event, SquidwardBot.getGuildAudioManager().getTrackScheduler(guild)));
+        AudioManager.loadAndPlay(guild, event.getOption("identifier").getAsString(), new AudioLoadResultImpl(event, AudioManager.getOrCreate(guild).getTrackScheduler()));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ForcePlayCommand implements IGuildCommand {
         @Override
         public void loadFailed(FriendlyException exception) {
             super.loadFailed(exception);
-            event.reply("Load fialed").queue();
+            event.reply("Load failed").queue();
         }
     }
 

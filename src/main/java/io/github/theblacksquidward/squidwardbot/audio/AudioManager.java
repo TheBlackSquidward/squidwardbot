@@ -3,9 +3,11 @@ package io.github.theblacksquidward.squidwardbot.audio;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.api.entities.Guild;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,13 @@ public class AudioManager {
 
     private static final AudioPlayerManager AUDIO_PLAYER_MANAGER = new DefaultAudioPlayerManager();
     private static final Map<Long, GuildAudioManager> GUILD_AUDIO_MANAGERS = new HashMap<>();
+
+    static {
+        //TODO
+        AUDIO_PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager());
+        AUDIO_PLAYER_MANAGER.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
+        AUDIO_PLAYER_MANAGER.registerSourceManager(new SpotifyAudioSourceManager(AUDIO_PLAYER_MANAGER));
+    }
 
     public static GuildAudioManager getOrCreate(Guild guild) {
         GUILD_AUDIO_MANAGERS.computeIfAbsent(guild.getIdLong(), guildId -> {

@@ -12,10 +12,7 @@ import io.github.theblacksquidward.squidwardbot.commands.IGuildCommand;
 import io.github.theblacksquidward.squidwardbot.utils.EmbedUtils;
 import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -28,19 +25,23 @@ public class PlayCommand implements IGuildCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
-        //TODO this needs new logic implemented
         Guild guild = event.getGuild();
-        if(!guild.getAudioManager().isConnected()) {
-            User user = event.getUser();
-            Member member = guild.getMember(user);
-            if(member == null || member.getVoiceState() == null) {
-                event.replyEmbeds(EmbedUtils.createMusicReply("You are not in a channel and the bot is not in a channel.")).queue();
-                return;
-            }
-            GuildVoiceState memberVoiceState = member.getVoiceState();
-            event.getGuild().getAudioManager().openAudioConnection(memberVoiceState.getChannel());
+        if(!event.getMember().getVoiceState().inAudioChannel()) {
+            event.replyEmbeds(EmbedUtils.createMusicReply("You must be in a voice channel to use this command.")).queue();
+            return;
         }
-        AudioManager.loadAndPlay(guild, event.getOption("identifier").getAsString(), new AudioLoadResultImpl(event, AudioManager.getOrCreate(guild).getTrackScheduler()));
+        final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
+        if(!event.getGuild().getAudioManager().isConnected()) {
+            guild.getAudioManager().openAudioConnection(audioChannel);
+            //todo CHANGE TO just replyembed
+            event.getChannel().sendMessageEmbeds(EmbedUtils.createMusicReply("The bot must be connected to a voice channel to pause the queue.")).queue();
+        }
+        if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
+            event.replyEmbeds(EmbedUtils.createMusicReply("You must be in the same voice channel as the bot to pause the queue.")).queue();
+            return;
+        }
+        final String identifier = event.getOption("identifier").getAsString();
+        AudioManager.loadAndPlay(guild, identifier, new AudioLoadResultImpl(event, identifier, AudioManager.getOrCreate(guild).getTrackScheduler()));
     }
 
     @Override
@@ -62,10 +63,12 @@ public class PlayCommand implements IGuildCommand {
     private static class AudioLoadResultImpl extends DefaultAudioLoadResultImpl {
 
         private final SlashCommandInteractionEvent event;
+        private final String identifier;
 
-        public AudioLoadResultImpl(SlashCommandInteractionEvent event, TrackScheduler trackScheduler) {
+        public AudioLoadResultImpl(SlashCommandInteractionEvent event, String identifier, TrackScheduler trackScheduler) {
             super(trackScheduler);
             this.event = event;
+            this.identifier = identifier;
         }
 
         @Override
@@ -89,13 +92,17 @@ public class PlayCommand implements IGuildCommand {
         @Override
         public void noMatches() {
             super.noMatches();
-            event.replyEmbeds(EmbedUtils.createMusicReply("Could not match the given identifier to a track.")).queue();
+            event.replyEmbeds(EmbedUtils.createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track.")).queue();
         }
 
         @Override
         public void loadFailed(FriendlyException e) {
             super.loadFailed(e);
-            event.replyEmbeds(EmbedUtils.createMusicReply("Error whilst loading the track.")).queue();
+            event.replyEmbeds(EmbedUtils.createMusicReply(
+                    "Error whilst loading the track. Please report the following information:" +
+                            "\n\nSeverity: " + e.severity.name() +
+                            "\nSpecified Identifier: " + identifier +
+                            "\nException: " + e.getMessage())).queue();
         }
 
     }

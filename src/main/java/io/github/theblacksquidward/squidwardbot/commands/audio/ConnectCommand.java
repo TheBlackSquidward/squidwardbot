@@ -3,10 +3,8 @@ package io.github.theblacksquidward.squidwardbot.commands.audio;
 import io.github.theblacksquidward.squidwardbot.commands.Command;
 import io.github.theblacksquidward.squidwardbot.commands.IGuildCommand;
 import io.github.theblacksquidward.squidwardbot.utils.EmbedUtils;
-import net.dv8tion.jda.api.entities.AudioChannel;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -34,11 +32,12 @@ public class ConnectCommand implements IGuildCommand {
             guild.getAudioManager().openAudioConnection(audioChannel);
             event.replyEmbeds(EmbedUtils.createMusicReply("Successfully connected to " + audioChannel.getName())).queue();
         } else {
-            VoiceChannel voiceChannel = option.getAsVoiceChannel();
-            if(voiceChannel == null) {
+            GuildChannelUnion channel = option.getAsChannel();
+            if(channel.getType() != ChannelType.VOICE) {
                 event.replyEmbeds(EmbedUtils.createMusicReply("The channel specified is not a voice channel.")).queue();
                 return;
             }
+            VoiceChannel voiceChannel = channel.asVoiceChannel();
             guild.getAudioManager().openAudioConnection(voiceChannel);
             event.replyEmbeds(EmbedUtils.createMusicReply("Successfully connected to " + voiceChannel.getName())).queue();
         }

@@ -12,7 +12,8 @@ import io.github.theblacksquidward.squidwardbot.commands.IGuildCommand;
 import io.github.theblacksquidward.squidwardbot.utils.EmbedUtils;
 import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.AudioChannel;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -33,8 +34,7 @@ public class PlayCommand implements IGuildCommand {
         final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
         if(!event.getGuild().getAudioManager().isConnected()) {
             guild.getAudioManager().openAudioConnection(audioChannel);
-            //todo CHANGE TO just replyembed
-            event.getChannel().sendMessageEmbeds(EmbedUtils.createMusicReply("The bot must be connected to a voice channel to pause the queue.")).queue();
+            event.getChannel().sendMessageEmbeds(EmbedUtils.createMusicReply("Successfully connected to " + audioChannel.getName())).queue();
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
             event.replyEmbeds(EmbedUtils.createMusicReply("You must be in the same voice channel as the bot to pause the queue.")).queue();

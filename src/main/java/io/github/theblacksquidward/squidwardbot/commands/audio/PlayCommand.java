@@ -37,7 +37,7 @@ public class PlayCommand implements IGuildCommand {
             event.getChannel().sendMessageEmbeds(EmbedUtils.createMusicReply("Successfully connected to " + audioChannel.getName())).queue();
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
-            event.replyEmbeds(EmbedUtils.createMusicReply("You must be in the same voice channel as the bot to pause the queue.")).queue();
+            event.replyEmbeds(EmbedUtils.createMusicReply("You must be in the same voice channel as the bot to add an audio track to the queue.")).queue();
             return;
         }
         final String identifier = event.getOption("identifier").getAsString();
@@ -93,18 +93,18 @@ public class PlayCommand implements IGuildCommand {
 
         @Override
         public void noMatches() {
-            event.replyEmbeds(EmbedUtils.createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track.")).queue();
+            event.replyEmbeds(EmbedUtils.createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track or an audio playlist.")).queue();
             super.noMatches();
         }
 
         @Override
-        public void loadFailed(FriendlyException e) {
+        public void loadFailed(FriendlyException exception) {
             event.replyEmbeds(EmbedUtils.createMusicReply(
                     "Error whilst loading the track. Please report the following information:" +
-                            "\n\nSeverity: " + e.severity.name() +
+                            "\n\nSeverity: " + exception.severity.name() +
                             "\nSpecified Identifier: " + identifier +
-                            "\nException: " + e.getMessage())).queue();
-            super.loadFailed(e);
+                            "\nException: " + exception.getMessage())).queue();
+            super.loadFailed(exception);
         }
 
     }

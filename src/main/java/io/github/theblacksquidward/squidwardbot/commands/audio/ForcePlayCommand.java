@@ -3,39 +3,44 @@ package io.github.theblacksquidward.squidwardbot.commands.audio;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
 import io.github.theblacksquidward.squidwardbot.commands.Command;
 import io.github.theblacksquidward.squidwardbot.commands.IGuildCommand;
 import io.github.theblacksquidward.squidwardbot.utils.EmbedUtils;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
+import io.github.theblacksquidward.squidwardbot.utils.constants.ColorConstants;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
+
+import java.time.Instant;
 
 @Command
 public class ForcePlayCommand implements IGuildCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
-        //TODO this needs redoing with the new logic
         Guild guild = event.getGuild();
-        if(!guild.getAudioManager().isConnected()) {
-            User user = event.getUser();
-            Member member = guild.getMember(user);
-            if(member == null || member.getVoiceState() == null) {
-                event.replyEmbeds(EmbedUtils.createMusicReply("You are not in a channel and the bot is not in a channel.")).queue();
-                return;
-            }
-            GuildVoiceState memberVoiceState = member.getVoiceState();
-            guild.getAudioManager().openAudioConnection(memberVoiceState.getChannel());
+        if(!event.getMember().getVoiceState().inAudioChannel()) {
+            event.replyEmbeds(EmbedUtils.createMusicReply("You must be in a voice channel to use this command.")).queue();
+            return;
         }
-        AudioManager.loadAndPlay(guild, event.getOption("identifier").getAsString(), new AudioLoadResultImpl(event, AudioManager.getOrCreate(guild).getTrackScheduler()));
+        final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
+        if(!event.getGuild().getAudioManager().isConnected()) {
+            guild.getAudioManager().openAudioConnection(audioChannel);
+            event.getChannel().sendMessageEmbeds(EmbedUtils.createMusicReply("Successfully connected to " + audioChannel.getName())).queue();
+        }
+        if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
+            event.replyEmbeds(EmbedUtils.createMusicReply("You must be in the same voice channel as the bot to force play an audio track.")).queue();
+            return;
+        }
+        final String identifier = event.getOption("identifier").getAsString();
+        AudioManager.loadAndPlay(guild, identifier, new AudioLoadResultImpl(event, identifier, AudioManager.getOrCreate(guild).getTrackScheduler()));
     }
 
     @Override
@@ -57,35 +62,49 @@ public class ForcePlayCommand implements IGuildCommand {
     private static class AudioLoadResultImpl extends BaseAudioLoadResultImpl {
 
         private final SlashCommandInteractionEvent event;
+        private final String identifier;
 
-        public AudioLoadResultImpl(SlashCommandInteractionEvent event, TrackScheduler trackScheduler) {
+        public AudioLoadResultImpl(SlashCommandInteractionEvent event, String identifier, TrackScheduler trackScheduler) {
             super(trackScheduler);
             this.event = event;
+            this.identifier = identifier;
         }
 
         @Override
         public void trackLoaded(AudioTrack audioTrack) {
+            trackScheduler.forceQueueTrack(audioTrack);
+            AudioTrackInfo audioTrackInfo = audioTrack.getInfo();
+            event.replyEmbeds(new EmbedBuilder()
+                    .setTimestamp(Instant.now())
+                    .setColor(ColorConstants.PRIMARY_COLOR)
+                    .setAuthor("|  " + "Successfully force loaded " + audioTrackInfo.title + " by " + audioTrackInfo.author + " to the queue.", null, "https://avatars.githubusercontent.com/u/65785034?v=4")
+                    .setThumbnail(audioTrackInfo.artworkUrl)
+                    .build()).queue();
             super.trackLoaded(audioTrack);
-            trackScheduler.forcePlayTrack(audioTrack);
-            event.reply("forced track").queue();
         }
 
         @Override
         public void playlistLoaded(AudioPlaylist audioPlaylist) {
+            trackScheduler.forceQueueTracks(audioPlaylist.getTracks());
+            //TODO create cool embed
+            event.replyEmbeds(EmbedUtils.createMusicReply("Successfully force loaded the playlist: " + audioPlaylist.getName())).queue();
             super.playlistLoaded(audioPlaylist);
-            event.reply("Tried to force playlist").queue();
         }
 
         @Override
         public void noMatches() {
+            event.replyEmbeds(EmbedUtils.createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track or an audio playlist.")).queue();
             super.noMatches();
-            event.reply("No Match").queue();
         }
 
         @Override
         public void loadFailed(FriendlyException exception) {
+            event.replyEmbeds(EmbedUtils.createMusicReply(
+                    "Error whilst loading the track. Please report the following information:" +
+                            "\n\nSeverity: " + exception.severity.name() +
+                            "\nSpecified Identifier: " + identifier +
+                            "\nException: " + exception.getMessage())).queue();
             super.loadFailed(exception);
-            event.reply("Load failed").queue();
         }
     }
 

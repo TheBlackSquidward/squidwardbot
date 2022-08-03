@@ -73,9 +73,15 @@ public class TrackScheduler extends AudioEventAdapter {
         }
     }
 
-    public void forcePlayTrack(AudioTrack audioTrack) {
+    public void forceQueueTrack(AudioTrack audioTrack) {
         addTrackAtHead(audioTrack);
-        audioPlayer.stopTrack();
+        nextTrack();
+    }
+
+    public void forceQueueTracks(List<AudioTrack> audioTracks) {
+        Collections.reverse(audioTracks);
+        audioTracks.forEach(this::addTrackAtHead);
+        nextTrack();
     }
 
     public void addTrackAtHead(AudioTrack audioTrack) {

@@ -8,9 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 //TODO logs
-public abstract class BaseAudioLoadResultImpl implements AudioLoadResultHandler {
+public class BaseAudioLoadResultImpl implements AudioLoadResultHandler {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(DefaultAudioLoadResultImpl.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BaseAudioLoadResultImpl.class);
 
     protected final TrackScheduler trackScheduler;
 
@@ -34,7 +34,7 @@ public abstract class BaseAudioLoadResultImpl implements AudioLoadResultHandler 
 
     @Override
     public void loadFailed(FriendlyException exception) {
-        LOGGER.error("Caught an exception when trying to load an audio result. {}", exception.getStackTrace());
+        LOGGER.error("Caught an exception when trying to load an audio track. {}", exception.getStackTrace());
     }
 
 }

@@ -36,7 +36,7 @@ public class TrackScheduler extends AudioEventAdapter {
         this.audioPlayer.setVolume(volume);
     }
 
-    public void queue(AudioTrack track) {
+    public void queueTrack(AudioTrack track) {
         if(!this.audioPlayer.startTrack(track, true)) {
             this.queue.offer(track);
         }

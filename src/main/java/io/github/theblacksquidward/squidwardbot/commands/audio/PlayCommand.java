@@ -5,7 +5,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
-import io.github.theblacksquidward.squidwardbot.audio.DefaultAudioLoadResultImpl;
+import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
 import io.github.theblacksquidward.squidwardbot.commands.Command;
 import io.github.theblacksquidward.squidwardbot.commands.IGuildCommand;
@@ -60,7 +60,7 @@ public class PlayCommand implements IGuildCommand {
                 .addOption(OptionType.STRING, "identifier", "Identifier of the track (URL/Name)", true);
     }
 
-    private static class AudioLoadResultImpl extends DefaultAudioLoadResultImpl {
+    private static class AudioLoadResultImpl extends BaseAudioLoadResultImpl {
 
         private final SlashCommandInteractionEvent event;
         private final String identifier;
@@ -73,6 +73,7 @@ public class PlayCommand implements IGuildCommand {
 
         @Override
         public void trackLoaded(AudioTrack audioTrack) {
+            trackScheduler.queueTrack(audioTrack);
             AudioTrackInfo audioTrackInfo = audioTrack.getInfo();
             event.replyEmbeds(new EmbedBuilder()
                     .setTimestamp(Instant.now())
@@ -85,24 +86,25 @@ public class PlayCommand implements IGuildCommand {
 
         @Override
         public void playlistLoaded(AudioPlaylist audioPlaylist) {
-            super.playlistLoaded(audioPlaylist);
+            audioPlaylist.getTracks().forEach(trackScheduler::queueTrack);
             event.replyEmbeds(EmbedUtils.createMusicReply("Successfully loaded the playlist: " + audioPlaylist.getName())).queue();
+            super.playlistLoaded(audioPlaylist);
         }
 
         @Override
         public void noMatches() {
-            super.noMatches();
             event.replyEmbeds(EmbedUtils.createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track.")).queue();
+            super.noMatches();
         }
 
         @Override
         public void loadFailed(FriendlyException e) {
-            super.loadFailed(e);
             event.replyEmbeds(EmbedUtils.createMusicReply(
                     "Error whilst loading the track. Please report the following information:" +
                             "\n\nSeverity: " + e.severity.name() +
                             "\nSpecified Identifier: " + identifier +
                             "\nException: " + e.getMessage())).queue();
+            super.loadFailed(e);
         }
 
     }

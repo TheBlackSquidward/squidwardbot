@@ -99,7 +99,7 @@ public class AudioManager {
 
     public static void loadAndPlay(Guild guild, String identifier) {
         final GuildAudioManager guildAudioManager = getOrCreate(guild);
-        loadAndPlay(guild, identifier, new DefaultAudioLoadResultImpl(guildAudioManager.getTrackScheduler()));
+        loadAndPlay(guild, identifier, new BaseAudioLoadResultImpl(guildAudioManager.getTrackScheduler()));
     }
 
     public static void loadAndPlay(Guild guild, String identifier, AudioLoadResultHandler audioLoadResult) {

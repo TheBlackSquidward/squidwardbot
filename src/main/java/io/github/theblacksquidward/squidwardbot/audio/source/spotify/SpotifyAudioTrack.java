@@ -4,7 +4,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.model_objects.specification.*;
@@ -16,23 +15,10 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioTrack.class);
 
     private final SpotifyAudioSourceManager sourceManager;
-    private final String isrc;
-    private final String artworkUrl;
 
-    public SpotifyAudioTrack(AudioTrackInfo trackInfo, String isrc, String artworkUrl, SpotifyAudioSourceManager sourceManager) {
+    public SpotifyAudioTrack(AudioTrackInfo trackInfo, SpotifyAudioSourceManager sourceManager) {
         super(trackInfo);
         this.sourceManager = sourceManager;
-        this.isrc = isrc;
-        this.artworkUrl = artworkUrl;
-    }
-
-    public String getISRC() {
-        return isrc;
-    }
-
-    @Nullable
-    public String getArtworkUrl() {
-        return artworkUrl;
     }
 
     @Override
@@ -53,8 +39,8 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
         AudioItem track;
         String provider = "";
 
-        if(this.isrc != null) {
-            provider = "ytsearch:\"" + isrc + "\"";
+        if(trackInfo.isrc != null) {
+            provider = "ytsearch:\"" + trackInfo.isrc + "\"";
         }
         track = loadItem(provider);
         if(track == null) {
@@ -98,12 +84,14 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
     }
 
     public static SpotifyAudioTrack createSpotifyTrack(String title, String identifier, String isrc, ArtistSimplified[] artists, Image[] images, Integer trackDuration, SpotifyAudioSourceManager sourceManager) {
-        return new SpotifyAudioTrack(new AudioTrackInfo(title,
+        return new SpotifyAudioTrack(new AudioTrackInfo(
+                title,
                 artists.length == 0 ? "unknown" : artists[0].getName(),
                 trackDuration.longValue(),
                 identifier,
                 false,
-                "https://open.spotify.com/track/" + identifier, images.length == 0 ? null : images[0].getUrl()), isrc, images.length == 0 ? null : images[0].getUrl(), sourceManager);
+                "https://open.spotify.com/track/" + identifier, images.length == 0 ? null : images[0].getUrl(),
+                isrc), sourceManager);
     }
 
     public static SpotifyAudioTrack createSpotifyTrack(Track track, SpotifyAudioSourceManager sourceManager) {
@@ -112,7 +100,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
     @Override
     protected AudioTrack makeShallowClone() {
-        return new SpotifyAudioTrack(trackInfo, isrc, artworkUrl, sourceManager);
+        return new SpotifyAudioTrack(trackInfo, sourceManager);
     }
 
 }

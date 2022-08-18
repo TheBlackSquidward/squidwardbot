@@ -1,2 +1,4 @@
 rootProject.name = 'SquidwardBot'
 
+include 'squidwardbot-core'
+include 'squidwardbot-audio'

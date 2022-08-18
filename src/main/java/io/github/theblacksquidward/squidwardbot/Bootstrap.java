@@ -5,6 +5,7 @@ import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +15,6 @@ import java.util.List;
 public class Bootstrap {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Bootstrap.class);
-
-    private static String spotifyClientId;
-    private static String spotifyClientSecret;
 
     public static void main(String[] args) {
         OptionParser optionParser = new OptionParser();
@@ -33,12 +31,13 @@ public class Bootstrap {
         }
         String discordBotAccessToken = parseArgument(optionSet, optionSpec);
         String version = parseArgument(optionSet, optionSpec1);
-        spotifyClientId = parseArgument(optionSet, optionSpec2);
-        spotifyClientSecret = parseArgument(optionSet, optionSpec3);
+        String spotifyClientId = parseArgument(optionSet, optionSpec2);
+        String spotifyClientSecret = parseArgument(optionSet, optionSpec3);
+        final Reflections REFLECTIONS = new Reflections("io.github.theblacksquidward");
         LOGGER.info("Starting SquidwardBot v{}", version);
-        final SquidwardBot squidwardBot;
+        final SquidwardBot SQUIDWARD_BOT;
         try {
-            squidwardBot = new SquidwardBot(discordBotAccessToken, version);
+            SQUIDWARD_BOT = new SquidwardBot(discordBotAccessToken, REFLECTIONS, version, spotifyClientId, spotifyClientSecret);
         } catch (LoginException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -56,14 +55,6 @@ public class Bootstrap {
             }
             throw throwable;
         }
-    }
-
-    public static String getSpotifyClientId() {
-        return spotifyClientId;
-    }
-
-    public static String getSpotifyClientSecret() {
-        return spotifyClientSecret;
     }
 
 }

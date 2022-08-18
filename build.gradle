@@ -1,32 +1,58 @@
-plugins {
-    id 'java'
-    id 'application'
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    group 'io.github.theblacksquidward'
+    version '0.0.1'
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://m2.dv8tion.net/releases'
+        }
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+
+    dependencies {
+        implementation 'org.jetbrains:annotations:23.0.0'
+        implementation "org.apache.logging.log4j:log4j-api:2.18.0"
+        implementation "org.apache.logging.log4j:log4j-core:2.18.0"
+        implementation "org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0"
+        implementation 'net.dv8tion:JDA:5.0.0-alpha.17'
+        implementation 'org.reflections:reflections:0.10.2'
+        implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
+        implementation 'com.google.guava:guava:31.1-jre'
+        implementation 'com.google.code.gson:gson:2.9.1'
+    }
 }
 
-group 'io.github.theblacksquidward'
-version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-    maven {
-        url 'https://m2.dv8tion.net/releases'
-    }
-    maven {
-        url 'https://jitpack.io'
-    }
+configurations {
+    moduleJar
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:23.0.0'
-    implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
-    implementation 'com.google.code.gson:gson:2.9.1'
-    implementation 'org.jsoup:jsoup:1.15.2'
-    implementation 'net.dv8tion:JDA:5.0.0-alpha.17'
-    implementation 'org.reflections:reflections:0.10.2'
-    implementation 'com.github.walkyst.lavaplayer-fork:lavaplayer:custom-SNAPSHOT'
-    implementation 'se.michaelthelin.spotify:spotify-web-api-java:7.1.0'
-    implementation "org.apache.logging.log4j:log4j-api:2.18.0"
-    implementation "org.apache.logging.log4j:log4j-core:2.18.0"
-    implementation "org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0"
+    subprojects.each {
+        moduleJar project(it.path)
+        implementation project(it.path)
+    }
+}
+
+task fatJar(type: Jar) {
+    dependsOn configurations.moduleJar
+    manifest {
+        attributes(
+                "Implementation-Title": "SquidwardBot",
+                "Implementation-Version": "0.0.1",
+                "Main-Class": "io.github.theblacksquidward.squidwardbot.Bootstrap"
+        )
+    }
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    from {
+        configurations.moduleJar.collect {
+            zipTree(it)
+        }
+    }
+    with jar
 }

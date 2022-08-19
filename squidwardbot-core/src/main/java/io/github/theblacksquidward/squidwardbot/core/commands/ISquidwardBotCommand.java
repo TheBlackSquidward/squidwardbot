@@ -34,7 +34,7 @@ public interface ISquidwardBotCommand {
         return new CommandDataImpl(getName(), getDescription())
                 .addSubcommands(getSubcommandData())
                 .addOptions(getOptionData())
-                .setGuildOnly(true);
+                .setGuildOnly(isGuildOnly());
     }
 
 }

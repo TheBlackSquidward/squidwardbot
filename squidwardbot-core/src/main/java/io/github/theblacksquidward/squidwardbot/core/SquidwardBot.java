@@ -47,23 +47,7 @@ public class SquidwardBot {
                 .addEventListeners(new CommandManager())
                 .build()
                 .awaitReady();
-
-        //TODO based on if its in dev or not
-        registerDevCommands(jda);
-    }
-
-    //TODO to move
-    private static void initializeAllCommands(CommandListUpdateAction commandListUpdateAction) {
-        //TODO global commands arent registered globally
-        CommandManager.getAllCommands().forEach((string, cmd) -> commandListUpdateAction.addCommands(cmd.getCommandData()));
-    }
-
-    //TODO to move
-    private static void registerDevCommands(@NotNull JDA jdaInstance) {
-        final Guild GUILD_1 = jdaInstance.getGuildById(488101404364505120L);
-        final CommandListUpdateAction GUILD_1_COMMANDS = GUILD_1.updateCommands();
-        initializeAllCommands(GUILD_1_COMMANDS);
-        GUILD_1_COMMANDS.queue();
+        CommandManager.onReady(jda);
     }
 
     private static void registerGlobalCommands() {

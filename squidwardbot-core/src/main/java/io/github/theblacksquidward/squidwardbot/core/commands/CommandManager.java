@@ -1,8 +1,11 @@
 package io.github.theblacksquidward.squidwardbot.core.commands;
 
 import com.google.common.base.Stopwatch;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.reflections.Reflections;
@@ -75,6 +78,13 @@ public class CommandManager extends ListenerAdapter {
         allCommands.putAll(GLOBAL_COMMANDS);
         allCommands.putAll(GUILD_COMMANDS);
         return Collections.unmodifiableMap(allCommands);
+    }
+
+    public static void onReady(@NotNull JDA jda) {
+        final Guild GUILD_1 = jda.getGuildById(488101404364505120L);
+        final CommandListUpdateAction GUILD_1_COMMANDS = GUILD_1.updateCommands();
+        CommandManager.getAllCommands().forEach((string, cmd) -> GUILD_1_COMMANDS.addCommands(cmd.getCommandData()));
+        GUILD_1_COMMANDS.queue();
     }
 
     //TODO redo

@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 
+import java.util.List;
+
 @Command
 public class VolumeCommand extends AbstractAudioCommand {
 
@@ -50,9 +52,8 @@ public class VolumeCommand extends AbstractAudioCommand {
     }
 
     @Override
-    public CommandData getCommandData() {
-        return new CommandDataImpl(getName(), getDescription())
-                .addOptions(new OptionData(OptionType.INTEGER, "volume", getDescription(), false).setRequiredRange(0, 1000));
+    public List<OptionData> getOptionData() {
+        return List.of(new OptionData(OptionType.INTEGER, "volume", getDescription(), false).setRequiredRange(0, 1000));
     }
 
 }

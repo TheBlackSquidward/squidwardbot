@@ -1,6 +1,7 @@
 package io.github.theblacksquidward.squidwardbot;
 
 import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
+import io.github.theblacksquidward.squidwardbot.core.SquidwardBotBuilder;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -23,9 +24,11 @@ public class Bootstrap {
         OptionSpec<String> optionSpec1 = optionParser.accepts("version").withRequiredArg().required();
         OptionSpec<String> optionSpec2 = optionParser.accepts("spotifyClientId").withRequiredArg().required();
         OptionSpec<String> optionSpec3 = optionParser.accepts("spotifyClientSecret").withRequiredArg().required();
+        OptionSpec<String> optionSpec4 = optionParser.accepts("githubPersonalToken").withRequiredArg();
+        OptionSpec<String> optionSpec5 = optionParser.accepts("githubUserId").withRequiredArg();
         OptionSpec<String> nonOptions = optionParser.nonOptions();
         OptionSet optionSet = optionParser.parse(args);
-        List<String> list  = optionSet.valuesOf(nonOptions);
+        List<String> list = optionSet.valuesOf(nonOptions);
         if(!list.isEmpty()) {
             LOGGER.warn("Completely ignored arguments: " + list);
         }
@@ -33,9 +36,12 @@ public class Bootstrap {
         String version = parseArgument(optionSet, optionSpec1);
         String spotifyClientId = parseArgument(optionSet, optionSpec2);
         String spotifyClientSecret = parseArgument(optionSet, optionSpec3);
+        String githubPersonalToken = parseArgument(optionSet, optionSpec4);
+        String githubUserId = parseArgument(optionSet, optionSpec5);
         final Reflections REFLECTIONS = new Reflections("io.github.theblacksquidward");
         LOGGER.info("Starting SquidwardBot v{}", version);
         final SquidwardBot SQUIDWARD_BOT;
+        final SquidwardBotBuilder SQUIDWARD_BOT_BUILDER = SquidwardBot.builder();
         try {
             SQUIDWARD_BOT = new SquidwardBot(discordBotAccessToken, REFLECTIONS, version, spotifyClientId, spotifyClientSecret);
         } catch (LoginException | InterruptedException e) {

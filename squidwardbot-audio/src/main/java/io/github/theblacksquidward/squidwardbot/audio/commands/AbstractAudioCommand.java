@@ -1,11 +1,11 @@
 package io.github.theblacksquidward.squidwardbot.audio.commands;
 
-import io.github.theblacksquidward.squidwardbot.core.commands.IGuildCommand;
+import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotCommand;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
-public abstract class AbstractAudioCommand implements IGuildCommand {
+public abstract class AbstractAudioCommand extends SquidwardBotCommand {
 
     protected static MessageEmbed createMusicReply(String text) {
         return new EmbedBuilder()

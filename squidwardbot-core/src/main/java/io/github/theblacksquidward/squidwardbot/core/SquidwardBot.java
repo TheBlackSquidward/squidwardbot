@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
@@ -41,13 +42,15 @@ public class SquidwardBot {
         //TODO VERIFY from here down
         CommandManager.captureAndRegisterCommands(reflections);
         jda = JDABuilder.createDefault(accessToken)
+                .enableIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGES,
+                        GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_EMOJIS_AND_STICKERS, GatewayIntent.GUILD_VOICE_STATES,
+                        GatewayIntent.MESSAGE_CONTENT)
                 .enableCache(CacheFlag.VOICE_STATE)
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .setActivity(Activity.playing("SquidwardBot | /help"))
                 .addEventListeners(new CommandManager())
                 .build()
                 .awaitReady();
-        CommandManager.onReady(jda);
     }
 
     private static void registerGlobalCommands() {

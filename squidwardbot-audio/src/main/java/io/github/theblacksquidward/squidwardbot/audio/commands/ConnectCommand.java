@@ -7,7 +7,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
+
+import java.util.List;
 
 @Command
 public class ConnectCommand extends AbstractAudioCommand {
@@ -52,9 +55,8 @@ public class ConnectCommand extends AbstractAudioCommand {
     }
 
     @Override
-    public CommandData getCommandData() {
-        return new CommandDataImpl(getName(), getDescription())
-                .addOption(OptionType.CHANNEL, "channel", "The channel the bot should be connected to", false);
+    public List<OptionData> getOptionData() {
+        return List.of(new OptionData(OptionType.CHANNEL, "channel", "The channel the bot should be connected to", false));
     }
 
 }

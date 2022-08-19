@@ -6,17 +6,22 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import core.GLA;
+import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class AudioManager {
+
+    public static final GLA GENIUS_LYRICS = new GLA();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudioManager.class);
 
@@ -93,6 +98,10 @@ public class AudioManager {
 
     public static void setVolume(Guild guild, int volume) {
         getOrCreate(guild).getTrackScheduler().setVolume(volume);
+    }
+
+    public static SongSearch getLyrics(Guild guild) throws IOException {
+        return GENIUS_LYRICS.search(getCurrentlyPlayingTrack(guild).getInfo().title);
     }
 
     //TODO move/remove

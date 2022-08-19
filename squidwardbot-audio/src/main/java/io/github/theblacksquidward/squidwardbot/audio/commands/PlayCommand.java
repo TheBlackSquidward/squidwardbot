@@ -15,9 +15,11 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 
 import java.time.Instant;
+import java.util.List;
 
 @Command
 public class PlayCommand extends AbstractAudioCommand {
@@ -53,9 +55,8 @@ public class PlayCommand extends AbstractAudioCommand {
     }
 
     @Override
-    public CommandData getCommandData() {
-        return new CommandDataImpl(getName(), getDescription())
-                .addOption(OptionType.STRING, "identifier", "Identifier of the track (URL/Name)", true);
+    public List<OptionData> getOptionData() {
+        return List.of(new OptionData(OptionType.STRING, "identifier", "Identifier of the track (URL/Name)", false));
     }
 
     private static class AudioLoadResultImpl extends BaseAudioLoadResultImpl {

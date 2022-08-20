@@ -45,12 +45,11 @@ public class LyricsCommand extends AbstractAudioCommand{
         try {
             final SongSearch songSearch = AudioManager.getLyrics(guild);
             final LinkedList<Hit> hits = songSearch.getHits();
-            final Hit hit = hits.getFirst();
-
             if(hits.isEmpty()) {
                 event.replyEmbeds(createMusicReply("There are no lyric results for this song.")).queue();
                 return;
             }
+            final Hit hit = hits.getFirst();
             event.replyEmbeds(getLyricsEmbed(hit)).queue();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -73,6 +72,9 @@ public class LyricsCommand extends AbstractAudioCommand{
         embedBuilder.setTimestamp(Instant.now());
         embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
         embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
+        embedBuilder.setTitle(hit.getTitleWithFeatured());
+        final String lyrics = hit.fetchLyrics();
+        embedBuilder.setDescription(lyrics.substring(0, Math.min(lyrics.length(), 1024)));
         return embedBuilder.build();
     }
 

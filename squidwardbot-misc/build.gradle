@@ -1,3 +1,5 @@
 dependencies {
+    implementation project(":squidwardbot-core")
+
     implementation "org.kohsuke:github-api:1.307"
 }

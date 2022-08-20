@@ -26,8 +26,8 @@ public class SpotifyAPIOLD {
     @NotNull
     private static SpotifyApi initializeSpotifyAPI() throws IOException, ParseException, SpotifyWebApiException {
         var spotifyApi = new SpotifyApi.Builder()
-                .setClientId(SquidwardBot.getSpotifyClientId())
-                .setClientSecret(SquidwardBot.getSpotifyClientSecret())
+                .setClientId(SquidwardBot.getInstance().getSpotifyClientId())
+                .setClientSecret(SquidwardBot.getInstance().getSpotifyClientSecret())
                 .build();
         ClientCredentialsRequest.Builder request = new ClientCredentialsRequest.Builder(spotifyApi.getClientId(), spotifyApi.getClientSecret());
         ClientCredentials credentials = request.grant_type("client_credentials").build().execute();

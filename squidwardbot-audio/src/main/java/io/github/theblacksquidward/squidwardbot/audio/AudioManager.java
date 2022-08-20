@@ -6,9 +6,9 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import core.GLA;
 import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifyAudioSourceManager;
+import io.github.theblacksquidward.squidwardbot.core.constants.Constants;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class AudioManager {
-
-    public static final GLA GENIUS_LYRICS = new GLA();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudioManager.class);
 
@@ -101,10 +99,8 @@ public class AudioManager {
     }
 
     public static SongSearch getLyrics(Guild guild) throws IOException {
-        return GENIUS_LYRICS.search(getCurrentlyPlayingTrack(guild).getInfo().title);
+        return Constants.GENIUS_LYRICS_API.search(getCurrentlyPlayingTrack(guild).getInfo().title + "" + getCurrentlyPlayingTrack(guild).getInfo().author);
     }
-
-    //TODO move/remove
 
     public static void loadAndPlay(Guild guild, String identifier) {
         final GuildAudioManager guildAudioManager = getOrCreate(guild);
@@ -116,6 +112,7 @@ public class AudioManager {
         AUDIO_PLAYER_MANAGER.loadItemOrdered(guildAudioManager, identifier, audioLoadResult);
     }
 
+    //TODO should this be here or a helper else where
     public static String formatTrackTimeDuration(long timeInMilliseconds) {
         long hours = timeInMilliseconds / TimeUnit.HOURS.toMillis(1);
         long minutes = timeInMilliseconds / TimeUnit.MINUTES.toMillis(1);

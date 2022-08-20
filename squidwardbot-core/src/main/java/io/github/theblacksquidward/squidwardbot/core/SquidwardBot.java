@@ -5,11 +5,8 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +18,12 @@ public class SquidwardBot {
     public static final Logger LOGGER = LoggerFactory.getLogger(SquidwardBot.class);
 
     private static SquidwardBot instance;
-    private static Reflections reflections;
-    private static String spotifyClientId;
-    private static String spotifyClientSecret;
 
     private final JDA jda;
     private final String version;
+    private final Reflections reflections;
+    private final String spotifyClientId;
+    private final String spotifyClientSecret;
 
     public SquidwardBot(String accessToken,
                         Reflections reflections,
@@ -53,16 +50,20 @@ public class SquidwardBot {
                 .awaitReady();
     }
 
-    private static void registerGlobalCommands() {
-
+    public static SquidwardBot getInstance() {
+        return instance;
     }
 
-    public static String getSpotifyClientId() {
+    public String getSpotifyClientId() {
         return spotifyClientId;
     }
 
-    public static String getSpotifyClientSecret() {
+    public String getSpotifyClientSecret() {
         return spotifyClientSecret;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public static SquidwardBotBuilder builder() {

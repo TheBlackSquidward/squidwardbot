@@ -1,9 +1,8 @@
 package io.github.theblacksquidward.squidwardbot.core.commands;
 
 import com.google.common.base.Stopwatch;
-import net.dv8tion.jda.api.JDA;
+import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
 import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CommandManager extends ListenerAdapter {
 
@@ -36,9 +34,7 @@ public class CommandManager extends ListenerAdapter {
                 e.printStackTrace();
             }
         });
-        LOGGER.debug("Loaded commands: {}", getCommands().stream()
-                .map(ISquidwardBotCommand::getName)
-                .collect(Collectors.joining("\n\t", "\n\t", "")));
+        LOGGER.debug("Loaded commands: {}", StringUtils.getIndentedStringList(getCommands()));
         timer.stop();
         LOGGER.info("Finished capturing and registering commands in {}. Successfully registered {} commands.", timer, getCommands().size());
     }

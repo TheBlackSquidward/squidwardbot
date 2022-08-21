@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 import java.util.List;
 
@@ -30,13 +31,23 @@ public class VolumeCommand extends AbstractAudioCommand {
             event.replyEmbeds(createMusicReply("You must be in the same voice channel as the bot to pause the queue.")).queue();
             return;
         }
-        final OptionMapping volume = event.getOption("volume");
-        if(volume == null) {
+        if(event.getSubcommandName().equalsIgnoreCase("get")) {
             event.replyEmbeds(createMusicReply("The current volume of the bot is `" + AudioManager.getVolume(guild) + "`.")).queue();
             return;
         }
-        AudioManager.setVolume(guild, volume.getAsInt());
-        event.replyEmbeds(createMusicReply("The volume has successfully been set to " + AudioManager.getVolume(guild) + "`.")).queue();
+        if(event.getSubcommandName().equalsIgnoreCase("reset")) {
+            event.replyEmbeds(createMusicReply("The volume of the audio player has been reset to the default value of `100`.")).queue();
+            return;
+        }
+        if(event.getSubcommandName().equalsIgnoreCase("set")) {
+            final OptionMapping volume = event.getOption("volume");
+            if(volume == null) {
+                event.replyEmbeds(createMusicReply("Please specify a volume.")).queue();
+                return;
+            }
+            AudioManager.setVolume(guild, volume.getAsInt());
+            event.replyEmbeds(createMusicReply("The volume has successfully been set to " + AudioManager.getVolume(guild) + "`.")).queue();
+        }
     }
 
     @Override
@@ -46,12 +57,17 @@ public class VolumeCommand extends AbstractAudioCommand {
 
     @Override
     public String getDescription() {
-        return "Sets the volume of the music player.";
+        return "Controls the volume of the audio player.";
     }
 
     @Override
-    public List<OptionData> getOptionData() {
-        return List.of(new OptionData(OptionType.INTEGER, "volume", getDescription(), false).setRequiredRange(0, 1000));
+    public List<SubcommandData> getSubcommandData() {
+        return List.of(
+                new SubcommandData("get", "Gets the volume of the audio player."),
+                new SubcommandData("reset", "Resets the volume back to the default value. (100)"),
+                new SubcommandData("set", "Sets the volume to the given integer. Must be a value between 0 and 1000.")
+                        .addOptions(new OptionData(OptionType.INTEGER, "volume", getDescription(), false).setRequiredRange(0, 1000))
+                );
     }
 
 }

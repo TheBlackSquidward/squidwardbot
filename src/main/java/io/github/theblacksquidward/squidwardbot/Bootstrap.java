@@ -18,14 +18,17 @@ public class Bootstrap {
     private static final Logger LOGGER = LoggerFactory.getLogger(Bootstrap.class);
 
     public static void main(String[] args) {
+        String version = Bootstrap.class.getPackage().getImplementationVersion();
+        if(version == null) {
+            version = "IN-DEV";
+        }
         OptionParser optionParser = new OptionParser();
         optionParser.allowsUnrecognizedOptions();
         OptionSpec<String> optionSpec = optionParser.accepts("discordBotAccessToken").withRequiredArg().required();
-        OptionSpec<String> optionSpec1 = optionParser.accepts("version").withRequiredArg().required();
-        OptionSpec<String> optionSpec2 = optionParser.accepts("spotifyClientId").withRequiredArg().required();
-        OptionSpec<String> optionSpec3 = optionParser.accepts("spotifyClientSecret").withRequiredArg().required();
-        OptionSpec<String> optionSpec4 = optionParser.accepts("githubPersonalToken").withRequiredArg();
-        OptionSpec<String> optionSpec5 = optionParser.accepts("githubUserId").withRequiredArg();
+        OptionSpec<String> optionSpec1 = optionParser.accepts("spotifyClientId").withRequiredArg().required();
+        OptionSpec<String> optionSpec2 = optionParser.accepts("spotifyClientSecret").withRequiredArg().required();
+        OptionSpec<String> optionSpec3 = optionParser.accepts("githubPersonalToken").withRequiredArg();
+        OptionSpec<String> optionSpec4 = optionParser.accepts("githubUserId").withRequiredArg();
         OptionSpec<String> nonOptions = optionParser.nonOptions();
         OptionSet optionSet = optionParser.parse(args);
         List<String> list = optionSet.valuesOf(nonOptions);
@@ -33,13 +36,12 @@ public class Bootstrap {
             LOGGER.warn("Completely ignored arguments: " + list);
         }
         String discordBotAccessToken = parseArgument(optionSet, optionSpec);
-        String version = parseArgument(optionSet, optionSpec1);
-        String spotifyClientId = parseArgument(optionSet, optionSpec2);
-        String spotifyClientSecret = parseArgument(optionSet, optionSpec3);
-        String githubPersonalToken = parseArgument(optionSet, optionSpec4);
-        String githubUserId = parseArgument(optionSet, optionSpec5);
+        String spotifyClientId = parseArgument(optionSet, optionSpec1);
+        String spotifyClientSecret = parseArgument(optionSet, optionSpec2);
+        String githubPersonalToken = parseArgument(optionSet, optionSpec3);
+        String githubUserId = parseArgument(optionSet, optionSpec4);
         final Reflections REFLECTIONS = new Reflections("io.github.theblacksquidward");
-        LOGGER.info("Starting SquidwardBot v{}", version);
+        LOGGER.info("Starting SquidwardBot (Version {})", version);
         final SquidwardBot SQUIDWARD_BOT;
         final SquidwardBotBuilder SQUIDWARD_BOT_BUILDER = SquidwardBot.builder();
         try {

@@ -46,13 +46,7 @@ public class CommandManager extends ListenerAdapter {
     @NotNull
     @UnmodifiableView
     public static Set<ISquidwardBotCommand> getCommands() {
-        return Collections.unmodifiableSet(new HashSet<>(COMMANDS.values()));
-    }
-
-    @NotNull
-    @UnmodifiableView
-    public static Map<String, ISquidwardBotCommand> getCommandsMap() {
-        return Collections.unmodifiableMap(COMMANDS);
+        return Set.copyOf(COMMANDS.values());
     }
 
     @Override

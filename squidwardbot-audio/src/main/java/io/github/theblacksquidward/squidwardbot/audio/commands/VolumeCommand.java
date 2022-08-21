@@ -37,6 +37,7 @@ public class VolumeCommand extends AbstractAudioCommand {
         }
         if(event.getSubcommandName().equalsIgnoreCase("reset")) {
             event.replyEmbeds(createMusicReply("The volume of the audio player has been reset to the default value of `100`.")).queue();
+            AudioManager.setVolume(guild, 100);
             return;
         }
         if(event.getSubcommandName().equalsIgnoreCase("set")) {
@@ -64,9 +65,10 @@ public class VolumeCommand extends AbstractAudioCommand {
     public List<SubcommandData> getSubcommandData() {
         return List.of(
                 new SubcommandData("get", "Gets the volume of the audio player."),
-                new SubcommandData("reset", "Resets the volume back to the default value. (100)"),
+                new SubcommandData("reset", "Resets the volume back to the default value of 100."),
                 new SubcommandData("set", "Sets the volume to the given integer. Must be a value between 0 and 1000.")
-                        .addOptions(new OptionData(OptionType.INTEGER, "volume", getDescription(), false).setRequiredRange(0, 1000))
+                        .addOptions(new OptionData(OptionType.INTEGER, "volume", "The volume of the audio player.", true)
+                                .setRequiredRange(0, 1000))
                 );
     }
 

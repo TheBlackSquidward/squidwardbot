@@ -1,5 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.audio;
 
+import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -17,13 +18,37 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class TrackScheduler extends AudioEventAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
+    private static final float[] BASS_BOOST = {0.15f, 0.14f, 0.13f, 0.14f, 0.05f, 0.01f, 0.02f, 0.03f, 0.04f, 0.05f, 0.06f, 0.07f, 0.08f, 0.09f, 0.1f};
 
     private final AudioPlayer audioPlayer;
     private BlockingDeque<AudioTrack> queue;
 
+    private EqualizerFactory equalizerFactory;
+
     public TrackScheduler(AudioPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
         this.queue = new LinkedBlockingDeque<>();
+    }
+
+    public boolean isBassBoosted() {
+        return equalizerFactory != null;
+    }
+
+    public void enableBassBoost() {
+        this.equalizerFactory = new EqualizerFactory();
+        this.audioPlayer.setFilterFactory(equalizerFactory);
+    }
+
+    public void disableBassBoost() {
+        this.equalizerFactory = null;
+        this.audioPlayer.setFilterFactory(equalizerFactory);
+    }
+
+    public void setBassBoostLevel(int percentage) {
+        final float multiplier = (float) percentage / 100.00f;
+        for(int i = 0; i< BASS_BOOST.length; i++) {
+            this.equalizerFactory.setGain(i, BASS_BOOST[i] * multiplier);
+        }
     }
 
     public int getVolume() {

@@ -98,6 +98,22 @@ public class AudioManager {
         getOrCreate(guild).getTrackScheduler().setVolume(volume);
     }
 
+    public static boolean isBassBoosted(Guild guild) {
+        return getOrCreate(guild).getTrackScheduler().isBassBoosted();
+    }
+
+    public static void enableBassBoost(Guild guild) {
+        getOrCreate(guild).getTrackScheduler().enableBassBoost();
+    }
+
+    public static void disableBassBoost(Guild guild) {
+        getOrCreate(guild).getTrackScheduler().disableBassBoost();
+    }
+
+    public static void setBassBoostLevel(Guild guild, int percentage) {
+        getOrCreate(guild).getTrackScheduler().setBassBoostLevel(percentage);
+    }
+
     public static SongSearch getLyrics(Guild guild) throws IOException {
         return Constants.GENIUS_LYRICS_API.search(getCurrentlyPlayingTrack(guild).getInfo().title + "" + getCurrentlyPlayingTrack(guild).getInfo().author);
     }

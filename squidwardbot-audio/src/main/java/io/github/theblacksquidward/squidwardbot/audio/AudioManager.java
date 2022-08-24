@@ -34,12 +34,11 @@ public class AudioManager {
     }
 
     public static GuildAudioManager getOrCreate(Guild guild) {
-        GUILD_AUDIO_MANAGERS.computeIfAbsent(guild.getIdLong(), guildId -> {
+        return GUILD_AUDIO_MANAGERS.computeIfAbsent(guild.getIdLong(), guildId -> {
             final GuildAudioManager guildAudioManager = new GuildAudioManager(AUDIO_PLAYER_MANAGER.createPlayer());
             guild.getAudioManager().setSendingHandler(guildAudioManager.getAudioPlayerSendHandler());
             return guildAudioManager;
         });
-        return GUILD_AUDIO_MANAGERS.get(guild.getIdLong());
     }
 
     public static void repeatTrack(Guild guild) {

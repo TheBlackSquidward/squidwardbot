@@ -56,9 +56,9 @@ public class BassBoostCommand extends AbstractAudioCommand{
                 event.replyEmbeds(createMusicReply("The audio player is not currently bass boosted.")).queue();
                 return;
             }
-            final OptionMapping bassBoostLevel = event.getOption("bassboost");
-            AudioManager.setBassBoostLevel(guild, bassBoostLevel.getAsInt());
-            event.replyEmbeds(createMusicReply("The bass boost level has been set to " + bassBoostLevel.getAsInt() + "%.")).queue();
+            final OptionMapping bassBoostMultiplier = event.getOption("bassboost");
+            AudioManager.setBassBoostMultiplier(guild, bassBoostMultiplier.getAsInt());
+            event.replyEmbeds(createMusicReply("The bass boost multiplier has been set to " + bassBoostMultiplier.getAsInt() + "%.")).queue();
         }
     }
 

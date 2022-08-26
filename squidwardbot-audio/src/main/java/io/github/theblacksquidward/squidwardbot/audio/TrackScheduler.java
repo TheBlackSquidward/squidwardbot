@@ -1,6 +1,8 @@
 package io.github.theblacksquidward.squidwardbot.audio;
 
-import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
+import com.sedmelluq.discord.lavaplayer.filter.*;
+import com.sedmelluq.discord.lavaplayer.filter.equalizer.Equalizer;
+import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -23,32 +25,108 @@ public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer audioPlayer;
     private BlockingDeque<AudioTrack> queue;
 
-    private EqualizerFactory equalizerFactory;
+    private boolean isNightcore = false;
+    private float nightcoreSpeed = 1.0f;
+
+    private boolean isBassBoosted = false;
+    private float bassBoostMultiplier = 0.0f;
+
+    private volatile boolean shouldRebuildFilters = false;
+    private volatile List<AudioFilter> audioFilterChain;
 
     public TrackScheduler(AudioPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
         this.queue = new LinkedBlockingDeque<>();
     }
 
+    public boolean isNightcore() {
+        return isNightcore;
+    }
+
+    public void enableNightcore() {
+        this.isNightcore = true;
+        updateFilters();
+    }
+
+    public void disableNightcore() {
+        this.isNightcore = false;
+        this.nightcoreSpeed = 1.0f;
+        updateFilters();
+    }
+
+    public void setNightcoreSpeed(double speed) {
+        nightcoreSpeed = (float) speed;
+        updateFilters();
+    }
+
     public boolean isBassBoosted() {
-        return equalizerFactory != null;
+        return isBassBoosted;
     }
 
     public void enableBassBoost() {
-        this.equalizerFactory = new EqualizerFactory();
-        this.audioPlayer.setFilterFactory(equalizerFactory);
+        this.isBassBoosted = true;
+        updateFilters();
     }
 
     public void disableBassBoost() {
-        this.equalizerFactory = null;
-        this.audioPlayer.setFilterFactory(equalizerFactory);
+        this.isBassBoosted = false;
+        this.bassBoostMultiplier = 0.0f;
+        updateFilters();
     }
 
-    public void setBassBoostLevel(int percentage) {
-        final float multiplier = (float) percentage / 100.00f;
-        for(int i = 0; i< BASS_BOOST.length; i++) {
-            this.equalizerFactory.setGain(i, BASS_BOOST[i] * multiplier);
+    public void setBassBoostMultiplier(int percentage) {
+        bassBoostMultiplier = (float) percentage / 100.00f;
+        updateFilters();
+    }
+
+    public void resetFilters() {
+        this.isNightcore = false;
+        this.nightcoreSpeed = 1.0f;
+        this.isBassBoosted = false;
+        this.bassBoostMultiplier = 0.0f;
+        shouldRebuildFilters = false;
+        audioPlayer.setFilterFactory(null);
+    }
+
+    public void updateFilters() {
+        shouldRebuildFilters = true;
+        audioPlayer.setFilterFactory(this::getOrRebuildFilters);
+        audioPlayer.setFrameBufferDuration(500);
+    }
+
+    private List<AudioFilter> getOrRebuildFilters(AudioTrack audioTrack, AudioDataFormat audioDataFormat, UniversalPcmAudioFilter downstreamAudioFilter) {
+        if (shouldRebuildFilters) {
+            audioFilterChain = buildAudioFilterChain(audioTrack, audioDataFormat, downstreamAudioFilter);
+            shouldRebuildFilters = false;
         }
+        return audioFilterChain;
+    }
+
+    private List<AudioFilter> buildAudioFilterChain(AudioTrack audioTrack, AudioDataFormat audioDataFormat, UniversalPcmAudioFilter downstreamAudioFilter) {
+        List<AudioFilter> filterList = new ArrayList<>();
+        FloatPcmAudioFilter filter = downstreamAudioFilter;
+
+        if(isNightcore) {
+            ResamplingPcmAudioFilter resamplingPcmAudioFilter = new ResamplingPcmAudioFilter(
+                    AudioManager.getAudioConfiguration(),
+                    audioDataFormat.channelCount,
+                    filter,
+                    audioDataFormat.sampleRate,
+                    (int) (audioDataFormat.sampleRate / nightcoreSpeed)
+            );
+            filterList.add(resamplingPcmAudioFilter);
+            filter = resamplingPcmAudioFilter;
+        }
+        if(isBassBoosted) {
+            Equalizer equalizer = new Equalizer(audioDataFormat.channelCount, filter);
+            for (int i = 0; i < BASS_BOOST.length; i++) {
+                equalizer.setGain(i, BASS_BOOST[i] * bassBoostMultiplier);
+            }
+            filter = equalizer;
+            filterList.add(equalizer);
+        }
+        Collections.reverse(filterList);
+        return filterList;
     }
 
     public int getVolume() {
@@ -121,6 +199,11 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public AudioTrack getCurrentlyPlayingTrack() {
         return audioPlayer.getPlayingTrack();
+    }
+
+    @Override
+    public void onTrackStart(AudioPlayer player, AudioTrack track) {
+        updateFilters();
     }
 
     @Override

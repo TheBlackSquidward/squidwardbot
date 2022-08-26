@@ -1,5 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.audio;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -31,14 +32,20 @@ public class AudioManager {
         AUDIO_PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager());
         AUDIO_PLAYER_MANAGER.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         AUDIO_PLAYER_MANAGER.registerSourceManager(new SpotifyAudioSourceManager(AUDIO_PLAYER_MANAGER));
+        AUDIO_PLAYER_MANAGER.getConfiguration().setFilterHotSwapEnabled(true);
     }
 
     public static GuildAudioManager getOrCreate(Guild guild) {
         return GUILD_AUDIO_MANAGERS.computeIfAbsent(guild.getIdLong(), guildId -> {
             final GuildAudioManager guildAudioManager = new GuildAudioManager(AUDIO_PLAYER_MANAGER.createPlayer());
             guild.getAudioManager().setSendingHandler(guildAudioManager.getAudioPlayerSendHandler());
+            guild.getAudioManager().setSelfDeafened(true);
             return guildAudioManager;
         });
+    }
+
+    public static AudioConfiguration getAudioConfiguration() {
+        return AUDIO_PLAYER_MANAGER.getConfiguration();
     }
 
     public static void repeatTrack(Guild guild) {
@@ -109,8 +116,24 @@ public class AudioManager {
         getOrCreate(guild).getTrackScheduler().disableBassBoost();
     }
 
-    public static void setBassBoostLevel(Guild guild, int percentage) {
-        getOrCreate(guild).getTrackScheduler().setBassBoostLevel(percentage);
+    public static void setBassBoostMultiplier(Guild guild, int percentage) {
+        getOrCreate(guild).getTrackScheduler().setBassBoostMultiplier(percentage);
+    }
+
+    public static boolean isNightcore(Guild guild) {
+        return getOrCreate(guild).getTrackScheduler().isNightcore();
+    }
+
+    public static void enableNightcore(Guild guild) {
+        getOrCreate(guild).getTrackScheduler().enableNightcore();
+    }
+
+    public static void disableNightcore(Guild guild) {
+        getOrCreate(guild).getTrackScheduler().disableNightcore();
+    }
+
+    public static void setNightcoreSpeed(Guild guild, double speed) {
+        getOrCreate(guild).getTrackScheduler().setNightcoreSpeed(speed);
     }
 
     public static SongSearch getLyrics(Guild guild) throws IOException {

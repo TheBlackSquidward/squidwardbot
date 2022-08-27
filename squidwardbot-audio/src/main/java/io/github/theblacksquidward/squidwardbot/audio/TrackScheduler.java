@@ -176,6 +176,17 @@ public class TrackScheduler extends AudioEventAdapter {
         return new ArrayList<>(queue);
     }
 
+    public int getPositionInQueue(AudioTrack audioTrack) {
+        int counter = 0;
+        for (AudioTrack inQueue : queue) {
+            if(audioTrack == inQueue) {
+                return counter;
+            }
+            counter++;
+        }
+        return counter;
+    }
+
     public void nextTrack() {
         if(!queue.isEmpty()) {
             this.audioPlayer.startTrack(this.queue.poll(), false);

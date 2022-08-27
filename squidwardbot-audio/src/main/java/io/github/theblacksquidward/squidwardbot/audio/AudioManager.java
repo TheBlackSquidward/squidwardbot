@@ -72,6 +72,10 @@ public class AudioManager {
         getOrCreate(guild).getTrackScheduler().clearQueue();
     }
 
+    public static int getPositionInQueue(Guild guild, AudioTrack audioTrack) {
+        return getOrCreate(guild).getTrackScheduler().getPositionInQueue(audioTrack);
+    }
+
     public static AudioTrack getCurrentlyPlayingTrack(Guild guild) {
         return getOrCreate(guild).getTrackScheduler().getCurrentlyPlayingTrack();
     }

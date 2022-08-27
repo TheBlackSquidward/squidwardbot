@@ -43,7 +43,7 @@ public class VolumeCommand extends AbstractAudioCommand {
         if(event.getSubcommandName().equalsIgnoreCase("set")) {
             final OptionMapping volume = event.getOption("volume");
             AudioManager.setVolume(guild, volume.getAsInt());
-            event.replyEmbeds(createMusicReply("The volume has successfully been set to " + AudioManager.getVolume(guild) + "`.")).queue();
+            event.replyEmbeds(createMusicReply("The volume has successfully been set to `" + AudioManager.getVolume(guild) + "`.")).queue();
         }
     }
 

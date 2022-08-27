@@ -54,7 +54,9 @@ public class PlayCommand extends AbstractAudioCommand {
 
     @Override
     public List<OptionData> getOptionData() {
-        return List.of(new OptionData(OptionType.STRING, "identifier", "Identifier of the track (URL/Name)", false));
+        return List.of(
+                new OptionData(OptionType.STRING, "identifier", "Identifier of the track (URL/Name)", false)
+        );
     }
 
     private static class AudioLoadResultImpl extends BaseAudioLoadResultImpl {
@@ -97,7 +99,7 @@ public class PlayCommand extends AbstractAudioCommand {
         @Override
         public void loadFailed(FriendlyException exception) {
             event.replyEmbeds(createMusicReply(
-                    "Error whilst loading the track. Please report the following information:" +
+                    "Error whilst queueing the track/playlist. Please report the following information:" +
                             "\n\nSeverity: " + exception.severity.name() +
                             "\nSpecified Identifier: " + identifier +
                             "\nException: " + exception.getMessage())).queue();

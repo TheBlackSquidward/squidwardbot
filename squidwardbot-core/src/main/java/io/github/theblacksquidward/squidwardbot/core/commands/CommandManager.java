@@ -18,7 +18,7 @@ public class CommandManager extends ListenerAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
 
-    private static final Map<String, ISquidwardBotCommand> COMMANDS = new HashMap<>();
+    private static final Map<String, SquidwardBotCommand> COMMANDS = new HashMap<>();
 
     public static void captureAndRegisterCommands(Reflections reflections) {
         LOGGER.info("Beginning to scan for commands...");
@@ -27,7 +27,7 @@ public class CommandManager extends ListenerAdapter {
         LOGGER.info("Successfully found " + annotatedClasses.size() + " commands, Attempting to register them...");
         annotatedClasses.forEach((annotatedClass) -> {
             try {
-                ISquidwardBotCommand squidwardBotCommand = (ISquidwardBotCommand) annotatedClass.getDeclaredConstructor().newInstance();
+                SquidwardBotCommand squidwardBotCommand = (SquidwardBotCommand) annotatedClass.getDeclaredConstructor().newInstance();
                 registerCommand(squidwardBotCommand);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 //TODO log better
@@ -39,13 +39,13 @@ public class CommandManager extends ListenerAdapter {
         LOGGER.info("Finished capturing and registering commands in {}. Successfully registered {} commands.", timer, getCommands().size());
     }
 
-    private static void registerCommand(ISquidwardBotCommand command) {
+    private static void registerCommand(SquidwardBotCommand command) {
         COMMANDS.putIfAbsent(command.getName(), command);
     }
 
     @NotNull
     @UnmodifiableView
-    public static Set<ISquidwardBotCommand> getCommands() {
+    public static Set<SquidwardBotCommand> getCommands() {
         return Set.copyOf(COMMANDS.values());
     }
 

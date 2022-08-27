@@ -15,4 +15,8 @@ public abstract class SquidwardBotCommand extends ListenerAdapter implements ISq
         }
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

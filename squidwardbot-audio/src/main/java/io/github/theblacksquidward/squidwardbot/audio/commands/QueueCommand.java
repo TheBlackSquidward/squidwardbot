@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
+import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
@@ -76,8 +77,7 @@ public class QueueCommand extends AbstractAudioCommand {
                     .append(" by ")
                     .append(trackInfo.author)
                     .append("`  [`")
-                    //TODO i dont like this
-                    .append(AudioManager.formatTrackTimeDuration(track.getDuration()))
+                    .append(StringUtils.millisecondsFormatted(track.getDuration()))
                     .append("`]\n");
         }
         if(tracks.size() > trackCount) {

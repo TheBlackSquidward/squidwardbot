@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class AudioManager {
 
@@ -160,15 +159,6 @@ public class AudioManager {
     public static void loadAndPlay(Guild guild, String identifier, AudioLoadResultHandler audioLoadResult) {
         final GuildAudioManager guildAudioManager = getOrCreate(guild);
         AUDIO_PLAYER_MANAGER.loadItemOrdered(guildAudioManager, identifier, audioLoadResult);
-    }
-
-    //TODO should this be here or a helper else where
-    public static String formatTrackTimeDuration(long timeInMilliseconds) {
-        long hours = timeInMilliseconds / TimeUnit.HOURS.toMillis(1);
-        long minutes = timeInMilliseconds / TimeUnit.MINUTES.toMillis(1);
-        long seconds = timeInMilliseconds % TimeUnit.MINUTES.toMillis(1) / TimeUnit.SECONDS.toMillis(1);
-
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
 }

@@ -51,6 +51,13 @@ public class NightcoreCommand extends AbstractAudioCommand {
             AudioManager.disableNightcore(guild);
             event.replyEmbeds(createMusicReply("The nightcore effect has been removed from the audio player.")).queue();
         }
+        if(event.getSubcommandName().equalsIgnoreCase("get")) {
+            if(!AudioManager.isNightcore(guild)) {
+                event.replyEmbeds(createMusicReply("The audio player does not currently have the nightcore effect applied.")).queue();
+                return;
+            }
+            event.replyEmbeds(createMusicReply("The current nightcore speed is `" + AudioManager.getNightcoreSpeed(guild) + "`.")).queue();
+        }
         if(event.getSubcommandName().equalsIgnoreCase("set")) {
             if(!AudioManager.isNightcore(guild)) {
                 event.replyEmbeds(createMusicReply("The audio player does not currently have the nightcore effect applied.")).queue();
@@ -77,9 +84,10 @@ public class NightcoreCommand extends AbstractAudioCommand {
         return List.of(
                 new SubcommandData("enable", "Enables the nightcore feature on this audio player."),
                 new SubcommandData("disable", "Disables the nightcore feature on this audio player."),
+                new SubcommandData("get", "Gets the current nightcore speed."),
                 new SubcommandData("set", "Sets the nightcore speed.")
                         .addOptions(new OptionData(OptionType.NUMBER, "nightcore", "The speed of the nightcore effect.", true)
-                                .setRequiredRange(1.0, 2.0))
+                                .setRequiredRange(1.0, 1.5))
         );
     }
 

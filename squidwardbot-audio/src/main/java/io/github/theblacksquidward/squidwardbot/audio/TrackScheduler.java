@@ -26,7 +26,7 @@ public class TrackScheduler extends AudioEventAdapter {
     private BlockingDeque<AudioTrack> queue;
 
     private boolean isNightcore = false;
-    private float nightcoreSpeed = 1.0f;
+    private double nightcoreSpeed = 1.0;
 
     private boolean isBassBoosted = false;
     private float bassBoostMultiplier = 0.0f;
@@ -55,8 +55,12 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public void setNightcoreSpeed(double speed) {
-        nightcoreSpeed = (float) speed;
+        nightcoreSpeed = speed;
         updateFilters();
+    }
+
+    public double getNightcoreSpeed() {
+        return nightcoreSpeed;
     }
 
     public boolean isBassBoosted() {
@@ -77,6 +81,10 @@ public class TrackScheduler extends AudioEventAdapter {
     public void setBassBoostMultiplier(int percentage) {
         bassBoostMultiplier = (float) percentage / 100.00f;
         updateFilters();
+    }
+
+    public int getBassBoostPercentage() {
+        return (int) (bassBoostMultiplier * 100);
     }
 
     public void resetFilters() {

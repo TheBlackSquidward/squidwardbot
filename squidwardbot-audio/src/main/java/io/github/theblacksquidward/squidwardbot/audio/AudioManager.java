@@ -120,6 +120,10 @@ public class AudioManager {
         getOrCreate(guild).getTrackScheduler().setBassBoostMultiplier(percentage);
     }
 
+    public static int getBassBoostPercentage(Guild guild) {
+        return getOrCreate(guild).getTrackScheduler().getBassBoostPercentage();
+    }
+
     public static boolean isNightcore(Guild guild) {
         return getOrCreate(guild).getTrackScheduler().isNightcore();
     }
@@ -134,6 +138,10 @@ public class AudioManager {
 
     public static void setNightcoreSpeed(Guild guild, double speed) {
         getOrCreate(guild).getTrackScheduler().setNightcoreSpeed(speed);
+    }
+
+    public static double getNightcoreSpeed(Guild guild) {
+        return getOrCreate(guild).getTrackScheduler().getNightcoreSpeed();
     }
 
     public static SongSearch getLyrics(Guild guild) throws IOException {

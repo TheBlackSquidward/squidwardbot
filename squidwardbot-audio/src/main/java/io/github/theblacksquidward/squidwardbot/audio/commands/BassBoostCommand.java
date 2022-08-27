@@ -51,6 +51,13 @@ public class BassBoostCommand extends AbstractAudioCommand{
             AudioManager.disableBassBoost(guild);
             event.replyEmbeds(createMusicReply("Bass boost has been disabled for this audio player.")).queue();
         }
+        if(event.getSubcommandName().equalsIgnoreCase("get")) {
+            if(!AudioManager.isBassBoosted(guild)) {
+                event.replyEmbeds(createMusicReply("The audio player is not currently bass boosted.")).queue();
+                return;
+            }
+            event.replyEmbeds(createMusicReply("The current bass boost percentage is " + AudioManager.getBassBoostPercentage(guild) + "%.")).queue();
+        }
         if(event.getSubcommandName().equalsIgnoreCase("set")) {
             if(!AudioManager.isBassBoosted(guild)) {
                 event.replyEmbeds(createMusicReply("The audio player is not currently bass boosted.")).queue();
@@ -77,6 +84,7 @@ public class BassBoostCommand extends AbstractAudioCommand{
         return List.of(
                 new SubcommandData("enable", "Enables the bass boost feature on this audio player."),
                 new SubcommandData("disable", "Disables the bass boost feature on this audio player."),
+                new SubcommandData("get", "Gets the current bass boost level."),
                 new SubcommandData("set", "Sets the bass boost level.")
                         .addOptions(new OptionData(OptionType.INTEGER, "bassboost", "The percentage bass boost level.", true)
                                 .setRequiredRange(0, 100))

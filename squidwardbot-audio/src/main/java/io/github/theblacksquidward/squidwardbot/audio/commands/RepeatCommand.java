@@ -29,8 +29,8 @@ public class RepeatCommand extends AbstractAudioCommand {
             event.replyEmbeds(createMusicReply("Could not repeat as there is no currently playing track.")).queue();
             return;
         }
-        AudioManager.repeatTrack(guild);
-        event.replyEmbeds(createMusicReply("Successfully repeated the currently playing song.")).queue();
+        AudioManager.toggleRepeating(guild);
+        event.replyEmbeds(createMusicReply("Repeating has been toggled to `" + AudioManager.isRepeating(guild) + "`.")).queue();
     }
 
     @Override

@@ -25,6 +25,8 @@ public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer audioPlayer;
     private BlockingDeque<AudioTrack> queue;
 
+    private boolean isRepeating = false;
+
     private boolean isNightcore = false;
     private double nightcoreSpeed = 1.0;
 
@@ -37,6 +39,14 @@ public class TrackScheduler extends AudioEventAdapter {
     public TrackScheduler(AudioPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
         this.queue = new LinkedBlockingDeque<>();
+    }
+
+    public boolean isRepeating() {
+        return isRepeating;
+    }
+
+    public void toggleRepeating() {
+        this.isRepeating = !this.isRepeating;
     }
 
     public boolean isNightcore() {
@@ -228,6 +238,9 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack audioTrack, AudioTrackEndReason endReason) {
         if(endReason.mayStartNext) {
+            if(isRepeating) {
+                addTrackAtHead(audioTrack.makeClone());
+            }
             nextTrack();
         }
     }

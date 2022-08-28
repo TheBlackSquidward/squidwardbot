@@ -47,8 +47,16 @@ public class AudioManager {
         return AUDIO_PLAYER_MANAGER.getConfiguration();
     }
 
-    public static void repeatTrack(Guild guild) {
+    public static void requeueTrack(Guild guild) {
         getOrCreate(guild).getTrackScheduler().addTrackAtHead(getCurrentlyPlayingTrack(guild).makeClone());
+    }
+
+    public static boolean isRepeating(Guild guild) {
+        return getOrCreate(guild).getTrackScheduler().isRepeating();
+    }
+
+    public static void toggleRepeating(Guild guild) {
+        getOrCreate(guild).getTrackScheduler().toggleRepeating();
     }
 
     public static boolean isQueueEmpty(Guild guild) {

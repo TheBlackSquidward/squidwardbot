@@ -46,6 +46,7 @@ dependencies {
 
 task fatJar(type: Jar) {
     dependsOn configurations.moduleJar
+    archiveName = "SquidwardBot-FatJar.jar"
     manifest {
         attributes(
                 'Implementation-Title': 'SquidwardBot',

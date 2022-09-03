@@ -12,7 +12,6 @@ public class StringUtils {
                 .collect(Collectors.joining("\n\t", "\n\t", ""));
     }
 
-    //TODO
     public static String millisecondsFormatted(final long millis) {
         final long hours = TimeUnit.MILLISECONDS.toHours(millis)
                 - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(millis));

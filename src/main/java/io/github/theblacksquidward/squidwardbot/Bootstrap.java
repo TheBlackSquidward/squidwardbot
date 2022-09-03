@@ -1,7 +1,6 @@
 package io.github.theblacksquidward.squidwardbot;
 
 import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
-import io.github.theblacksquidward.squidwardbot.core.SquidwardBotBuilder;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -43,7 +42,6 @@ public class Bootstrap {
         final Reflections REFLECTIONS = new Reflections("io.github.theblacksquidward");
         LOGGER.info("Starting SquidwardBot (Version {})", version);
         final SquidwardBot SQUIDWARD_BOT;
-        final SquidwardBotBuilder SQUIDWARD_BOT_BUILDER = SquidwardBot.builder();
         try {
             SQUIDWARD_BOT = new SquidwardBot(discordBotAccessToken, REFLECTIONS, version, spotifyClientId, spotifyClientSecret);
         } catch (LoginException | InterruptedException e) {

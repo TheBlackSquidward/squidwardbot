@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,26 +19,26 @@ public class SquidwardBot {
 
     private static SquidwardBot instance;
 
-    private final JDA jda;
-    private final String version;
-    private final Reflections reflections;
-    private final String spotifyClientId;
-    private final String spotifyClientSecret;
+    private final JDA JDA;
+    private final String VERSION;
+    private final Reflections REFLECTIONS;
+    private final String SPOTIFY_CLIENT_ID;
+    private final String SPOTIFY_CLIENT_SECRET;
 
     public SquidwardBot(String accessToken,
                         Reflections reflections,
                         String version,
                         String spotifyClientId,
-                        String spotifyClientSecret) throws LoginException, InterruptedException{
+                        String spotifyClientSecret) throws LoginException, InterruptedException {
         instance = this;
-        this.reflections = reflections;
-        this.version = version;
-        this.spotifyClientId = spotifyClientId;
-        this.spotifyClientSecret = spotifyClientSecret;
+        this.REFLECTIONS = reflections;
+        this.VERSION = version;
+        this.SPOTIFY_CLIENT_ID = spotifyClientId;
+        this.SPOTIFY_CLIENT_SECRET = spotifyClientSecret;
 
         //TODO VERIFY from here down
-        CommandManager.captureAndRegisterCommands(reflections);
-        jda = JDABuilder.createDefault(accessToken)
+        CommandManager.captureAndRegisterCommands(REFLECTIONS);
+        JDA = JDABuilder.createDefault(accessToken)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGES,
                         GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_EMOJIS_AND_STICKERS, GatewayIntent.GUILD_VOICE_STATES,
                         GatewayIntent.MESSAGE_CONTENT)
@@ -56,18 +55,15 @@ public class SquidwardBot {
     }
 
     public String getSpotifyClientId() {
-        return spotifyClientId;
+        return SPOTIFY_CLIENT_ID;
     }
 
     public String getSpotifyClientSecret() {
-        return spotifyClientSecret;
+        return SPOTIFY_CLIENT_SECRET;
     }
 
     public String getVersion() {
-        return version;
+        return VERSION;
     }
 
-    public static @NotNull SquidwardBotBuilder builder() {
-        return new SquidwardBotBuilder();
-    }
 }

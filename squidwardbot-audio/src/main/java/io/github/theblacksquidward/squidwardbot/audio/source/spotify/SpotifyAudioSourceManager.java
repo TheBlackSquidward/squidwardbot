@@ -21,17 +21,44 @@ import java.util.regex.Pattern;
 
 public class SpotifyAudioSourceManager implements AudioSourceManager {
 
+    private static final String SEARCH_PREFIX = "spsearch:";
     public static final int PLAYLIST_MAX_PAGE_ITEMS = 100;
     public static final int ALBUM_MAX_PAGE_ITEMS = 50;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
     private static final Pattern SPOTIFY_URL_PATTERN = Pattern.compile("(https?://)?(www\\.)?open\\.spotify\\.com/(user/[a-zA-Z0-9-_]+/)?(?<type>track|album|playlist|artist)/(?<identifier>[a-zA-Z0-9-_]+)");
 
-    private final SpotifyAPIOLD spotifyAPI = SpotifyAPIOLD.createSpotifyAPI();
+    private final SpotifyApi spotifyApi;
+    private final ClientCredentialsRequest spotifyClientCredentialsRequest;
+    private final Thread spotifyApiRefreshThread;
     private final AudioPlayerManager audioPlayerManager;
+
 
     public SpotifyAudioSourceManager(AudioPlayerManager audioPlayerManager) {
         this.audioPlayerManager = audioPlayerManager;
+        this.spotifyApi = new SpotifyApi.Builder()
+                .setClientId(SquidwardBot.getInstance().getSpotifyClientId())
+                .setClientSecret(SquidwardBot.getInstance().getSpotifyClientSecret())
+                .build();
+        this.spotifyClientCredentialsRequest = spotifyApi.clientCredentials().build();
+        spotifyApiRefreshThread = new Thread(() -> {
+            try {
+                while(true) {
+                    try {
+                        ClientCredentials clientCredentials = this.spotifyClientCredentialsRequest.execute();
+                        spotifyApi.setAccessToken(clientCredentials.getAccessToken());
+                        Thread.sleep((clientCredentials.getExpiresIn() - 10) * 1000L);
+                    }catch (IOException | SpotifyWebApiException | ParseException e) {
+                        LOGGER.error("Failed to refresh the Spotify access token. Attempting to refresh in 1 minute... ", e);
+                        Thread.sleep(60 * 1000L);
+                    }
+                }
+            } catch (Exception e) {
+                LOGGER.error("Failed to refresh the Spotify access token.", e);
+            }
+        });
+        spotifyApiRefreshThread.setDaemon(true);
+        spotifyApiRefreshThread.start();
     }
 
     public AudioPlayerManager getAudioPlayerManager() {
@@ -65,12 +92,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     }
 
     private AudioItem getTrack(String identifier) throws IOException, ParseException, SpotifyWebApiException {
-        return SpotifyAudioTrack.createSpotifyTrack(this.spotifyAPI.getSpotifyAPI().getTrack(identifier).build().execute(), this);
+        return SpotifyAudioTrack.createSpotifyTrack(this.spotifyApi.getTrack(identifier).build().execute(), this);
     }
 
     private AudioItem getPlaylist(String identifier) throws IOException, ParseException, SpotifyWebApiException {
-        Playlist playlist = this.spotifyAPI.getSpotifyAPI().getPlaylist(identifier).build().execute();
-        Paging<PlaylistTrack> playlistTracks = this.spotifyAPI.getSpotifyAPI().getPlaylistsItems(identifier).limit(PLAYLIST_MAX_PAGE_ITEMS).build().execute();
+        Playlist playlist = this.spotifyApi.getPlaylist(identifier).build().execute();
+        Paging<PlaylistTrack> playlistTracks = this.spotifyApi.getPlaylistsItems(identifier).limit(PLAYLIST_MAX_PAGE_ITEMS).build().execute();
         List<AudioTrack> tracks = new ArrayList<>();
 
         Arrays.stream(playlistTracks.getItems()).forEach((track) -> tracks.add(SpotifyAudioTrack.createSpotifyTrack((Track) track.getTrack(), this)));
@@ -78,8 +105,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     }
 
     private AudioItem getAlbum(String identifier) throws IOException, ParseException, SpotifyWebApiException {
-        Album album = this.spotifyAPI.getSpotifyAPI().getAlbum(identifier).build().execute();
-        Paging<TrackSimplified> albumTracks = this.spotifyAPI.getSpotifyAPI().getAlbumsTracks(identifier).limit(ALBUM_MAX_PAGE_ITEMS).build().execute();
+        Album album = this.spotifyApi.getAlbum(identifier).build().execute();
+        Paging<TrackSimplified> albumTracks = this.spotifyApi.getAlbumsTracks(identifier).limit(ALBUM_MAX_PAGE_ITEMS).build().execute();
         List<AudioTrack> tracks = new ArrayList<>();
 
         Arrays.stream(albumTracks.getItems()).forEach((trackSimplified) -> tracks.add(SpotifyAudioTrack.createSpotifyTrack(trackSimplified, album, this)));
@@ -87,8 +114,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     }
 
     private AudioItem getArtist(String identifier) throws IOException, ParseException, SpotifyWebApiException {
-        Artist artist = this.spotifyAPI.getSpotifyAPI().getArtist(identifier).build().execute();
-        Track[] artistTracks = this.spotifyAPI.getSpotifyAPI().getArtistsTopTracks(identifier, CountryCode.GB).build().execute();
+        Artist artist = this.spotifyApi.getArtist(identifier).build().execute();
+        Track[] artistTracks = this.spotifyApi.getArtistsTopTracks(identifier, CountryCode.GB).build().execute();
         List<AudioTrack> tracks = new ArrayList<>();
 
         Arrays.stream(artistTracks).toList().forEach((track) -> tracks.add(SpotifyAudioTrack.createSpotifyTrack(track, this)));

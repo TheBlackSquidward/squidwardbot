@@ -4,29 +4,35 @@ import com.neovisionaries.i18n.CountryCode;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.*;
+import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import org.apache.hc.core5.http.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
 import se.michaelthelin.spotify.model_objects.specification.*;
+import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SpotifyAudioSourceManager implements AudioSourceManager {
 
-    private static final String SEARCH_PREFIX = "spsearch:";
+    public static final Pattern SPOTIFY_URL_PATTERN = Pattern.compile("(https?://)?(www\\.)?open\\.spotify\\.com/(user/[a-zA-Z0-9-_]+/)?(?<type>track|album|playlist|artist)/(?<identifier>[a-zA-Z0-9-_]+)");
+    public static final String SEARCH_PREFIX = "spsearch:";
     public static final int PLAYLIST_MAX_PAGE_ITEMS = 100;
     public static final int ALBUM_MAX_PAGE_ITEMS = 50;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
-    private static final Pattern SPOTIFY_URL_PATTERN = Pattern.compile("(https?://)?(www\\.)?open\\.spotify\\.com/(user/[a-zA-Z0-9-_]+/)?(?<type>track|album|playlist|artist)/(?<identifier>[a-zA-Z0-9-_]+)");
 
     private final SpotifyApi spotifyApi;
     private final ClientCredentialsRequest spotifyClientCredentialsRequest;
@@ -48,7 +54,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
                         ClientCredentials clientCredentials = this.spotifyClientCredentialsRequest.execute();
                         spotifyApi.setAccessToken(clientCredentials.getAccessToken());
                         Thread.sleep((clientCredentials.getExpiresIn() - 10) * 1000L);
-                    }catch (IOException | SpotifyWebApiException | ParseException e) {
+                    } catch (IOException | SpotifyWebApiException | ParseException e) {
                         LOGGER.error("Failed to refresh the Spotify access token. Attempting to refresh in 1 minute... ", e);
                         Thread.sleep(60 * 1000L);
                     }
@@ -71,9 +77,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
     }
 
     @Override
-    public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
+    public AudioItem loadItem(AudioPlayerManager manager, AudioReference audioReference) {
         try {
-            Matcher matcher = SPOTIFY_URL_PATTERN.matcher(reference.identifier);
+            if(audioReference.identifier.startsWith(SEARCH_PREFIX)) {
+                return this.getFirstSearchResultAsTrack(audioReference.identifier.substring(SEARCH_PREFIX.length()).trim());
+            }
+            Matcher matcher = SPOTIFY_URL_PATTERN.matcher(audioReference.identifier);
             if (!matcher.find()) {
                 return null;
             }
@@ -89,6 +98,32 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
         } catch (IOException | ParseException | SpotifyWebApiException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private AudioItem getFirstSearchResultAsTrack(String identifier) throws IOException, ParseException, SpotifyWebApiException {
+        List<AudioTrack> result = getSearchResults(identifier);
+        if(result.isEmpty()) {
+            return AudioReference.NO_TRACK;
+        }
+        return result.get(0);
+    }
+
+    private AudioItem getAllSearchResultsAsPlaylist(String identifier) throws IOException, ParseException, SpotifyWebApiException {
+        List<AudioTrack> result = getSearchResults(identifier);
+        if(result.isEmpty()) {
+            return AudioReference.NO_TRACK;
+        }
+        return new BasicAudioPlaylist("Search results for: " + identifier, result, null, true);
+    }
+
+    private List<AudioTrack> getSearchResults(String identifier) throws IOException, ParseException, SpotifyWebApiException {
+        Paging<Track> searchResult = this.spotifyApi.searchTracks(identifier).build().execute();
+        if(searchResult.getItems().length == 0) {
+            return Collections.emptyList();
+        }
+        return Arrays.stream(searchResult.getItems())
+                .map((track) -> SpotifyAudioTrack.createSpotifyTrack(track, this))
+                .collect(Collectors.toList());
     }
 
     private AudioItem getTrack(String identifier) throws IOException, ParseException, SpotifyWebApiException {

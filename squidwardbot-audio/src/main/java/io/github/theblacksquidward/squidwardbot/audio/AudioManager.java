@@ -8,6 +8,7 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import genius.SongSearch;
+import io.github.theblacksquidward.squidwardbot.audio.source.GeneralSearchSourceManager;
 import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifyAudioSourceManager;
 import io.github.theblacksquidward.squidwardbot.core.constants.Constants;
 import net.dv8tion.jda.api.entities.Guild;
@@ -27,10 +28,10 @@ public class AudioManager {
     private static final Map<Long, GuildAudioManager> GUILD_AUDIO_MANAGERS = new HashMap<>();
 
     static {
-        //TODO
-        AUDIO_PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager());
-        AUDIO_PLAYER_MANAGER.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         AUDIO_PLAYER_MANAGER.registerSourceManager(new SpotifyAudioSourceManager(AUDIO_PLAYER_MANAGER));
+        AUDIO_PLAYER_MANAGER.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
+        AUDIO_PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager());
+        AUDIO_PLAYER_MANAGER.registerSourceManager(new GeneralSearchSourceManager());
         AUDIO_PLAYER_MANAGER.getConfiguration().setFilterHotSwapEnabled(true);
     }
 

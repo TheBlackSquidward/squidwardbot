@@ -3,7 +3,7 @@ allprojects {
     apply plugin: 'idea'
 
     group 'io.github.theblacksquidward'
-    version '0.0.3'
+    version SQUIDWARDBOT_VERSION
 
     repositories {
         mavenCentral()
@@ -50,7 +50,7 @@ task fatJar(type: Jar) {
     manifest {
         attributes(
                 'Implementation-Title': 'SquidwardBot',
-                'Implementation-Version': '0.0.3',
+                'Implementation-Version': SQUIDWARDBOT_VERSION,
                 'Main-Class': 'io.github.theblacksquidward.squidwardbot.Bootstrap'
         )
     }

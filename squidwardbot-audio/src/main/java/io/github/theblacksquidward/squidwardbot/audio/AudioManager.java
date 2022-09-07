@@ -12,6 +12,7 @@ import io.github.theblacksquidward.squidwardbot.audio.source.GeneralSearchSource
 import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifyAudioSourceManager;
 import io.github.theblacksquidward.squidwardbot.core.constants.Constants;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class AudioManager {
     private static final AudioPlayerManager AUDIO_PLAYER_MANAGER = new DefaultAudioPlayerManager();
     private static final Map<Long, GuildAudioManager> GUILD_AUDIO_MANAGERS = new HashMap<>();
 
-    static {
+    public static void init() {
         AUDIO_PLAYER_MANAGER.registerSourceManager(new SpotifyAudioSourceManager(AUDIO_PLAYER_MANAGER));
         AUDIO_PLAYER_MANAGER.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         AUDIO_PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager());
@@ -35,7 +36,7 @@ public class AudioManager {
         AUDIO_PLAYER_MANAGER.getConfiguration().setFilterHotSwapEnabled(true);
     }
 
-    public static GuildAudioManager getOrCreate(Guild guild) {
+    public static GuildAudioManager getOrCreate(@NotNull Guild guild) {
         return GUILD_AUDIO_MANAGERS.computeIfAbsent(guild.getIdLong(), guildId -> {
             final GuildAudioManager guildAudioManager = new GuildAudioManager(AUDIO_PLAYER_MANAGER.createPlayer());
             guild.getAudioManager().setSendingHandler(guildAudioManager.getAudioPlayerSendHandler());
@@ -48,124 +49,124 @@ public class AudioManager {
         return AUDIO_PLAYER_MANAGER.getConfiguration();
     }
 
-    public static void requeueTrack(Guild guild) {
+    public static void requeueTrack(@NotNull Guild guild) {
         getOrCreate(guild).getTrackScheduler().addTrackAtHead(getCurrentlyPlayingTrack(guild).makeClone());
     }
 
-    public static boolean isRepeating(Guild guild) {
+    public static boolean isRepeating(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().isRepeating();
     }
 
-    public static void toggleRepeating(Guild guild) {
+    public static void toggleRepeating(@NotNull Guild guild) {
         getOrCreate(guild).getTrackScheduler().toggleRepeating();
     }
 
-    public static boolean isQueueEmpty(Guild guild) {
+    public static boolean isQueueEmpty(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().isQueueEmpty();
     }
 
-    public static int getQueueSize(Guild guild) {
+    public static int getQueueSize(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().getQueueSize();
     }
 
-    public static void shuffleQueue(Guild guild) {
+    public static void shuffleQueue(@NotNull Guild guild) {
         getOrCreate(guild).getTrackScheduler().shuffleQueue();
     }
 
-    public static List<AudioTrack> getQueuedTracks(Guild guild) {
+    public static List<AudioTrack> getQueuedTracks(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().getQueuedTracks();
     }
 
-    public static void clearQueue(Guild guild) {
+    public static void clearQueue(@NotNull Guild guild) {
         getOrCreate(guild).getTrackScheduler().clearQueue();
     }
 
-    public static int getPositionInQueue(Guild guild, AudioTrack audioTrack) {
+    public static int getPositionInQueue(@NotNull Guild guild, AudioTrack audioTrack) {
         return getOrCreate(guild).getTrackScheduler().getPositionInQueue(audioTrack);
     }
 
-    public static AudioTrack getCurrentlyPlayingTrack(Guild guild) {
+    public static AudioTrack getCurrentlyPlayingTrack(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().getCurrentlyPlayingTrack();
     }
 
-    public static AudioTrack skipTrack(Guild guild) {
+    public static AudioTrack skipTrack(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().skip();
     }
 
-    public static boolean isPlayingTrack(Guild guild) {
+    public static boolean isPlayingTrack(@NotNull Guild guild) {
         return getOrCreate(guild).getAudioPlayer().getPlayingTrack() != null;
     }
 
-    public static void pauseTrack(Guild guild) {
+    public static void pauseTrack(@NotNull Guild guild) {
         getOrCreate(guild).getAudioPlayer().setPaused(true);
     }
 
-    public static void resumeTrack(Guild guild) {
+    public static void resumeTrack(@NotNull Guild guild) {
         getOrCreate(guild).getAudioPlayer().setPaused(false);
     }
 
-    public static boolean isPaused(Guild guild) {
+    public static boolean isPaused(@NotNull Guild guild) {
         return getOrCreate(guild).getAudioPlayer().isPaused();
     }
 
-    public static int getVolume(Guild guild) {
+    public static int getVolume(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().getVolume();
     }
 
-    public static void setVolume(Guild guild, int volume) {
+    public static void setVolume(@NotNull Guild guild, int volume) {
         getOrCreate(guild).getTrackScheduler().setVolume(volume);
     }
 
-    public static boolean isBassBoosted(Guild guild) {
+    public static boolean isBassBoosted(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().isBassBoosted();
     }
 
-    public static void enableBassBoost(Guild guild) {
+    public static void enableBassBoost(@NotNull Guild guild) {
         getOrCreate(guild).getTrackScheduler().enableBassBoost();
     }
 
-    public static void disableBassBoost(Guild guild) {
+    public static void disableBassBoost(@NotNull Guild guild) {
         getOrCreate(guild).getTrackScheduler().disableBassBoost();
     }
 
-    public static void setBassBoostMultiplier(Guild guild, int percentage) {
+    public static void setBassBoostMultiplier(@NotNull Guild guild, int percentage) {
         getOrCreate(guild).getTrackScheduler().setBassBoostMultiplier(percentage);
     }
 
-    public static int getBassBoostPercentage(Guild guild) {
+    public static int getBassBoostPercentage(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().getBassBoostPercentage();
     }
 
-    public static boolean isNightcore(Guild guild) {
+    public static boolean isNightcore(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().isNightcore();
     }
 
-    public static void enableNightcore(Guild guild) {
+    public static void enableNightcore(@NotNull Guild guild) {
         getOrCreate(guild).getTrackScheduler().enableNightcore();
     }
 
-    public static void disableNightcore(Guild guild) {
+    public static void disableNightcore(@NotNull Guild guild) {
         getOrCreate(guild).getTrackScheduler().disableNightcore();
     }
 
-    public static void setNightcoreSpeed(Guild guild, double speed) {
+    public static void setNightcoreSpeed(@NotNull Guild guild, double speed) {
         getOrCreate(guild).getTrackScheduler().setNightcoreSpeed(speed);
     }
 
-    public static double getNightcoreSpeed(Guild guild) {
+    public static double getNightcoreSpeed(@NotNull Guild guild) {
         return getOrCreate(guild).getTrackScheduler().getNightcoreSpeed();
     }
 
-    public static SongSearch getLyrics(Guild guild) throws IOException {
+    public static SongSearch getLyrics(@NotNull Guild guild) throws IOException {
         return Constants.GENIUS_LYRICS_API.search(getCurrentlyPlayingTrack(guild).getInfo().title + "" + getCurrentlyPlayingTrack(guild).getInfo().author);
     }
 
-    public static void loadAndPlay(Guild guild, String identifier) {
+    public static void loadAndPlay(@NotNull Guild guild, String identifier) {
         final GuildAudioManager guildAudioManager = getOrCreate(guild);
         loadAndPlay(guild, identifier, new BaseAudioLoadResultImpl(guildAudioManager.getTrackScheduler()));
     }
 
-    public static void loadAndPlay(Guild guild, String identifier, AudioLoadResultHandler audioLoadResult) {
+    public static void loadAndPlay(@NotNull Guild guild, String identifier, AudioLoadResultHandler audioLoadResult) {
         final GuildAudioManager guildAudioManager = getOrCreate(guild);
         AUDIO_PLAYER_MANAGER.loadItemOrdered(guildAudioManager, identifier, audioLoadResult);
     }

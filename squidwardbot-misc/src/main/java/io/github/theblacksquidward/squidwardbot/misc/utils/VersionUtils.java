@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 
 public class VersionUtils {
 
-    private static final String VERSION_URL = "https://raw.githubusercontent.com/TheBlackSquidward/SquidwardBot/master/build.gradle";
-    private static final Pattern VERSION_PATTERN = Pattern.compile("version '([0-9]+\\.[0-9]+\\.[0-9]+)'");
+    private static final String VERSION_URL = "https://raw.githubusercontent.com/TheBlackSquidward/SquidwardBot/master/gradle.properties";
+    private static final Pattern VERSION_PATTERN = Pattern.compile("SQUIDWARDBOT_VERSION=([0-9]+\\.[0-9]+\\.[0-9]+)");
 
     public static String getLatestVersion() {
         final Request request = new Request.Builder().url(VERSION_URL).build();

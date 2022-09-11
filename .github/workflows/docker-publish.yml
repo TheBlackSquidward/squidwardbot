@@ -11,7 +11,7 @@ jobs:
     name: Gather Variables
     runs-on: ubuntu-20.04
     outputs:
-      version: ${{steps.version.outputs.version}}
+      version: ${{steps.version.outputs.SQUIDWARDBOT_VERSION}}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
           properties: 'SQUIDWARDBOT_VERSION'
 
       - name: Get Semantic Versioning
-        run: echo ${{steps.version.outputs.version}}
+        run: echo ${{steps.version.outputs.SQUIDWARDBOT_VERSION}}
   jar:
     name: Build JAR
     runs-on: ubuntu-20.04

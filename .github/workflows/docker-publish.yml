@@ -21,7 +21,7 @@ jobs:
         uses: christian-draeger/read-properties@1.1.0
         with:
           path: './gradle.properties'
-          properties: 'version'
+          properties: 'SQUIDWARDBOT_VERSION'
 
       - name: Get Semantic Versioning
         run: echo ${{steps.version.outputs.version}}

@@ -44,4 +44,6 @@ jobs:
 
       - name: Build Jar with Gradle
         run: ./gradlew fatJar
-#  publish:
+
+      - name: Output Directory Structure
+        run: ls -lhR build-out

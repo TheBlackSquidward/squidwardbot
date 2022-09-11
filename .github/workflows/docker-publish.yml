@@ -47,3 +47,9 @@ jobs:
 
       - name: Output Directory Structure
         run: ls -Rla
+
+      - name: Add Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: squidwardbot
+          path: ./build/libs/SquidwardBot-${{needs.variables.outputs.version}}.jar

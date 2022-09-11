@@ -23,7 +23,7 @@ jobs:
           path: './gradle.properties'
           properties: 'SQUIDWARDBOT_VERSION'
 
-      - name: Get Semantic Versioning
+      - name: Print Semantic Versioning
         run: echo ${{steps.version.outputs.SQUIDWARDBOT_VERSION}}
   jar:
     name: Build JAR
@@ -51,5 +51,5 @@ jobs:
       - name: Add Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: squidwardbot
+          name: SquidwardBot-${{needs.variables.outputs.version}}
           path: ./build/libs/SquidwardBot-${{needs.variables.outputs.version}}.jar

@@ -74,8 +74,8 @@ jobs:
       - name: Download SquidwardBot JAR
         uses: actions/download-artifact@v2
         with:
-          name: SquidwardBot
-          path: build/libs
+          name: SquidwardBot-${{needs.variables.outputs.version}}
+          path: ./build/libs/SquidwardBot.jar
       - name: Create Github Release
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:

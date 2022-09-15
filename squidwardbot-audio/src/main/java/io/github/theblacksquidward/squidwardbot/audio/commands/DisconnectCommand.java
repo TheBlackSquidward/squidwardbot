@@ -1,8 +1,8 @@
 package io.github.theblacksquidward.squidwardbot.audio.commands;
 
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
-import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 @Command

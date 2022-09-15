@@ -7,9 +7,9 @@ import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.List;

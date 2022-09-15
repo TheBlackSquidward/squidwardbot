@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Command
 public class LyricsCommand extends AbstractAudioCommand{
 
-    private static final Map<Long, String> ID_LYRIC_MAP = new HashMap<>();
+    private static final Map<Long, Hit> ID_LYRIC_MAP = new HashMap<>();
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
@@ -48,7 +48,7 @@ public class LyricsCommand extends AbstractAudioCommand{
         }
         if(instruction.equalsIgnoreCase("next")) {
             newPage++;
-            final String lyrics = ID_LYRIC_MAP.get(hitId);
+            final String lyrics = ID_LYRIC_MAP.get(hitId).fetchLyrics();
             final List<String> requestedLyrics = getLyricsPage(lyrics.lines().collect(Collectors.toList()), newPage);
             if(requestedLyrics.isEmpty()) {
                 event.editButton(event.getButton().withDisabled(true)).queue();
@@ -68,7 +68,7 @@ public class LyricsCommand extends AbstractAudioCommand{
         }
         if(instruction.equalsIgnoreCase("prev")) {
             newPage--;
-            final String lyrics = ID_LYRIC_MAP.get(hitId);
+            final String lyrics = ID_LYRIC_MAP.get(hitId).fetchLyrics();
             final List<String> requestedLyrics = getLyricsPage(lyrics.lines().collect(Collectors.toList()), newPage);
             if(requestedLyrics.isEmpty()) {
                 event.editButton(event.getButton().withDisabled(true)).queue();
@@ -116,9 +116,8 @@ public class LyricsCommand extends AbstractAudioCommand{
                 return;
             }
             final Hit hit = hits.getFirst();
-            final String lyrics = hit.fetchLyrics();
-            ID_LYRIC_MAP.put(hit.getId(), lyrics);
-            event.replyEmbeds(getLyricsEmbed(hit, lyrics))
+            ID_LYRIC_MAP.put(hit.getId(), hit);
+            event.replyEmbeds(getLyricsEmbed(hit))
                     .setComponents(ActionRow.of(
                             Button.primary("lyrics_" + event.getChannel().getId() + "_" + event.getUser().getId() + "_" + hit.getId() + "_page0" + "_prev", Emoji.fromUnicode("◀️"))
                                     .asDisabled(),
@@ -140,14 +139,14 @@ public class LyricsCommand extends AbstractAudioCommand{
         return "Returns the lyrics of the currently playing song.";
     }
 
-    private MessageEmbed getLyricsEmbed(Hit hit, String lyrics) {
+    private MessageEmbed getLyricsEmbed(Hit hit) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setThumbnail(hit.getThumbnailUrl());
         embedBuilder.setTimestamp(Instant.now());
         embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
         embedBuilder.setFooter(hit.getArtist().getName() + " • Page 1", hit.getArtist().getImageUrl());
         embedBuilder.setTitle(hit.getTitleWithFeatured(), hit.getUrl());
-        embedBuilder.setDescription(String.join("\n", getLyricsPage(lyrics.lines().collect(Collectors.toList()), 0)));
+        embedBuilder.setDescription(String.join("\n", getLyricsPage(hit.fetchLyrics().lines().collect(Collectors.toList()), 0)));
         return embedBuilder.build();
     }
 

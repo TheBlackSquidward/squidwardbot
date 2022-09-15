@@ -1,6 +1,6 @@
-# Builds a Docker image and publishes it to Docker Hub.
+# Manually triggers a workflow that builds a Docker image and publishes it to Docker Hub.
 
-name: Publish Docker Image
+name: Manually Publish Docker Image
 
 on: workflow_dispatch
 

@@ -50,6 +50,7 @@ jobs:
         with:
           include: 'v*'
           exclude: ${{steps.current_tag.outputs.tag}}
+          commit-ish: '@'
           skip-unshallow: true
 
       - name: Generate changlog

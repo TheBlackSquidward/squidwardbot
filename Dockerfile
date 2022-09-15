@@ -15,7 +15,7 @@ ENV discordToken = $DISCORD_TOKEN
 ENV spotifyClientId = $SPOTIFY_CLIENT_ID
 ENV spotifyClientSecret = $SPOTIFY_CLIENT_SECRET
 
-COPY --from=builder /home/gradle/source/build/libs/SquidwardBot-FatJar.jar ./
+COPY --from=builder /home/gradle/source/build/libs/SquidwardBot.jar ./
 COPY entrypoint.sh ./
 
 ENTRYPOINT ["./entrypoint.sh"]

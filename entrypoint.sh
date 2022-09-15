@@ -1,2 +1,2 @@
 #!/bin/sh
-java -jar SquidwardBot-FatJar.jar --discordBotAccessToken $discordToken --spotifyClientId $spotifyClientId --spotifyClientSecret $spotifyClientSecret
+java -jar SquidwardBot.jar --discordBotAccessToken $discordToken --spotifyClientId $spotifyClientId --spotifyClientSecret $spotifyClientSecret

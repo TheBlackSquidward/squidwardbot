@@ -53,6 +53,7 @@ task fatJar(type: Jar) {
                 'Main-Class': 'io.github.theblacksquidward.squidwardbot.Bootstrap'
         )
     }
+    archiveName 'SquidwardBot.jar'
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     from {
         configurations.moduleJar.collect {

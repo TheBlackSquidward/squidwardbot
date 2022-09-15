@@ -42,7 +42,6 @@ jobs:
         with:
           include: 'v*'
           exclude: '*-rc'
-
           skip-unshallow: true
 
       - name: Find Previous Tag

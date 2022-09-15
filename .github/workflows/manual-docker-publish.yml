@@ -42,6 +42,7 @@ jobs:
         with:
           include: 'v*'
           exclude: '*-rc'
+          commit-ish: '@'
           skip-unshallow: true
 
       - name: Find Previous Tag
@@ -50,7 +51,6 @@ jobs:
         with:
           include: 'v*'
           exclude: ${{steps.current_tag.outputs.tag}}
-          commit-ish: '@'
           skip-unshallow: true
 
       - name: Generate changlog

@@ -1,5 +1,7 @@
 package io.github.theblacksquidward.squidwardbot.core.utils;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -23,6 +25,10 @@ public class StringUtils {
                 minutes > 0 ? String.format("%02d", minutes) + ":" : "00:",
                 seconds > 0 ? String.format("%02d", seconds) : "00").trim();
         return ret.endsWith(":") ? ret.substring(0, ret.length() - 1) : ret;
+    }
+
+    public static String formatTime(OffsetDateTime time) {
+        return time.format(DateTimeFormatter.RFC_1123_DATE_TIME);
     }
 
 }

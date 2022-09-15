@@ -69,3 +69,4 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: theblacksquidward/squidwardbot
+          tags: type=semver,pattern={{version}},value=v${{needs.variables.outputs.version}}

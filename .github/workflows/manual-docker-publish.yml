@@ -70,3 +70,11 @@ jobs:
         with:
           images: theblacksquidward/squidwardbot
           tags: type=semver,pattern={{version}},value=v${{needs.variables.outputs.version}}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

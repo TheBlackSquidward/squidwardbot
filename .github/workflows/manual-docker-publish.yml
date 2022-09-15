@@ -42,7 +42,7 @@ jobs:
         with:
           include: 'v*'
           exclude: '*-rc'
-          commit-ish: '@'
+
           skip-unshallow: true
 
       - name: Find Previous Tag

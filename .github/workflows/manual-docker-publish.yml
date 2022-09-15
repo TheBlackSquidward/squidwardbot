@@ -1,6 +1,6 @@
-# Manually trigger a workflow that builds a Docker image and publishes it to Docker Hub.
+# Builds a Docker image and publishes it to Docker Hub.
 
-name: Manually Publish Docker Image
+name: Publish Docker Image
 
 on: workflow_dispatch
 
@@ -69,7 +69,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: theblacksquidward/squidwardbot
-          tags: type=semver,pattern={{version}},value=v0.0.9
+          tags: type=semver,pattern={{version}},value=v${{needs.variables.outputs.version}}
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v3

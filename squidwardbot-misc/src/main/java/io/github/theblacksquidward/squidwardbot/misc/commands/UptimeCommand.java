@@ -21,7 +21,7 @@ public class UptimeCommand extends SquidwardBotCommand {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
         embedBuilder.setDescription("The current uptime of the bot is: **" + uptimeFormatted + "**.");
-        event.replyEmbeds(embedBuilder.build()).queue();
+        event.deferReply().addEmbeds(embedBuilder.build()).queue();
     }
 
     @Override

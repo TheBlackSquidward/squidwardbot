@@ -13,24 +13,24 @@ public class ShuffleCommand extends AbstractAudioCommand {
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
         if(!event.getMember().getVoiceState().inAudioChannel()) {
-            event.replyEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
         final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
         if(!event.getGuild().getAudioManager().isConnected()) {
-            event.replyEmbeds(createMusicReply("The bot must be connected to a voice channel to shuffle the queue.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("The bot must be connected to a voice channel to shuffle the queue.")).queue();
             return;
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
-            event.replyEmbeds(createMusicReply("You must be in the same voice channel as the bot to shuffle the queue.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("You must be in the same voice channel as the bot to shuffle the queue.")).queue();
             return;
         }
         if(AudioManager.isQueueEmpty(guild)) {
-            event.replyEmbeds(createMusicReply("Could not shuffle the queue as it is empty.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("Could not shuffle the queue as it is empty.")).queue();
             return;
         }
         AudioManager.shuffleQueue(guild);
-        event.replyEmbeds(createMusicReply("Successfully shuffled the queue.")).queue();
+        event.deferReply().addEmbeds(createMusicReply("Successfully shuffled the queue.")).queue();
     }
 
     @Override

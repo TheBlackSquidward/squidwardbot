@@ -22,19 +22,19 @@ public class NowPlayingCommand extends AbstractAudioCommand {
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
         if(!event.getMember().getVoiceState().inAudioChannel()) {
-            event.replyEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
         if(!event.getGuild().getAudioManager().isConnected()) {
-            event.replyEmbeds(createMusicReply("The bot must be connected to a voice channel to get the currently playing track.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("The bot must be connected to a voice channel to get the currently playing track.")).queue();
             return;
         }
         final AudioTrack currentTrack = AudioManager.getCurrentlyPlayingTrack(guild);
         if(currentTrack == null) {
-            event.replyEmbeds(createMusicReply("There is no song currently playing...")).queue();
+            event.deferReply().addEmbeds(createMusicReply("There is no song currently playing...")).queue();
             return;
         }
-        event.replyEmbeds(getCurrentTrackEmbed(guild, currentTrack)).queue();
+        event.deferReply().addEmbeds(getCurrentTrackEmbed(guild, currentTrack)).queue();
     }
 
     @Override

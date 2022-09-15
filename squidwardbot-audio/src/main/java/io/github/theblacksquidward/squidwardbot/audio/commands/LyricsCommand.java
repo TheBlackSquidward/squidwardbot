@@ -46,9 +46,10 @@ public class LyricsCommand extends AbstractAudioCommand{
             event.deferEdit().flatMap(InteractionHook::deleteOriginal).queue();
             ID_LYRIC_MAP.remove(hitId);
         }
+        final Hit hit = ID_LYRIC_MAP.get(hitId);
+        final String lyrics = hit.fetchLyrics();
         if(instruction.equalsIgnoreCase("next")) {
             newPage++;
-            final String lyrics = ID_LYRIC_MAP.get(hitId).fetchLyrics();
             final List<String> requestedLyrics = getLyricsPage(lyrics.lines().collect(Collectors.toList()), newPage);
             if(requestedLyrics.isEmpty()) {
                 event.editButton(event.getButton().withDisabled(true)).queue();
@@ -68,7 +69,6 @@ public class LyricsCommand extends AbstractAudioCommand{
         }
         if(instruction.equalsIgnoreCase("prev")) {
             newPage--;
-            final String lyrics = ID_LYRIC_MAP.get(hitId).fetchLyrics();
             final List<String> requestedLyrics = getLyricsPage(lyrics.lines().collect(Collectors.toList()), newPage);
             if(requestedLyrics.isEmpty()) {
                 event.editButton(event.getButton().withDisabled(true)).queue();
@@ -92,32 +92,32 @@ public class LyricsCommand extends AbstractAudioCommand{
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
         if(!event.getMember().getVoiceState().inAudioChannel()) {
-            event.replyEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
         final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
         if(!event.getGuild().getAudioManager().isConnected()) {
-            event.replyEmbeds(createMusicReply("The bot must be connected to a voice channel to pause the queue.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("The bot must be connected to a voice channel to pause the queue.")).queue();
             return;
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
-            event.replyEmbeds(createMusicReply("You must be in the same voice channel as the bot to pause the queue.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("You must be in the same voice channel as the bot to pause the queue.")).queue();
             return;
         }
         if(!AudioManager.isPlayingTrack(guild)) {
-            event.replyEmbeds(createMusicReply("The bot is not currently playing anything...")).queue();
+            event.deferReply().addEmbeds(createMusicReply("The bot is not currently playing anything...")).queue();
             return;
         }
         try {
             final SongSearch songSearch = AudioManager.getLyrics(guild);
             final LinkedList<Hit> hits = songSearch.getHits();
             if(hits.isEmpty()) {
-                event.replyEmbeds(createMusicReply("There are no lyric results for this song.")).queue();
+                event.deferReply().addEmbeds(createMusicReply("There are no lyric results for this song.")).queue();
                 return;
             }
             final Hit hit = hits.getFirst();
             ID_LYRIC_MAP.put(hit.getId(), hit);
-            event.replyEmbeds(getLyricsEmbed(hit))
+            event.deferReply().addEmbeds(getLyricsEmbed(hit))
                     .setComponents(ActionRow.of(
                             Button.primary("lyrics_" + event.getChannel().getId() + "_" + event.getUser().getId() + "_" + hit.getId() + "_page0" + "_prev", Emoji.fromUnicode("◀️"))
                                     .asDisabled(),
@@ -144,7 +144,7 @@ public class LyricsCommand extends AbstractAudioCommand{
         embedBuilder.setThumbnail(hit.getThumbnailUrl());
         embedBuilder.setTimestamp(Instant.now());
         embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
-        embedBuilder.setFooter(hit.getArtist().getName() + " • Page 1", hit.getArtist().getImageUrl());
+        embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
         embedBuilder.setTitle(hit.getTitleWithFeatured(), hit.getUrl());
         embedBuilder.setDescription(String.join("\n", getLyricsPage(hit.fetchLyrics().lines().collect(Collectors.toList()), 0)));
         return embedBuilder.build();

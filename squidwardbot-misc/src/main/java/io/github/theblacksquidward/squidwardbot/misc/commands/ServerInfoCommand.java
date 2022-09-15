@@ -17,7 +17,7 @@ public class ServerInfoCommand extends SquidwardBotCommand {
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         if(!event.isFromGuild()) {
-            event.deferReply().setContent("This command can obly be executed in a server.").mentionRepliedUser(false).queue();
+            event.deferReply().setContent("This command can only be executed in a server.").mentionRepliedUser(false).queue();
             return;
         }
         event.deferReply().addEmbeds(getServerEmbed(event.getGuild())).mentionRepliedUser(false).queue();

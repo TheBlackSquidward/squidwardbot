@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
 import java.time.Instant;
 import java.util.List;
@@ -26,20 +27,21 @@ public class ForcePlayCommand extends AbstractAudioCommand {
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
         if(!event.getMember().getVoiceState().inAudioChannel()) {
-            event.replyEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
         final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
+        final ReplyCallbackAction reply = event.deferReply();
         if(!event.getGuild().getAudioManager().isConnected()) {
             guild.getAudioManager().openAudioConnection(audioChannel);
-            event.getChannel().sendMessageEmbeds(createMusicReply("Successfully connected to " + audioChannel.getName())).queue();
+            reply.addEmbeds(createMusicReply("Successfully connected to " + audioChannel.getName()));
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
-            event.replyEmbeds(createMusicReply("You must be in the same voice channel as the bot to force play an audio track.")).queue();
+            event.deferReply().addEmbeds(createMusicReply("You must be in the same voice channel as the bot to force play an audio track.")).queue();
             return;
         }
         final String identifier = event.getOption("identifier").getAsString();
-        AudioManager.loadAndPlay(guild, identifier, new AudioLoadResultImpl(event, identifier, AudioManager.getOrCreate(guild).getTrackScheduler()));
+        AudioManager.loadAndPlay(guild, identifier, new AudioLoadResultImpl(reply, identifier, AudioManager.getOrCreate(guild).getTrackScheduler()));
     }
 
     @Override
@@ -61,12 +63,12 @@ public class ForcePlayCommand extends AbstractAudioCommand {
 
     private static class AudioLoadResultImpl extends BaseAudioLoadResultImpl {
 
-        private final SlashCommandInteractionEvent event;
+        private final ReplyCallbackAction replyCallbackAction;
         private final String identifier;
 
-        public AudioLoadResultImpl(SlashCommandInteractionEvent event, String identifier, TrackScheduler trackScheduler) {
+        public AudioLoadResultImpl(ReplyCallbackAction replyCallbackAction, String identifier, TrackScheduler trackScheduler) {
             super(trackScheduler);
-            this.event = event;
+            this.replyCallbackAction = replyCallbackAction;
             this.identifier = identifier;
         }
 
@@ -74,7 +76,7 @@ public class ForcePlayCommand extends AbstractAudioCommand {
         public void trackLoaded(AudioTrack audioTrack) {
             trackScheduler.forceQueueTrack(audioTrack);
             AudioTrackInfo audioTrackInfo = audioTrack.getInfo();
-            event.replyEmbeds(new EmbedBuilder()
+            replyCallbackAction.addEmbeds(new EmbedBuilder()
                     .setTimestamp(Instant.now())
                     .setColor(ColorConstants.PRIMARY_COLOR)
                     .setAuthor("|  " + "Successfully force loaded " + audioTrackInfo.title + " by " + audioTrackInfo.author + " to the queue.", null, "https://avatars.githubusercontent.com/u/65785034?v=4")
@@ -87,19 +89,19 @@ public class ForcePlayCommand extends AbstractAudioCommand {
         public void playlistLoaded(AudioPlaylist audioPlaylist) {
             trackScheduler.forceQueueTracks(audioPlaylist.getTracks());
             //TODO create cool embed
-            event.replyEmbeds(createMusicReply("Successfully force loaded the playlist: " + audioPlaylist.getName())).queue();
+            replyCallbackAction.addEmbeds(createMusicReply("Successfully force loaded the playlist: " + audioPlaylist.getName())).queue();
             super.playlistLoaded(audioPlaylist);
         }
 
         @Override
         public void noMatches() {
-            event.replyEmbeds(createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track or an audio playlist.")).queue();
+            replyCallbackAction.addEmbeds(createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track or an audio playlist.")).queue();
             super.noMatches();
         }
 
         @Override
         public void loadFailed(FriendlyException exception) {
-            event.replyEmbeds(createMusicReply(
+            replyCallbackAction.addEmbeds(createMusicReply(
                     "Error whilst trying to force queue the track/playlist. Please report the following information:" +
                             "\n\nSeverity: " + exception.severity.name() +
                             "\nSpecified Identifier: " + identifier +

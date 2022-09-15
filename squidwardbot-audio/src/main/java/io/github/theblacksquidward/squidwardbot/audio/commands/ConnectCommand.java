@@ -19,26 +19,26 @@ public class ConnectCommand extends AbstractAudioCommand {
         User user = event.getUser();
         OptionMapping option = event.getOption("channel");
         if(event.getGuild().getAudioManager().isConnected()) {
-            event.replyEmbeds(createMusicReply("The bot is already connected to the channel" + guild.getAudioManager().getConnectedChannel().getName())).queue();
+            event.deferReply().addEmbeds(createMusicReply("The bot is already connected to the channel" + guild.getAudioManager().getConnectedChannel().getName())).queue();
             return;
         }
         if(option == null) {
             if(guild.getMember(user) == null) {
-                event.replyEmbeds(createMusicReply("You are not currently in a voice channel. Either join one or specifiy one.")).queue();
+                event.deferReply().addEmbeds(createMusicReply("You are not currently in a voice channel. Either join one or specifiy one.")).queue();
                 return;
             }
             final AudioChannel audioChannel = guild.getMember(user).getVoiceState().getChannel();
             guild.getAudioManager().openAudioConnection(audioChannel);
-            event.replyEmbeds(createMusicReply("Successfully connected to " + audioChannel.getName())).queue();
+            event.deferReply().addEmbeds(createMusicReply("Successfully connected to " + audioChannel.getName())).queue();
         } else {
             GuildChannelUnion channel = option.getAsChannel();
             if(channel.getType() != ChannelType.VOICE) {
-                event.replyEmbeds(createMusicReply("The channel specified is not a voice channel.")).queue();
+                event.deferReply().addEmbeds(createMusicReply("The channel specified is not a voice channel.")).queue();
                 return;
             }
             VoiceChannel voiceChannel = channel.asVoiceChannel();
             guild.getAudioManager().openAudioConnection(voiceChannel);
-            event.replyEmbeds(createMusicReply("Successfully connected to " + voiceChannel.getName())).queue();
+            event.deferReply().addEmbeds(createMusicReply("Successfully connected to " + voiceChannel.getName())).queue();
         }
     }
 

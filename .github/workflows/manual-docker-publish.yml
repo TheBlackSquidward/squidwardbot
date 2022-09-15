@@ -36,6 +36,45 @@ jobs:
       - name: Unshallow
         run: git fetch --prune --unshallow
 
+      - name: Find Current Tag
+        id: current_tag
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: 'v*'
+          exclude: '*-rc'
+          commit-ish: '@'
+          skip-unshallow: true
+
+      - name: Find Previous Tag
+        id: previous_tag
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: 'v*'
+          exclude: ${{steps.current_tag.outputs.tag}}
+          skip-unshallow: true
+
+      - name: Generate changlog
+        uses: jimschubert/beast-changelog-action@v1
+        with:
+          GITHUB_TOKEN: ${{github.token}}
+          CONFIG_LOCATION: .github/changelog_config.json
+          FROM: ${{steps.previous_tag.outputs.tag}}
+          TO: ${{steps.current_tag.outputs.tag}}
+          OUTPUT: .github/CHANGELOG.md
+
+      - name: Read CHANGELOG file
+        id: getchangelog
+        run: echo "::set-output name=changelog::$(cat .github/CHANGELOG.md)"
+
+      - name: View Changelog
+        run: cat .github/CHANGELOG.md
+
+      - name: Add Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: changelog
+          path: .github/CHANGELOG.md
+
   jar:
     name: Build JAR
     runs-on: ubuntu-20.04

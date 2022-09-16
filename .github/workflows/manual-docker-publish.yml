@@ -60,7 +60,7 @@ jobs:
   release-gh:
     name: Create Github Release
     runs-on: ubuntu-20.04
-    needs: [variables, changelog, jar]
+    needs: [variables, jar]
     steps:
       - name: Download SquidwardBot JAR
         uses: actions/download-artifact@v2
@@ -79,7 +79,7 @@ jobs:
   docker-publish:
     name: Builds and Publishes Docker Image
     runs-on: ubuntu-20.04
-    needs: [variables, changelog, jar]
+    needs: [variables, jar]
     steps:
       - name: Checkout
         uses: actions/checkout@v3

@@ -102,10 +102,9 @@ public class PlayCommand extends AbstractAudioCommand {
         public void playlistLoaded(AudioPlaylist audioPlaylist) {
             audioPlaylist.getTracks().forEach(trackScheduler::queueTrack);
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            List<String> formattedPlaylistTracks = audioPlaylist.getTracks().stream().map(audioTrack -> {
-                AudioTrackInfo audioTrackInfo = audioTrack.getInfo();
-                return audioTrackInfo.title + " by " + audioTrackInfo.author;
-            }).toList();
+            List<String> formattedPlaylistTracks = audioPlaylist.getTracks().stream()
+                    .map(audioTrack -> audioTrack.getInfo().title + " by " + audioTrack.getInfo().author)
+                    .toList();
             embedBuilder.setTimestamp(Instant.now());
             embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
             embedBuilder.setTitle(audioPlaylist.getName());

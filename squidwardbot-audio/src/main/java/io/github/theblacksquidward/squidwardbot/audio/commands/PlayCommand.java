@@ -59,7 +59,7 @@ public class PlayCommand extends AbstractAudioCommand {
     @Override
     public List<OptionData> getOptionData() {
         return List.of(
-                new OptionData(OptionType.STRING, "identifier", "Identifier of the track (URL/Name)", false)
+                new OptionData(OptionType.STRING, "identifier", "Identifier of the track (URL/Name)", true)
         );
     }
 

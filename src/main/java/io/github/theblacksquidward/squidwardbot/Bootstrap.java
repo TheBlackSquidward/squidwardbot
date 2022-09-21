@@ -44,7 +44,7 @@ public class Bootstrap {
         final SquidwardBot SQUIDWARD_BOT;
         try {
             SQUIDWARD_BOT = new SquidwardBot(discordBotAccessToken, REFLECTIONS, version, spotifyClientId, spotifyClientSecret);
-        } catch (LoginException | InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

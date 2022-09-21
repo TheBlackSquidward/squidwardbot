@@ -31,7 +31,7 @@ public class SquidwardBot {
                         Reflections reflections,
                         String version,
                         String spotifyClientId,
-                        String spotifyClientSecret) throws LoginException, InterruptedException {
+                        String spotifyClientSecret) throws InterruptedException {
         instance = this;
         this.REFLECTIONS = reflections;
         this.VERSION = version;

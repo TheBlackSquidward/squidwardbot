@@ -16,6 +16,6 @@ ENV spotifyClientId = $SPOTIFY_CLIENT_ID
 ENV spotifyClientSecret = $SPOTIFY_CLIENT_SECRET
 
 COPY --from=builder /home/gradle/source/build/libs/SquidwardBot.jar ./
-COPY entrypoint.sh ./
+COPY entrypoint.sh /
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

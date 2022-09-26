@@ -37,11 +37,9 @@ public class SquidwardBot {
         this.VERSION = version;
         this.SPOTIFY_CLIENT_ID = spotifyClientId;
         this.SPOTIFY_CLIENT_SECRET = spotifyClientSecret;
-
-        //TODO VERIFY from here down
         ModuleRegistry.getInstance().captureAndInitModules(reflections);
         CommandManager.captureAndRegisterCommands(REFLECTIONS);
-        JDA = JDABuilder.createDefault(accessToken)
+        final JDABuilder jdaBuilder = JDABuilder.createDefault(accessToken)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGES,
                         GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_EMOJIS_AND_STICKERS, GatewayIntent.GUILD_VOICE_STATES,
                         GatewayIntent.MESSAGE_CONTENT)
@@ -50,9 +48,9 @@ public class SquidwardBot {
                 .setActivity(Activity.playing("SquidwardBot | /help"))
                 .addEventListeners(
                         new CommandManager(),
-                        new ModuleEventHandler())
-                .build()
-                .awaitReady();
+                        new ModuleEventHandler());
+        ModuleRegistry.getInstance().forEachPlugin(module -> module.onJDABuild(jdaBuilder));
+        JDA = jdaBuilder.build().awaitReady();
     }
 
     public static SquidwardBot getInstance() {

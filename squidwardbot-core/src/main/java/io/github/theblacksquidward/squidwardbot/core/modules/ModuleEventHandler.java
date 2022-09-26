@@ -8,7 +8,7 @@ public class ModuleEventHandler extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        ModuleRegistry.getInstance().forEachPlugin(ISquidwardBotModule::onJDAReady);
+        ModuleRegistry.getInstance().forEachPlugin(squidwardBotModule -> squidwardBotModule.onJDAReady(event));
     }
 
 }

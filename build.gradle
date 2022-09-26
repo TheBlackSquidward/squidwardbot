@@ -21,7 +21,6 @@ allprojects {
         implementation 'ch.qos.logback:logback-classic:1.4.1'
         implementation 'net.dv8tion:JDA:5.0.0-alpha.20'
         implementation 'org.reflections:reflections:0.10.2'
-        implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
         implementation 'com.google.guava:guava:31.1-jre'
         implementation 'com.google.code.gson:gson:2.9.1'
     }
@@ -41,6 +40,7 @@ dependencies {
         moduleJar project(it.path)
         implementation project(it.path)
     }
+    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
 }
 
 task fatJar(type: Jar) {

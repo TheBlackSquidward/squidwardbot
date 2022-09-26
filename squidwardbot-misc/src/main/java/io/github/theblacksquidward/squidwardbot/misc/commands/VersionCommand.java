@@ -14,7 +14,8 @@ public class VersionCommand extends SquidwardBotCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
-        event.deferReply().addEmbeds(getVersionEmbed()).queue();
+        event.deferReply().queue();
+        event.getHook().sendMessageEmbeds(getVersionEmbed()).queue();
     }
 
     @Override

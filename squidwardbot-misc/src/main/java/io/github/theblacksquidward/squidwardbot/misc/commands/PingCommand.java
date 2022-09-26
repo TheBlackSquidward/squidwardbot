@@ -9,7 +9,8 @@ public class PingCommand extends SquidwardBotCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
-        event.deferReply().setContent("Gateway Ping: " + event.getJDA().getGatewayPing() + "ms").queue();
+        event.deferReply().queue();
+        event.getHook().sendMessage("Gateway Ping: " + event.getJDA().getGatewayPing() + "ms").queue();
     }
 
     @Override

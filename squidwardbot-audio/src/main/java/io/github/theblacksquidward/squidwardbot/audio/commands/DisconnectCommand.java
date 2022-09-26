@@ -11,12 +11,13 @@ public class DisconnectCommand extends AbstractAudioCommand {
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
+        event.deferReply().queue();
         if(!guild.getAudioManager().isConnected()) {
-            event.deferReply().addEmbeds(createMusicReply("The bot is currently not in a channel.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The bot is currently not in a channel.")).queue();
         }
         final AudioChannel audioChannel = guild.getAudioManager().getConnectedChannel();
         guild.getAudioManager().closeAudioConnection();
-        event.deferReply().addEmbeds(createMusicReply("Successfully disconnected from " + audioChannel.getName() + ".")).queue();
+        event.getHook().sendMessageEmbeds(createMusicReply("Successfully disconnected from " + audioChannel.getName() + ".")).queue();
     }
 
     @Override

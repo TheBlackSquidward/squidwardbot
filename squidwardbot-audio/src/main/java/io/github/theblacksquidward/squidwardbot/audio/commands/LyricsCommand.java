@@ -91,33 +91,34 @@ public class LyricsCommand extends AbstractAudioCommand{
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
+        event.deferReply().queue();
         if(!event.getMember().getVoiceState().inAudioChannel()) {
-            event.deferReply().addEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
         final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
         if(!event.getGuild().getAudioManager().isConnected()) {
-            event.deferReply().addEmbeds(createMusicReply("The bot must be connected to a voice channel to pause the queue.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The bot must be connected to a voice channel to pause the queue.")).queue();
             return;
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
-            event.deferReply().addEmbeds(createMusicReply("You must be in the same voice channel as the bot to pause the queue.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in the same voice channel as the bot to pause the queue.")).queue();
             return;
         }
         if(!AudioManager.isPlayingTrack(guild)) {
-            event.deferReply().addEmbeds(createMusicReply("The bot is not currently playing anything...")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The bot is not currently playing anything...")).queue();
             return;
         }
         try {
             final SongSearch songSearch = AudioManager.getLyrics(guild);
             final LinkedList<Hit> hits = songSearch.getHits();
             if(hits.isEmpty()) {
-                event.deferReply().addEmbeds(createMusicReply("There are no lyric results for this song.")).queue();
+                event.getHook().sendMessageEmbeds(createMusicReply("There are no lyric results for this song.")).queue();
                 return;
             }
             final Hit hit = hits.getFirst();
             ID_LYRIC_MAP.put(hit.getId(), hit);
-            event.deferReply().addEmbeds(getLyricsEmbed(hit))
+            event.getHook().sendMessageEmbeds(getLyricsEmbed(hit))
                     .setComponents(ActionRow.of(
                             Button.primary("lyrics_" + event.getChannel().getId() + "_" + event.getUser().getId() + "_" + hit.getId() + "_page0" + "_prev", Emoji.fromUnicode("◀️"))
                                     .asDisabled(),

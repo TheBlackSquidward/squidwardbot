@@ -18,32 +18,33 @@ public class VolumeCommand extends AbstractAudioCommand {
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
+        event.deferReply().queue();
         if(!event.getMember().getVoiceState().inAudioChannel()) {
-            event.deferReply().addEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
         final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
         if(!event.getGuild().getAudioManager().isConnected()) {
-            event.deferReply().addEmbeds(createMusicReply("The bot must be connected to a voice channel to pause the queue.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The bot must be connected to a voice channel to pause the queue.")).queue();
             return;
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
-            event.deferReply().addEmbeds(createMusicReply("You must be in the same voice channel as the bot to pause the queue.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in the same voice channel as the bot to pause the queue.")).queue();
             return;
         }
         if(event.getSubcommandName().equalsIgnoreCase("get")) {
-            event.deferReply().addEmbeds(createMusicReply("The current volume of the bot is `" + AudioManager.getVolume(guild) + "`.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The current volume of the bot is `" + AudioManager.getVolume(guild) + "`.")).queue();
             return;
         }
         if(event.getSubcommandName().equalsIgnoreCase("reset")) {
-            event.deferReply().addEmbeds(createMusicReply("The volume of the audio player has been reset to the default value of `100`.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The volume of the audio player has been reset to the default value of `100`.")).queue();
             AudioManager.setVolume(guild, 100);
             return;
         }
         if(event.getSubcommandName().equalsIgnoreCase("set")) {
             final OptionMapping volume = event.getOption("volume");
             AudioManager.setVolume(guild, volume.getAsInt());
-            event.deferReply().addEmbeds(createMusicReply("The volume has successfully been set to `" + AudioManager.getVolume(guild) + "`.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The volume has successfully been set to `" + AudioManager.getVolume(guild) + "`.")).queue();
         }
     }
 

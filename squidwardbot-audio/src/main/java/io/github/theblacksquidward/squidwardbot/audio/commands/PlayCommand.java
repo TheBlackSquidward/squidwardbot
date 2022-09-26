@@ -17,7 +17,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
 import java.time.Instant;
 import java.util.List;
@@ -28,22 +27,22 @@ public class PlayCommand extends AbstractAudioCommand {
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
+        event.deferReply().queue();
         if(!event.getMember().getVoiceState().inAudioChannel()) {
-            event.deferReply().addEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
         final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
-        final ReplyCallbackAction reply = event.deferReply();
         if(!event.getGuild().getAudioManager().isConnected()) {
             guild.getAudioManager().openAudioConnection(audioChannel);
-            reply.addEmbeds(createMusicReply("Successfully connected to " + audioChannel.getName()));
+            event.getHook().sendMessageEmbeds(createMusicReply("Successfully connected to " + audioChannel.getName())).queue();
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
-            event.deferReply().addEmbeds(createMusicReply("You must be in the same voice channel as the bot to add an audio track to the queue.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in the same voice channel as the bot to add an audio track to the queue.")).queue();
             return;
         }
         final String identifier = event.getOption("identifier").getAsString();
-        AudioManager.loadAndPlay(guild, identifier, new AudioLoadResultImpl(event, reply, identifier, AudioManager.getOrCreate(guild).getTrackScheduler()));
+        AudioManager.loadAndPlay(guild, identifier, new AudioLoadResultImpl(event, identifier, AudioManager.getOrCreate(guild).getTrackScheduler()));
     }
 
     @Override
@@ -65,13 +64,11 @@ public class PlayCommand extends AbstractAudioCommand {
 
     private static class AudioLoadResultImpl extends BaseAudioLoadResultImpl {
 
-        private final ReplyCallbackAction replyCallbackAction;
         private final SlashCommandInteractionEvent event;
         private final String identifier;
 
-        public AudioLoadResultImpl(SlashCommandInteractionEvent event, ReplyCallbackAction replyCallbackAction, String identifier, TrackScheduler trackScheduler) {
+        public AudioLoadResultImpl(SlashCommandInteractionEvent event, String identifier, TrackScheduler trackScheduler) {
             super(trackScheduler);
-            this.replyCallbackAction = replyCallbackAction;
             this.event = event;
             this.identifier = identifier;
         }
@@ -94,7 +91,7 @@ public class PlayCommand extends AbstractAudioCommand {
                 embedBuilder.setFooter(audioTrackInfo.author);
                 embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
             }
-            replyCallbackAction.addEmbeds(embedBuilder.build()).queue();
+            event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
             super.trackLoaded(audioTrack);
         }
 
@@ -109,19 +106,19 @@ public class PlayCommand extends AbstractAudioCommand {
             embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
             embedBuilder.setTitle(audioPlaylist.getName());
             embedBuilder.setDescription(StringUtils.getIndentedStringList(formattedPlaylistTracks));
-            replyCallbackAction.addEmbeds(embedBuilder.build()).queue();
+            event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
             super.playlistLoaded(audioPlaylist);
         }
 
         @Override
         public void noMatches() {
-            replyCallbackAction.addEmbeds(createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track or an audio playlist.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track or an audio playlist.")).queue();
             super.noMatches();
         }
 
         @Override
         public void loadFailed(FriendlyException exception) {
-            replyCallbackAction.addEmbeds(createMusicReply(
+            event.getHook().sendMessageEmbeds(createMusicReply(
                     "Error whilst queueing the track/playlist. Please report the following information:" +
                             "\n\nSeverity: " + exception.severity.name() +
                             "\nSpecified Identifier: " + identifier +

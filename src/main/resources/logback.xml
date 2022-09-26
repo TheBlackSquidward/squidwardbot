@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
                 [%d{HH:mm:ss}] [%boldCyan(%t/%p)] [%boldGreen(%logger{0})]: %msg%n
             </Pattern>
         </encoder>
     </appender>
-    <root level="debug">
-        <appender-ref ref="STDOUT" />
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE" />
     </root>
+    <logger name="org.apache.hc.client5.http" level="WARN" />
+    <logger name="net.dv8tion.jda.internal.requests" level="WARN" />
+    <logger name="net.dv8tion.jda.api.utils.SessionControllerAdapter" level="WARN" />
+    <logger name="net.dv8tion.jda.internal.handle.GuildSetupController" level="WARN" />
 </configuration>

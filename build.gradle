@@ -7,7 +7,6 @@ allprojects {
 
     repositories {
         mavenCentral()
-        jcenter()
         maven {
             url 'https://m2.dv8tion.net/releases'
         }
@@ -23,6 +22,7 @@ allprojects {
         implementation 'org.reflections:reflections:0.10.2'
         implementation 'com.google.guava:guava:31.1-jre'
         implementation 'com.google.code.gson:gson:2.9.1'
+        implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
         implementation 'org.apache.commons:commons-text:1.9'
     }
     compileJava.options.encoding = "UTF-8"
@@ -41,7 +41,6 @@ dependencies {
         moduleJar project(it.path)
         implementation project(it.path)
     }
-    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
 }
 
 task fatJar(type: Jar) {

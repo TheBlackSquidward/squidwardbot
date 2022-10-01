@@ -1,5 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.misc.commands;
 
+import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.commands.CommandManager;
 import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotCommand;
@@ -53,6 +54,7 @@ public class BotInfoCommand extends SquidwardBotCommand {
         embedBuilder.addField("Channels", String.valueOf(jda.getVoiceChannelCache().size() + jda.getTextChannelCache().size()
                 + jda.getThreadChannelCache().size()), true);
         embedBuilder.addField("Slash Commands", String.valueOf(CommandManager.getCommands().size()), true);
+        embedBuilder.addField("Bot Owner", jda.getUserById(SquidwardBot.getInstance().getOwnerId()).getAsMention(), false);
 
         embedBuilder.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl());
         return embedBuilder.build();

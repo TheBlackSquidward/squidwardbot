@@ -1,5 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.audio.commands;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotCommand;
@@ -22,12 +23,35 @@ public abstract class AbstractAudioCommand extends SquidwardBotCommand {
                 .build();
     }
 
-    protected static SongSearch.Hit getHit(Guild guild) {
+    protected static SongSearch.Hit getCurrentlyPlayingHit(Guild guild) {
         try {
             final SongSearch songSearch = AudioManager.getLyrics(guild);
             final LinkedList<SongSearch.Hit> hits = songSearch.getHits();
             return hits.isEmpty() ? null : hits.getFirst();
         } catch (IOException e) {
+            //TODO this needs to be logged
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    protected static LinkedList<SongSearch.Hit> getHits(Guild guild, AudioTrack audioTrack) {
+        try {
+            final SongSearch songSearch = AudioManager.getLyrics(guild, audioTrack);
+            return songSearch.getHits();
+        } catch (IOException e) {
+            //TODO change this to be logged
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected static SongSearch.Hit getHit(Guild guild, AudioTrack audioTrack) {
+        try {
+            final SongSearch songSearch = AudioManager.getLyrics(guild, audioTrack);
+            final LinkedList<SongSearch.Hit> hits = songSearch.getHits();
+            return hits.isEmpty() ? null : hits.getFirst();
+        } catch (IOException e) {
+            //TODO change this to be logged
             throw new RuntimeException(e);
         }
     }

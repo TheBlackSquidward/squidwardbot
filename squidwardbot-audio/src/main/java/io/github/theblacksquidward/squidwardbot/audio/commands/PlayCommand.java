@@ -84,7 +84,7 @@ public class PlayCommand extends AbstractAudioCommand {
             embedBuilder.setTimestamp(Instant.now());
             embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
             embedBuilder.setDescription("Successfully queued the track " + audioTrackInfo.title + " by " + audioTrackInfo.author + " [" + StringUtils.millisecondsFormatted(audioTrack.getDuration()) + "] at position #" + AudioManager.getPositionInQueue(event.getGuild(), audioTrack) + " in the queue.");
-            SongSearch.Hit hit = AbstractAudioCommand.getHit(event.getGuild());
+            SongSearch.Hit hit = getCurrentlyPlayingHit(event.getGuild());
             if (hit != null) {
                 embedBuilder.setThumbnail(hit.getThumbnailUrl());
                 embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());

@@ -3,16 +3,20 @@ package io.github.theblacksquidward.squidwardbot.audio.commands;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
+import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
+import java.time.Instant;
 import java.util.List;
 
 @Command
@@ -21,41 +25,58 @@ public class SearchCommand extends AbstractAudioCommand {
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
+        event.deferReply().queue();
+
         String identifier = event.getOption("identifier").getAsString();
-        ReplyCallbackAction replyCallbackAction = event.deferReply();
-        AudioManager.loadAndPlay(guild, identifier, new AudioLoadResultImpl(replyCallbackAction, identifier, AudioManager.getOrCreate(guild).getTrackScheduler()));
+        AudioManager.loadAndPlay(guild, identifier, new AudioLoadResultImpl(event, identifier, AudioManager.getOrCreate(guild).getTrackScheduler()));
     }
 
     private static class AudioLoadResultImpl extends BaseAudioLoadResultImpl {
 
-        private final ReplyCallbackAction replyCallbackAction;
+        private final SlashCommandInteractionEvent event;
         private final String identifier;
 
-        public AudioLoadResultImpl(ReplyCallbackAction replyCallbackAction, String identifier, TrackScheduler trackScheduler) {
+        public AudioLoadResultImpl(SlashCommandInteractionEvent event, String identifier, TrackScheduler trackScheduler) {
             super(trackScheduler);
-            this.replyCallbackAction = replyCallbackAction;
+            this.event = event;
             this.identifier = identifier;
         }
 
         @Override
-        public void trackLoaded(AudioTrack track) {
-            super.trackLoaded(track);
+        public void trackLoaded(AudioTrack audioTrack) {
+            AudioTrackInfo audioTrackInfo = audioTrack.getInfo();
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setTimestamp(Instant.now());
+            embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
+
+            SongSearch.Hit hit = getHit(event.getGuild(), audioTrack);
+            if(hit != null) {
+                embedBuilder.setThumbnail(hit.getThumbnailUrl());
+                embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
+                embedBuilder.setTitle(hit.getTitleWithFeatured(), audioTrackInfo.uri);
+            } else {
+                embedBuilder.setThumbnail(audioTrackInfo.artworkUrl);
+                embedBuilder.setFooter(audioTrackInfo.author);
+                embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
+            }
+            event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
+            super.trackLoaded(audioTrack);
         }
 
         @Override
-        public void playlistLoaded(AudioPlaylist playlist) {
-            super.playlistLoaded(playlist);
+        public void playlistLoaded(AudioPlaylist audioPlaylist) {
+            super.playlistLoaded(audioPlaylist);
         }
 
         @Override
         public void noMatches() {
-            replyCallbackAction.addEmbeds(createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track or an audio playlist.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("Could not match the given identifier: `" + identifier + "` to an audio track or an audio playlist.")).queue();
             super.noMatches();
         }
 
         @Override
         public void loadFailed(FriendlyException exception) {
-            replyCallbackAction.addEmbeds(createMusicReply(
+            event.getHook().sendMessageEmbeds(createMusicReply(
                     "Error whilst trying to search for the given identifier. Please report the following information:" +
                             "\n\nSeverity: " + exception.severity.name() +
                             "\nSpecified Identifier: " + identifier +

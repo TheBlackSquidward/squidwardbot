@@ -22,13 +22,18 @@ public class TrackScheduler extends AudioEventAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
     private static final float[] BASS_BOOST = {0.15f, 0.14f, 0.13f, 0.14f, 0.05f, 0.01f, 0.02f, 0.03f, 0.04f, 0.05f, 0.06f, 0.07f, 0.08f, 0.09f, 0.1f};
 
+    private final float NIGHTCORE_TEMPO = 1.15f;
+    private final float SLOWED_TEMPO = 0.85f;
+
     private final AudioPlayer audioPlayer;
     private BlockingDeque<AudioTrack> queue;
 
     private boolean isRepeating = false;
 
     private boolean isNightcore = false;
-    private double nightcoreSpeed = 1.0;
+    private boolean isSlowed = false;
+
+    private float tempo = 1.0f;
 
     private boolean isBassBoosted = false;
     private float bassBoostMultiplier = 0.0f;
@@ -49,28 +54,46 @@ public class TrackScheduler extends AudioEventAdapter {
         this.isRepeating = !this.isRepeating;
     }
 
+    public float getTempo() {
+        return tempo;
+    }
+
+    public void setTempo(float tempo) {
+        this.tempo = tempo;
+        updateFilters();
+    }
+
+    public void resetTempo() {
+        this.tempo = 1.0f;
+        updateFilters();
+    }
+
     public boolean isNightcore() {
         return isNightcore;
     }
 
+    public boolean isSlowed() {
+        return isSlowed;
+    }
+
+    public void enableSlowed() {
+        this.isSlowed = true;
+        setTempo(SLOWED_TEMPO);
+    }
+
+    public void disableSlowed() {
+        this.isSlowed = false;
+        resetTempo();
+    }
+
     public void enableNightcore() {
         this.isNightcore = true;
-        updateFilters();
+        setTempo(NIGHTCORE_TEMPO);
     }
 
     public void disableNightcore() {
         this.isNightcore = false;
-        this.nightcoreSpeed = 1.0f;
-        updateFilters();
-    }
-
-    public void setNightcoreSpeed(double speed) {
-        nightcoreSpeed = speed;
-        updateFilters();
-    }
-
-    public double getNightcoreSpeed() {
-        return nightcoreSpeed;
+        resetTempo();
     }
 
     public boolean isBassBoosted() {
@@ -99,7 +122,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public void resetFilters() {
         this.isNightcore = false;
-        this.nightcoreSpeed = 1.0f;
+        this.tempo = 1.0f;
         this.isBassBoosted = false;
         this.bassBoostMultiplier = 0.0f;
         shouldRebuildFilters = false;
@@ -124,13 +147,13 @@ public class TrackScheduler extends AudioEventAdapter {
         List<AudioFilter> filterList = new ArrayList<>();
         FloatPcmAudioFilter filter = downstreamAudioFilter;
 
-        if(isNightcore) {
+        if(isSlowed || isNightcore) {
             ResamplingPcmAudioFilter resamplingPcmAudioFilter = new ResamplingPcmAudioFilter(
                     AudioManager.getAudioConfiguration(),
                     audioDataFormat.channelCount,
                     filter,
                     audioDataFormat.sampleRate,
-                    (int) (audioDataFormat.sampleRate / nightcoreSpeed)
+                    (int) (audioDataFormat.sampleRate / tempo)
             );
             filterList.add(resamplingPcmAudioFilter);
             filter = resamplingPcmAudioFilter;

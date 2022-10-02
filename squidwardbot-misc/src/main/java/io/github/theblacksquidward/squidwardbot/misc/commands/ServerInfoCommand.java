@@ -16,11 +16,13 @@ public class ServerInfoCommand extends SquidwardBotCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
+        Guild guild = event.getGuild();
+        event.deferReply().queue();
         if(!event.isFromGuild()) {
-            event.deferReply().setContent("This command can only be executed in a server.").mentionRepliedUser(false).queue();
+            event.getHook().sendMessage("This command can only be executed in a server.").mentionRepliedUser(false).setEphemeral(true).queue();
             return;
         }
-        event.deferReply().addEmbeds(getServerEmbed(event.getGuild())).mentionRepliedUser(false).queue();
+        event.getHook().sendMessageEmbeds(getServerEmbed(guild)).mentionRepliedUser(false).queue();
     }
 
     @Override
@@ -36,7 +38,7 @@ public class ServerInfoCommand extends SquidwardBotCommand {
     private MessageEmbed getServerEmbed(Guild guild) {
         final EmbedBuilder embedBuilder = new EmbedBuilder();
 
-        embedBuilder.setTitle("Server Information: " + guild.getName());
+        embedBuilder.setTitle(guild.getName());
         embedBuilder.setTimestamp(Instant.now());
         embedBuilder.setThumbnail(guild.getIconUrl());
         embedBuilder.setDescription(guild.getDescription());

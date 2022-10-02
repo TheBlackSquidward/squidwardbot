@@ -20,7 +20,8 @@ public class BotInfoCommand extends SquidwardBotCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
-        event.deferReply().addEmbeds(createBotInfoEmbed(event.getJDA(), event.isFromGuild() ? event.getGuild() : null)).queue();
+        event.deferReply().queue();
+        event.getHook().sendMessageEmbeds(createBotInfoEmbed(event.getJDA(), event.isFromGuild() ? event.getGuild() : null)).queue();
     }
 
     @Override

@@ -18,55 +18,35 @@ public class NightcoreCommand extends AbstractAudioCommand {
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
+        event.deferReply().queue();
         if(!event.getMember().getVoiceState().inAudioChannel()) {
-            event.deferReply().addEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
         final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
         if(!event.getGuild().getAudioManager().isConnected()) {
-            event.deferReply().addEmbeds(createMusicReply("The bot must be connected to a voice channel to apply the nightcore effect to the audio player.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The bot must be connected to a voice channel to apply the nightcore effect to the audio player.")).queue();
             return;
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
-            event.deferReply().addEmbeds(createMusicReply("You must be in the same voice channel as the bot to apply the nightcore effect to the audio player.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in the same voice channel as the bot to apply the nightcore effect to the audio player.")).queue();
             return;
         }
         if(!AudioManager.isPlayingTrack(guild)) {
-            event.deferReply().addEmbeds(createMusicReply("The bot is not currently playing anything...")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The bot is not currently playing anything...")).queue();
             return;
         }
-        if(event.getSubcommandName().equalsIgnoreCase("enable")) {
-            if(AudioManager.isNightcore(guild)) {
-                event.deferReply().addEmbeds(createMusicReply("The audio player already has the nightcore effect applied.")).queue();
-                return;
-            }
-            AudioManager.enableNightcore(guild);
-            event.deferReply().addEmbeds(createMusicReply("The nightcore effect has successfully been applied to the audio player.")).queue();
+        if(AudioManager.isSlowed(guild)) {
+            event.getHook().sendMessageEmbeds(createMusicReply("The nightcore effect cannot be applied to the audio player as it currently has the slow effect.")).queue();
+            return;
         }
-        if(event.getSubcommandName().equalsIgnoreCase("disable")) {
-            if(!AudioManager.isNightcore(guild)) {
-                event.deferReply().addEmbeds(createMusicReply("The audio player does not currently have the nightcore effect applied.")).queue();
-                return;
-            }
+        if(AudioManager.isNightcore(guild)) {
+            event.getHook().sendMessageEmbeds(createMusicReply("The nightcore effect has been removed from the player.")).queue();
             AudioManager.disableNightcore(guild);
-            event.deferReply().addEmbeds(createMusicReply("The nightcore effect has been removed from the audio player.")).queue();
+            return;
         }
-        if(event.getSubcommandName().equalsIgnoreCase("get")) {
-            if(!AudioManager.isNightcore(guild)) {
-                event.deferReply().addEmbeds(createMusicReply("The audio player does not currently have the nightcore effect applied.")).queue();
-                return;
-            }
-            event.deferReply().addEmbeds(createMusicReply("The current nightcore speed is `" + AudioManager.getNightcoreSpeed(guild) + "`.")).queue();
-        }
-        if(event.getSubcommandName().equalsIgnoreCase("set")) {
-            if(!AudioManager.isNightcore(guild)) {
-                event.deferReply().addEmbeds(createMusicReply("The audio player does not currently have the nightcore effect applied.")).queue();
-                return;
-            }
-            final OptionMapping nightcore = event.getOption("nightcore");
-            AudioManager.setNightcoreSpeed(guild, nightcore.getAsDouble());
-            event.deferReply().addEmbeds(createMusicReply("The nightcore speed has been set to " + nightcore.getAsDouble() + ".")).queue();
-        }
+        event.getHook().sendMessageEmbeds(createMusicReply("The nightcore effect has been applied to the player.")).queue();
+        AudioManager.enableNightcore(guild);
     }
 
     @Override
@@ -77,18 +57,6 @@ public class NightcoreCommand extends AbstractAudioCommand {
     @Override
     public String getDescription() {
         return "Adds a nightcore effect to the audio player.";
-    }
-
-    @Override
-    public List<SubcommandData> getSubcommandData() {
-        return List.of(
-                new SubcommandData("enable", "Enables the nightcore feature on this audio player."),
-                new SubcommandData("disable", "Disables the nightcore feature on this audio player."),
-                new SubcommandData("get", "Gets the current nightcore speed."),
-                new SubcommandData("set", "Sets the nightcore speed.")
-                        .addOptions(new OptionData(OptionType.NUMBER, "nightcore", "The speed of the nightcore effect.", true)
-                                .setRequiredRange(0.0, 2.0))
-        );
     }
 
 }

@@ -5,6 +5,7 @@ import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotComman
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.lang.management.ManagementFactory;
@@ -15,13 +16,8 @@ public class UptimeCommand extends SquidwardBotCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
-        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-        final long uptimeInMilliseconds = runtimeMXBean.getUptime();
-        final String uptimeFormatted = StringUtils.millisecondsFormatted(uptimeInMilliseconds);
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
-        embedBuilder.setDescription("The current uptime of the bot is: **" + uptimeFormatted + "**.");
-        event.deferReply().addEmbeds(embedBuilder.build()).queue();
+        event.deferReply().queue();
+        event.getHook().sendMessageEmbeds(getUptimeEmbed()).queue();
     }
 
     @Override
@@ -32,6 +28,16 @@ public class UptimeCommand extends SquidwardBotCommand {
     @Override
     public String getDescription() {
         return "Displays the current uptime of the bot.";
+    }
+
+    private MessageEmbed getUptimeEmbed() {
+        final EmbedBuilder embedBuilder = new EmbedBuilder();
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        final long uptimeInMilliseconds = runtimeMXBean.getUptime();
+        final String uptimeFormatted = StringUtils.millisecondsFormatted(uptimeInMilliseconds);
+        embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
+        embedBuilder.setDescription("The current uptime of the bot is: **" + uptimeFormatted + "**.");
+        return embedBuilder.build();
     }
 
 }

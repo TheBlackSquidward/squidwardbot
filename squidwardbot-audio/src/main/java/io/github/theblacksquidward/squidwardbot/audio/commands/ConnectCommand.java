@@ -22,27 +22,28 @@ public class ConnectCommand extends AbstractAudioCommand {
         Guild guild = event.getGuild();
         User user = event.getUser();
         OptionMapping option = event.getOption("channel");
+        event.deferReply().queue();
         if(event.getGuild().getAudioManager().isConnected()) {
-            event.deferReply().addEmbeds(createMusicReply("The bot is already connected to the channel" + guild.getAudioManager().getConnectedChannel().getName())).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The bot is already connected to the channel" + guild.getAudioManager().getConnectedChannel().getName())).queue();
             return;
         }
         if(option == null) {
             if(guild.getMember(user) == null) {
-                event.deferReply().addEmbeds(createMusicReply("You are not currently in a voice channel. Either join one or specifiy one.")).queue();
+                event.getHook().sendMessageEmbeds(createMusicReply("You are not currently in a voice channel. Either join one or specify one.")).queue();
                 return;
             }
             final AudioChannel audioChannel = guild.getMember(user).getVoiceState().getChannel();
             guild.getAudioManager().openAudioConnection(audioChannel);
-            event.deferReply().addEmbeds(createMusicReply("Successfully connected to " + audioChannel.getName())).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("Successfully connected to " + audioChannel.getName())).queue();
         } else {
             GuildChannelUnion channel = option.getAsChannel();
             if(channel.getType() != ChannelType.VOICE) {
-                event.deferReply().addEmbeds(createMusicReply("The channel specified is not a voice channel.")).queue();
+                event.getHook().sendMessageEmbeds(createMusicReply("The channel specified is not a voice channel.")).queue();
                 return;
             }
             VoiceChannel voiceChannel = channel.asVoiceChannel();
             guild.getAudioManager().openAudioConnection(voiceChannel);
-            event.deferReply().addEmbeds(createMusicReply("Successfully connected to " + voiceChannel.getName())).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("Successfully connected to " + voiceChannel.getName())).queue();
         }
     }
 

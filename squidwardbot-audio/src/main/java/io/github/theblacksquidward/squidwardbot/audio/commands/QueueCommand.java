@@ -22,25 +22,26 @@ public class QueueCommand extends AbstractAudioCommand {
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
+        event.deferReply().queue();
         if(!event.getMember().getVoiceState().inAudioChannel()) {
-            event.deferReply().addEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in a voice channel to use this command.")).queue();
             return;
         }
         final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
         if(!event.getGuild().getAudioManager().isConnected()) {
-            event.deferReply().addEmbeds(createMusicReply("The bot must be connected to a voice channel to view the queue.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The bot must be connected to a voice channel to view the queue.")).queue();
             return;
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
-            event.deferReply().addEmbeds(createMusicReply("You must be in the same voice channel as the bot to view the queue.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in the same voice channel as the bot to view the queue.")).queue();
             return;
         }
         if(AudioManager.isQueueEmpty(guild)) {
-            event.deferReply().addEmbeds(createMusicReply("Could not view the queue as it is currently empty.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("Could not view the queue as it is currently empty.")).queue();
             return;
         }
-        //TODO redo with pagnation
-        event.deferReply().addEmbeds(getQueueEmbed(guild)).queue();
+        //TODO redo with pagination
+        event.getHook().sendMessageEmbeds(getQueueEmbed(guild)).queue();
     }
 
     @Override
@@ -53,7 +54,7 @@ public class QueueCommand extends AbstractAudioCommand {
         return "Returns the current queue.";
     }
 
-    //TODO this needs to be changed in favor of pagnation
+    //TODO this needs to be changed in favor of pagination
     private MessageEmbed getQueueEmbed(Guild guild) {
         return new EmbedBuilder()
                 .setColor(ColorConstants.PRIMARY_COLOR)

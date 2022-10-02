@@ -149,12 +149,24 @@ public class AudioManager {
         getOrCreate(guild).getTrackScheduler().disableNightcore();
     }
 
-    public static void setNightcoreSpeed(@NotNull Guild guild, double speed) {
-        getOrCreate(guild).getTrackScheduler().setNightcoreSpeed(speed);
+    public static boolean isSlowed(@NotNull Guild guild) {
+        return getOrCreate(guild).getTrackScheduler().isSlowed();
     }
 
-    public static double getNightcoreSpeed(@NotNull Guild guild) {
-        return getOrCreate(guild).getTrackScheduler().getNightcoreSpeed();
+    public static void enableSlowed(@NotNull Guild guild) {
+        getOrCreate(guild).getTrackScheduler().enableSlowed();
+    }
+
+    public static void disableSlowed(@NotNull Guild guild) {
+        getOrCreate(guild).getTrackScheduler().disableSlowed();
+    }
+
+    public static void setTempo(@NotNull Guild guild, float tempo) {
+        getOrCreate(guild).getTrackScheduler().setTempo(tempo);
+    }
+
+    public static double getTempo(@NotNull Guild guild) {
+        return getOrCreate(guild).getTrackScheduler().getTempo();
     }
 
     public static SongSearch getLyrics(@NotNull Guild guild) throws IOException {

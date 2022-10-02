@@ -9,7 +9,6 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.security.auth.login.LoginException;
 import java.util.List;
 
 public class Bootstrap {
@@ -28,6 +27,7 @@ public class Bootstrap {
         OptionSpec<String> optionSpec2 = optionParser.accepts("spotifyClientSecret").withRequiredArg().required();
         OptionSpec<String> optionSpec3 = optionParser.accepts("githubPersonalToken").withRequiredArg();
         OptionSpec<String> optionSpec4 = optionParser.accepts("githubUserId").withRequiredArg();
+        OptionSpec<String> optionSpec5 = optionParser.accepts("ownerIdAsLong").withRequiredArg();
         OptionSpec<String> nonOptions = optionParser.nonOptions();
         OptionSet optionSet = optionParser.parse(args);
         List<String> list = optionSet.valuesOf(nonOptions);
@@ -39,11 +39,13 @@ public class Bootstrap {
         String spotifyClientSecret = parseArgument(optionSet, optionSpec2);
         String githubPersonalToken = parseArgument(optionSet, optionSpec3);
         String githubUserId = parseArgument(optionSet, optionSpec4);
+        String ownerId = parseArgument(optionSet, optionSpec5);
+        Long ownerIdAsLong = ownerId == null ? null : Long.parseLong(ownerId);
         final Reflections REFLECTIONS = new Reflections("io.github.theblacksquidward");
         LOGGER.info("Starting SquidwardBot (Version {})", version);
         final SquidwardBot SQUIDWARD_BOT;
         try {
-            SQUIDWARD_BOT = new SquidwardBot(discordBotAccessToken, REFLECTIONS, version, spotifyClientId, spotifyClientSecret);
+            SQUIDWARD_BOT = new SquidwardBot(discordBotAccessToken, REFLECTIONS, version, spotifyClientId, spotifyClientSecret, ownerIdAsLong);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

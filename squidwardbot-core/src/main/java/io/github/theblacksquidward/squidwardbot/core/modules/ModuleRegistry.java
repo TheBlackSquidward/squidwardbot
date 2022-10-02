@@ -2,6 +2,7 @@ package io.github.theblacksquidward.squidwardbot.core.modules;
 
 import com.google.common.base.Stopwatch;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
+import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -29,9 +30,13 @@ public class ModuleRegistry {
                 addModuleFromClass(annotatedClass);
             }
         });
-        LOGGER.debug("Loaded modules: {}", StringUtils.getIndentedStringList(getModules()));
+        LOGGER.debug("Loaded modules: {}", StringUtils.getIndentedStringList(getModules().stream()
+                .map(ISquidwardBotModule::getModuleIdentifier)
+                .map(name -> WordUtils.capitalize(name.replace("_", " ").replace("squidwardbot", "SquidwardBot")))
+                .toList()
+        ));
         timer.stop();
-        LOGGER.info("Successfully found and registered {} commands in {}.", getModules().size(), timer);
+        LOGGER.info("Successfully found and registered {} modules in {}.", getModules().size(), timer);
         forEachPlugin(ISquidwardBotModule::onModuleRegister);
     }
 

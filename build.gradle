@@ -18,7 +18,7 @@ allprojects {
 
     dependencies {
         implementation 'org.jetbrains:annotations:23.0.0'
-        implementation 'ch.qos.logback:logback-classic:1.4.1'
+        implementation 'ch.qos.logback:logback-classic:1.4.3'
         implementation 'net.dv8tion:JDA:5.0.0-alpha.20'
         implementation 'org.reflections:reflections:0.10.2'
         implementation 'com.google.guava:guava:31.1-jre'

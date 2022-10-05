@@ -50,7 +50,7 @@ public class NowPlayingCommand extends AbstractAudioCommand {
 
     private MessageEmbed getCurrentTrackEmbed(Guild guild, AudioTrack currentTrack) {
         AudioTrackInfo currentTrackInfo = currentTrack.getInfo();
-        SongSearch.Hit hit = getHit(guild);
+        SongSearch.Hit hit = getCurrentlyPlayingHit(guild);
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTimestamp(Instant.now())
                 .setColor(ColorConstants.PRIMARY_COLOR)

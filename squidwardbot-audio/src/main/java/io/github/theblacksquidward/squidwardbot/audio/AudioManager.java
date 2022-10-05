@@ -170,7 +170,11 @@ public class AudioManager {
     }
 
     public static SongSearch getLyrics(@NotNull Guild guild) throws IOException {
-        return Constants.GENIUS_LYRICS_API.search(getCurrentlyPlayingTrack(guild).getInfo().title + "" + getCurrentlyPlayingTrack(guild).getInfo().author);
+        return getLyrics(guild, getCurrentlyPlayingTrack(guild));
+    }
+
+    public static SongSearch getLyrics(@NotNull Guild guild, @NotNull AudioTrack audioTrack) throws IOException {
+        return Constants.GENIUS_LYRICS_API.search(audioTrack.getInfo().title + "" + audioTrack.getInfo().author);
     }
 
     public static void loadAndPlay(@NotNull Guild guild, String identifier) {

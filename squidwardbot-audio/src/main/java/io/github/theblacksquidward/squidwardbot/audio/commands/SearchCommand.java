@@ -10,6 +10,7 @@ import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
+import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -17,7 +18,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.time.Instant;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Command
 public class SearchCommand extends AbstractAudioCommand {
@@ -59,12 +62,16 @@ public class SearchCommand extends AbstractAudioCommand {
                 embedBuilder.setFooter(audioTrackInfo.author);
                 embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
             }
+            embedBuilder.addField("Identifier", identifier, false);
+            embedBuilder.addField("Duration", StringUtils.millisecondsFormatted(audioTrackInfo.length), false);
+
             event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
             super.trackLoaded(audioTrack);
         }
 
         @Override
         public void playlistLoaded(AudioPlaylist audioPlaylist) {
+            event.getHook().sendMessageEmbeds(createMusicReply("Somehow the given identifier: `" + identifier + "` has returned an audio playlist.")).queue();
             super.playlistLoaded(audioPlaylist);
         }
 

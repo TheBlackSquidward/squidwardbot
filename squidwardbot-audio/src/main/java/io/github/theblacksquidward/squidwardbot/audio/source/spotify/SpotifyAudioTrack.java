@@ -6,7 +6,6 @@ import com.sedmelluq.discord.lavaplayer.track.*;
 import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.michaelthelin.spotify.model_objects.specification.*;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -77,25 +76,6 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
             }
         });
         return cf.join();
-    }
-
-    public static SpotifyAudioTrack createSpotifyTrack(TrackSimplified track, Album album, SpotifyAudioSourceManager sourceManager) {
-        return createSpotifyTrack(track.getName(), track.getId(), null, album.getArtists(), album.getImages(), track.getDurationMs(), sourceManager);
-    }
-
-    public static SpotifyAudioTrack createSpotifyTrack(String title, String identifier, String isrc, ArtistSimplified[] artists, Image[] images, Integer trackDuration, SpotifyAudioSourceManager sourceManager) {
-        return new SpotifyAudioTrack(new AudioTrackInfo(
-                title,
-                artists.length == 0 ? "unknown" : artists[0].getName(),
-                trackDuration.longValue(),
-                identifier,
-                false,
-                "https://open.spotify.com/track/" + identifier, images.length == 0 ? null : images[0].getUrl(),
-                isrc), sourceManager);
-    }
-
-    public static SpotifyAudioTrack createSpotifyTrack(Track track, SpotifyAudioSourceManager sourceManager) {
-        return createSpotifyTrack(track.getName(), track.getId(), track.getExternalIds().getExternalIds().getOrDefault("isrc", null), track.getArtists(), track.getAlbum().getImages(), track.getDurationMs(), sourceManager);
     }
 
     @Override

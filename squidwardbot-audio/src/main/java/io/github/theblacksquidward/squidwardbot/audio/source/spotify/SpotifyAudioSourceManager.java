@@ -34,12 +34,13 @@ import java.util.regex.Pattern;
 
 public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfigurable {
 
-    public static final Pattern SPOTIFY_URL_PATTERN = Pattern.compile("(https?://)?(www\\.)?open\\.spotify\\.com/(user/[a-zA-Z0-9-_]+/)?(?<type>track|album|playlist|artist)/(?<identifier>[a-zA-Z0-9-_]+)");
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
+
+    public static final Pattern URL_PATTERN = Pattern.compile("(https?://)?(www\\.)?open\\.spotify\\.com/(user/[a-zA-Z0-9-_]+/)?(?<type>track|album|playlist|artist)/(?<identifier>[a-zA-Z0-9-_]+)");
     public static final String SEARCH_PREFIX = "spsearch:";
+    public static final String COUNTRY_CODE = "GB";
     public static final int PLAYLIST_MAX_PAGE_ITEMS = 100;
     public static final int ALBUM_MAX_PAGE_ITEMS = 50;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
 
     private final HttpInterfaceManager httpInterfaceManager = HttpClientTools.createDefaultThreadLocalManager();
 
@@ -79,7 +80,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             if(audioReference.identifier.startsWith(SEARCH_PREFIX)) {
                 return this.getFirstSearchResultAsTrack(audioReference.identifier.substring(SEARCH_PREFIX.length()).trim());
             }
-            Matcher matcher = SPOTIFY_URL_PATTERN.matcher(audioReference.identifier);
+            Matcher matcher = URL_PATTERN.matcher(audioReference.identifier);
             if (!matcher.find()) {
                 return null;
             }
@@ -141,7 +142,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         if(json == null) {
             return Collections.emptyList();
         }
-        return parseSpotifyTracks(json);
+        return parseSpotifySearch(json);
     }
 
     private AudioItem getTrack(String identifier) throws IOException {
@@ -165,7 +166,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             page = this.getJson("https://api.spotify.com/v1/playlists/" + identifier + "/tracks?limit=" + PLAYLIST_MAX_PAGE_ITEMS + "&offset=" + offset);
             offset += PLAYLIST_MAX_PAGE_ITEMS;
 
-            tracks.addAll(parseSpotifyTracks(page));
+            tracks.addAll(parseSpotifyPlaylist(page));
         }
         while(page.get("next").text() != null);
 
@@ -185,7 +186,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             page = this.getJson("https://api.spotify.com/v1/albums/" + identifier + "/tracks?limit=" + ALBUM_MAX_PAGE_ITEMS + "&offset=" + offset);
             offset += ALBUM_MAX_PAGE_ITEMS;
 
-            tracks.addAll(parseSpotifyTracks(page));
+            tracks.addAll(parseSpotifyAlbum(page));
         }
         while(page.get("next").text() != null);
 
@@ -193,17 +194,41 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     private AudioItem getArtist(String identifier) throws IOException {
-        JsonBrowser json = this.getJson("https://api.spotify.com/v1/artists/" + identifier + "/top-tracks");
+        JsonBrowser json = this.getJson("https://api.spotify.com/v1/artists/" + identifier + "/top-tracks?market=" + COUNTRY_CODE);
         if(json == null) {
             return AudioReference.NO_TRACK;
         }
         return new BasicAudioPlaylist(json.get("tracks").index(0).get("artists").index(0).get("name").text() + "'s Top Tracks", parseSpotifyTracks(json), null, false);
     }
 
+    private List<AudioTrack> parseSpotifySearch(JsonBrowser json) {
+        List<AudioTrack> tracks = new ArrayList<>();
+        for(JsonBrowser value : json.get("tracks").get("items").values()) {
+            tracks.add(parseSpotifyTrack(value));
+        }
+        return tracks;
+    }
+
+    private List<AudioTrack> parseSpotifyPlaylist(JsonBrowser json) {
+        List<AudioTrack> tracks = new ArrayList<>();
+        for(JsonBrowser value : json.get("items").values()){
+            tracks.add(parseSpotifyTrack(value.get("track")));
+        }
+        return tracks;
+    }
+
+    private List<AudioTrack> parseSpotifyAlbum(JsonBrowser json) {
+        List<AudioTrack> tracks = new ArrayList<>();
+        for(JsonBrowser value : json.get("items").values()){
+            tracks.add(parseSpotifyTrack(value));
+        }
+        return tracks;
+    }
+
     private List<AudioTrack> parseSpotifyTracks(JsonBrowser json) {
         List<AudioTrack> tracks = new ArrayList<>();
-        for(JsonBrowser value : json.get("tracks").values()){
-            tracks.add(this.parseSpotifyTrack(value));
+        for(JsonBrowser value : json.get("tracks").values()) {
+            tracks.add(parseSpotifyTrack(value));
         }
         return tracks;
     }
@@ -217,8 +242,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                         json.get("id").text(),
                         false,
                         json.get("external_urls").get("spotify").text(),
-                        json.get("external_ids").get("isrc").text(),
-                        json.get("album").get("images").index(0).get("url").text()
+                        json.get("album").get("images").index(0).get("url").text(),
+                        json.get("external_ids").get("isrc").text()
                 ), this);
     }
 

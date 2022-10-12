@@ -65,7 +65,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
             }
             provider = provider.replace(QUERY_PATTERN, getTrackTitle());
             audioItem = loadItem(provider);
-            if(audioItem != null){
+            if(audioItem != AudioReference.NO_TRACK){
                 break;
             }
         }

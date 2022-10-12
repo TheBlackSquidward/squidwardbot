@@ -166,7 +166,7 @@ public class SpotifySourceManager implements AudioSourceManager, HttpConfigurabl
             page = getJson("https://api.spotify.com/v1/playlists/" + identifier + "/tracks?limit=" + PLAYLIST_MAX_PAGE_ITEMS + "&offset=" + offset);
         }
 
-        return new BasicAudioPlaylist(json.get("data").index(0).get("attributes").get("name").text(), tracks, null, false);
+        return tracks.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(json.get("data").index(0).get("attributes").get("name").text(), tracks, null, false);
     }
 
     private AudioItem getAlbum(String identifier) throws IOException {
@@ -182,7 +182,7 @@ public class SpotifySourceManager implements AudioSourceManager, HttpConfigurabl
             tracks.addAll(parseSpotifyTrackItems(page));
             page = getJson("https://api.spotify.com/v1/albums/" + identifier + "/tracks?limit=" + ALBUM_MAX_PAGE_ITEMS + "&offset=" + offset);
         }
-        return new BasicAudioPlaylist(json.get("data").index(0).get("attributes").get("name").text(), tracks, null, false);
+        return tracks.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(json.get("data").index(0).get("attributes").get("name").text(), tracks, null, false);
     }
 
     private AudioItem getArtist(String identifier) throws IOException {

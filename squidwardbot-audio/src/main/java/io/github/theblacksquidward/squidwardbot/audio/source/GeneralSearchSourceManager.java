@@ -7,7 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifyAudioSourceManager;
+import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifySourceManager;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -22,7 +22,7 @@ public class GeneralSearchSourceManager implements AudioSourceManager {
     @Override
     public AudioItem loadItem(AudioPlayerManager audioPlayerManager, AudioReference audioReference) {
         String identifier = audioReference.identifier;
-        AudioItem result = audioPlayerManager.source(SpotifyAudioSourceManager.class).loadItem(audioPlayerManager, new AudioReference("spsearch:" + identifier, null));
+        AudioItem result = audioPlayerManager.source(SpotifySourceManager.class).loadItem(audioPlayerManager, new AudioReference("spsearch:" + identifier, null));
         if(result != null) {
             return result;
         }

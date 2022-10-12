@@ -22,15 +22,15 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyAudioTrack.class);
 
-    private final SpotifyAudioSourceManager sourceManager;
+    private final SpotifySourceManager sourceManager;
 
-    public SpotifyAudioTrack(AudioTrackInfo trackInfo, SpotifyAudioSourceManager sourceManager) {
+    public SpotifyAudioTrack(AudioTrackInfo trackInfo, SpotifySourceManager sourceManager) {
         super(trackInfo);
         this.sourceManager = sourceManager;
     }
 
     @Override
-    public SpotifyAudioSourceManager getSourceManager() {
+    public SpotifySourceManager getSourceManager() {
         return sourceManager;
     }
 
@@ -47,7 +47,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
     public void process(LocalAudioTrackExecutor localAudioTrackExecutor) throws Exception {
         AudioItem audioItem = null;
         for(String provider : PROVIDERS) {
-            if(provider.startsWith(SpotifyAudioSourceManager.SEARCH_PREFIX)) {
+            if(provider.startsWith(SpotifySourceManager.SEARCH_PREFIX)) {
                 LOGGER.warn("Can not use spotify search as search provider!");
                 continue;
             }

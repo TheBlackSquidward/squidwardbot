@@ -132,14 +132,14 @@ public class SpotifySourceManager implements AudioSourceManager, HttpConfigurabl
     }
 
     private AudioItem getFirstSearchResultAsTrack(String identifier) throws IOException {
-        List<AudioTrack> result = getSearchResults(identifier);
-        return result.isEmpty() ? AudioReference.NO_TRACK : result.get(0);
+        List<AudioTrack> searchResults = getSearchResults(identifier);
+        return searchResults.isEmpty() ? AudioReference.NO_TRACK : searchResults.get(0);
     }
 
     @SuppressWarnings("unused")
     private AudioItem getAllSearchResultsAsPlaylist(String identifier) throws IOException {
-        List<AudioTrack> result = getSearchResults(identifier);
-        return result.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist("Search results for: " + identifier, result, null, true);
+        List<AudioTrack> searchResults = getSearchResults(identifier);
+        return searchResults.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist("Search results for: " + identifier, searchResults, null, true);
     }
 
     private List<AudioTrack> getSearchResults(String identifier) throws IOException {

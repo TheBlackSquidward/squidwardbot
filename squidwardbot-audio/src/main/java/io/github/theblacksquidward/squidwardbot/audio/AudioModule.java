@@ -4,7 +4,7 @@ import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import io.github.theblacksquidward.squidwardbot.core.modules.ISquidwardBotModule;
 import io.github.theblacksquidward.squidwardbot.core.modules.SquidwardBotModule;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 
 @SquidwardBotModule
 public class AudioModule implements ISquidwardBotModule {

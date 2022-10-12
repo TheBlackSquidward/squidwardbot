@@ -1,8 +1,8 @@
 package io.github.theblacksquidward.squidwardbot.core.modules;
 
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 
 public interface ISquidwardBotModule {
 

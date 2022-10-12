@@ -2,7 +2,7 @@ package io.github.theblacksquidward.squidwardbot.core.commands;
 
 import com.google.common.base.Stopwatch;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
-import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class CommandManager extends ListenerAdapter {
 

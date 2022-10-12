@@ -1,13 +1,13 @@
 package io.github.theblacksquidward.squidwardbot.audio.source.applemusic;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterfaceManager;
 import com.sedmelluq.discord.lavaplayer.track.*;
+import io.github.theblacksquidward.squidwardbot.audio.source.delegating.DelegatingSourceManager;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -36,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class AppleMusicSourceManager implements AudioSourceManager, HttpConfigurable {
+public class AppleMusicSourceManager extends DelegatingSourceManager implements HttpConfigurable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppleMusicSourceManager.class);
 
@@ -46,15 +45,13 @@ public class AppleMusicSourceManager implements AudioSourceManager, HttpConfigur
 
     private final HttpInterfaceManager httpInterfaceManager = HttpClientTools.createDefaultThreadLocalManager();
 
-    private final AudioPlayerManager audioPlayerManager;
-
     private final String countryCode;
 
     private String token;
     private Instant tokenExpire;
 
     public AppleMusicSourceManager(AudioPlayerManager audioPlayerManager, String countryCode) {
-        this.audioPlayerManager = audioPlayerManager;
+        super(audioPlayerManager);
         if(countryCode == null || countryCode.isEmpty()) {
             countryCode = "us";
         }
@@ -63,10 +60,6 @@ public class AppleMusicSourceManager implements AudioSourceManager, HttpConfigur
 
     public AppleMusicSourceManager(AudioPlayerManager audioPlayerManager) {
         this(audioPlayerManager, "us");
-    }
-
-    public AudioPlayerManager getAudioPlayerManager() {
-        return audioPlayerManager;
     }
 
     @Override
@@ -211,16 +204,6 @@ public class AppleMusicSourceManager implements AudioSourceManager, HttpConfigur
                         artwork.get("url").text().replace("{w}", artwork.get("width").text()).replace("{h}", artwork.get("height").text()),
                         attributes.get("isrc").text()
                 ), this);
-    }
-
-    @Override
-    public boolean isTrackEncodable(AudioTrack audioTrack) {
-        return true;
-    }
-
-    @Override
-    public void encodeTrack(AudioTrack audioTrack, DataOutput dataOutput)  {
-        // Nothing special to encode
     }
 
     @Override

@@ -1,13 +1,13 @@
 package io.github.theblacksquidward.squidwardbot.audio.source.spotify;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterfaceManager;
 import com.sedmelluq.discord.lavaplayer.track.*;
+import io.github.theblacksquidward.squidwardbot.audio.source.delegating.DelegatingSourceManager;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class SpotifySourceManager implements AudioSourceManager, HttpConfigurable {
+public class SpotifySourceManager extends DelegatingSourceManager implements HttpConfigurable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifySourceManager.class);
 
@@ -45,8 +44,6 @@ public class SpotifySourceManager implements AudioSourceManager, HttpConfigurabl
 
     private final HttpInterfaceManager httpInterfaceManager = HttpClientTools.createDefaultThreadLocalManager();
 
-    private final AudioPlayerManager audioPlayerManager;
-
     private final String spotifyClientId;
     private final String spotifyClientSecret;
     private final String countryCode;
@@ -55,7 +52,7 @@ public class SpotifySourceManager implements AudioSourceManager, HttpConfigurabl
     private Instant tokenExpire;
 
     public SpotifySourceManager(AudioPlayerManager audioPlayerManager, String spotifyClientId, String spotifyClientSecret, String countryCode) {
-        this.audioPlayerManager = audioPlayerManager;
+        super(audioPlayerManager);
         if(spotifyClientId == null || spotifyClientId.isEmpty()){
             throw new IllegalArgumentException("Spotify client id must be set");
         }
@@ -73,10 +70,6 @@ public class SpotifySourceManager implements AudioSourceManager, HttpConfigurabl
 
     public SpotifySourceManager(AudioPlayerManager audioPlayerManager, String spotifyClientId, String spotifyClientSecret) {
         this(audioPlayerManager, spotifyClientId, spotifyClientSecret, "US");
-    }
-
-    public AudioPlayerManager getAudioPlayerManager() {
-        return audioPlayerManager;
     }
 
     @Override
@@ -214,16 +207,6 @@ public class SpotifySourceManager implements AudioSourceManager, HttpConfigurabl
                         json.get("album").get("images").index(0).get("url").text(),
                         json.get("external_ids").get("isrc").text()
                 ), this);
-    }
-
-    @Override
-    public boolean isTrackEncodable(AudioTrack track) {
-        return true;
-    }
-
-    @Override
-    public void encodeTrack(AudioTrack track, DataOutput output) {
-        // Nothing special to decode
     }
 
     @Override

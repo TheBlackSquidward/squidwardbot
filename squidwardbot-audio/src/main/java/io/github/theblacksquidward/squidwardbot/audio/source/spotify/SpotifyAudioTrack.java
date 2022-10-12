@@ -79,7 +79,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
     private AudioItem loadItem(String provider) {
         CompletableFuture<AudioItem> cf = new CompletableFuture<>();
-        this.sourceManager.getAudioPlayerManager().loadItem(provider, new AudioLoadResultHandler(){
+        this.sourceManager.getAudioPlayerManager().loadItem(provider, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track){
                 cf.complete(track);

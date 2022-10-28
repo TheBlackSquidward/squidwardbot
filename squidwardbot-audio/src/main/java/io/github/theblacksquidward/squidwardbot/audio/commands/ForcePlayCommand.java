@@ -4,11 +4,15 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
+import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioTrack;
+import io.github.theblacksquidward.squidwardbot.audio.source.delegating.DelegatingAudioTrack;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
+import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
@@ -75,12 +79,21 @@ public class ForcePlayCommand extends AbstractAudioCommand {
         public void trackLoaded(AudioTrack audioTrack) {
             trackScheduler.forceQueueTrack(audioTrack);
             AudioTrackInfo audioTrackInfo = audioTrack.getInfo();
-            event.getHook().sendMessageEmbeds(new EmbedBuilder()
-                    .setTimestamp(Instant.now())
-                    .setColor(ColorConstants.PRIMARY_COLOR)
-                    .setAuthor("|  " + "Successfully force loaded " + audioTrackInfo.title + " by " + audioTrackInfo.author + " to the queue.", null, "https://avatars.githubusercontent.com/u/65785034?v=4")
-                    .setThumbnail(audioTrackInfo.artworkUrl)
-                    .build()).queue();
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setTimestamp(Instant.now());
+            embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
+            embedBuilder.setDescription("Successfully force loaded the track " + audioTrackInfo.title + " by " + audioTrackInfo.author + " [" + StringUtils.millisecondsFormatted(audioTrack.getDuration()) + "] to the queue.");
+            SongSearch.Hit hit = getCurrentlyPlayingHit(event.getGuild());
+            if (hit != null) {
+                embedBuilder.setThumbnail(hit.getThumbnailUrl());
+                embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
+                embedBuilder.setTitle(hit.getTitleWithFeatured(), audioTrackInfo.uri);
+            }
+            if(audioTrack instanceof DelegatingAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkUrl());
+            if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkUrl());
+            embedBuilder.setFooter(audioTrackInfo.author);
+            embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
+            event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
             super.trackLoaded(audioTrack);
         }
 

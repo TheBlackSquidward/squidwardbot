@@ -6,13 +6,13 @@ import io.github.theblacksquidward.squidwardbot.audio.source.delegating.Delegati
 
 public class SpotifyAudioTrack extends DelegatingAudioTrack {
 
-    public SpotifyAudioTrack(AudioTrackInfo trackInfo, SpotifySourceManager sourceManager) {
-        super(trackInfo, sourceManager);
+    public SpotifyAudioTrack(AudioTrackInfo trackInfo, String isrc, String artworkUrl, SpotifySourceManager sourceManager) {
+        super(trackInfo, isrc, artworkUrl, sourceManager);
     }
 
     @Override
     protected AudioTrack makeShallowClone() {
-        return new SpotifyAudioTrack(trackInfo, (SpotifySourceManager) sourceManager);
+        return new SpotifyAudioTrack(trackInfo, isrc, artworkUrl, (SpotifySourceManager) sourceManager);
     }
 
 }

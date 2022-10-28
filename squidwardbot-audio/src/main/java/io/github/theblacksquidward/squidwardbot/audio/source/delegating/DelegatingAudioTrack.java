@@ -18,11 +18,23 @@ public abstract class DelegatingAudioTrack extends DelegatedAudioTrack {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DelegatingAudioTrack.class);
 
+    protected final String isrc;
+    protected final String artworkUrl;
     protected final DelegatingSourceManager sourceManager;
 
-    public DelegatingAudioTrack(AudioTrackInfo trackInfo, DelegatingSourceManager sourceManager) {
+    public DelegatingAudioTrack(AudioTrackInfo trackInfo, String isrc, String artworkUrl, DelegatingSourceManager sourceManager) {
         super(trackInfo);
+        this.isrc = isrc;
+        this.artworkUrl = artworkUrl;
         this.sourceManager = sourceManager;
+    }
+
+    public String getIsrc() {
+        return isrc;
+    }
+
+    public String getArtworkUrl() {
+        return artworkUrl;
     }
 
     private String getTrackTitle() {
@@ -47,8 +59,8 @@ public abstract class DelegatingAudioTrack extends DelegatedAudioTrack {
                 continue;
             }
             if(provider.contains(ISRC_PATTERN)) {
-                if(this.trackInfo.isrc != null) {
-                    provider = provider.replace(ISRC_PATTERN, this.trackInfo.isrc);
+                if(isrc != null) {
+                    provider = provider.replace(ISRC_PATTERN, isrc);
                 } else {
                     LOGGER.debug("Ignoring identifier \"" + provider + "\" because this track does not have an ISRC!");
                     continue;

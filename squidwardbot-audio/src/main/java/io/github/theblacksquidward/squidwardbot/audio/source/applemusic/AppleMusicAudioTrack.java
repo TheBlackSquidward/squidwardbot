@@ -6,13 +6,13 @@ import io.github.theblacksquidward.squidwardbot.audio.source.delegating.Delegati
 
 public class AppleMusicAudioTrack extends DelegatingAudioTrack {
 
-    public AppleMusicAudioTrack(AudioTrackInfo trackInfo, AppleMusicSourceManager sourceManager) {
-        super(trackInfo, sourceManager);
+    public AppleMusicAudioTrack(AudioTrackInfo trackInfo, String isrc, String artworkUrl, AppleMusicSourceManager sourceManager) {
+        super(trackInfo, isrc, artworkUrl, sourceManager);
     }
 
     @Override
     protected AudioTrack makeShallowClone() {
-        return new AppleMusicAudioTrack(trackInfo, (AppleMusicSourceManager) sourceManager);
+        return new AppleMusicAudioTrack(trackInfo, isrc, artworkUrl, (AppleMusicSourceManager) sourceManager);
     }
 
 }

@@ -26,6 +26,13 @@ allprojects {
         implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
         implementation 'org.apache.commons:commons-text:1.10.0'
     }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(18)
+        }
+    }
+
     compileJava.options.encoding = "UTF-8"
 
     tasks.withType(JavaCompile) {

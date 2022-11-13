@@ -1,6 +1,7 @@
 package io.github.theblacksquidward.squidwardbot.audio.source.spotify;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
@@ -37,12 +38,12 @@ public class SpotifySourceManager extends DelegatingSourceManager implements Htt
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifySourceManager.class);
 
+    private static final HttpInterfaceManager HTTP_INTERFACE_MANAGER = HttpClientTools.createDefaultThreadLocalManager();
+
     public static final Pattern URL_PATTERN = Pattern.compile("(https?://)?(www\\.)?open\\.spotify\\.com/(user/[a-zA-Z0-9-_]+/)?(?<type>track|album|playlist|artist)/(?<identifier>[a-zA-Z0-9-_]+)");
     public static final String SEARCH_PREFIX = "spsearch:";
-    public static final int PLAYLIST_MAX_PAGE_ITEMS = 100;
-    public static final int ALBUM_MAX_PAGE_ITEMS = 50;
-
-    private final HttpInterfaceManager httpInterfaceManager = HttpClientTools.createDefaultThreadLocalManager();
+    private static final int PLAYLIST_MAX_PAGE_ITEMS = 100;
+    private static final int ALBUM_MAX_PAGE_ITEMS = 50;
 
     private final String spotifyClientId;
     private final String spotifyClientSecret;
@@ -106,7 +107,7 @@ public class SpotifySourceManager extends DelegatingSourceManager implements Htt
         request.addHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString((spotifyClientId + ":" + spotifyClientSecret).getBytes(StandardCharsets.UTF_8)));
         request.setEntity(new UrlEncodedFormEntity(List.of(new BasicNameValuePair("grant_type", "client_credentials")), StandardCharsets.UTF_8));
 
-        JsonBrowser json = HttpClientTools.fetchResponseAsJson(httpInterfaceManager.getInterface(), request);
+        JsonBrowser json = HttpClientTools.fetchResponseAsJson(HTTP_INTERFACE_MANAGER.getInterface(), request);
         token = json.get("access_token").text();
         tokenExpire = Instant.now().plusSeconds(json.get("expires_in").asLong(0));
     }
@@ -121,7 +122,7 @@ public class SpotifySourceManager extends DelegatingSourceManager implements Htt
     public JsonBrowser getJson(String uri) throws IOException {
         HttpGet request = new HttpGet(uri);
         request.addHeader("Authorization", "Bearer " + getToken());
-        return HttpClientTools.fetchResponseAsJson(httpInterfaceManager.getInterface(), request);
+        return HttpClientTools.fetchResponseAsJson(HTTP_INTERFACE_MANAGER.getInterface(), request);
     }
 
     private AudioItem getFirstSearchResultAsTrack(String identifier) throws IOException {
@@ -203,30 +204,35 @@ public class SpotifySourceManager extends DelegatingSourceManager implements Htt
                         json.get("duration_ms").asLong(0),
                         json.get("id").text(),
                         false,
-                        json.get("external_urls").get("spotify").text(),
-                        json.get("album").get("images").index(0).get("url").text(),
-                        json.get("external_ids").get("isrc").text()
-                ), this);
+                        json.get("external_urls").get("spotify").text()
+                ),
+                json.get("external_ids").get("isrc").text(),
+                json.get("album").get("images").index(0).get("url").text(),
+                this);
     }
 
     @Override
-    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
-        return new SpotifyAudioTrack(trackInfo, this);
+    public AudioTrack decodeTrack(AudioTrackInfo audioTrackInfo, DataInput dataInput) throws IOException {
+        return new SpotifyAudioTrack(audioTrackInfo,
+                DataFormatTools.readNullableText(dataInput),
+                DataFormatTools.readNullableText(dataInput),
+                this
+        );
     }
 
     @Override
     public void shutdown() {
-        ExceptionTools.closeWithWarnings(httpInterfaceManager);
+        ExceptionTools.closeWithWarnings(HTTP_INTERFACE_MANAGER);
     }
 
     @Override
     public void configureRequests(Function<RequestConfig, RequestConfig> configurator) {
-        httpInterfaceManager.configureRequests(configurator);
+        HTTP_INTERFACE_MANAGER.configureRequests(configurator);
     }
 
     @Override
     public void configureBuilder(Consumer<HttpClientBuilder> configurator) {
-        httpInterfaceManager.configureBuilder(configurator);
+        HTTP_INTERFACE_MANAGER.configureBuilder(configurator);
     }
 
 }

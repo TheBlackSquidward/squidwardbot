@@ -1,6 +1,7 @@
 package io.github.theblacksquidward.squidwardbot.audio.source.applemusic;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
@@ -39,11 +40,11 @@ public class AppleMusicSourceManager extends DelegatingSourceManager implements 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppleMusicSourceManager.class);
 
+    private static final HttpInterfaceManager HTTP_INTERFACE_MANAGER = HttpClientTools.createDefaultThreadLocalManager();
+
     public static final Pattern URL_PATTERN = Pattern.compile("(https?://)?(www\\.)?music\\.apple\\.com/(?<countrycode>[a-zA-Z]{2}/)?(?<type>album|playlist|artist)(/[a-zA-Z0-9\\-]+)?/(?<identifier>[a-zA-Z0-9.]+)(\\?i=(?<identifier2>\\d+))?");
     public static final String SEARCH_PREFIX = "apsearch:";
     public static final int MAX_PAGE_ITEMS = 300;
-
-    private final HttpInterfaceManager httpInterfaceManager = HttpClientTools.createDefaultThreadLocalManager();
 
     private final String countryCode;
 
@@ -101,7 +102,7 @@ public class AppleMusicSourceManager extends DelegatingSourceManager implements 
 
     public void requestToken() throws IOException {
         HttpGet request = new HttpGet("https://music.apple.com");
-        try (CloseableHttpResponse response = this.httpInterfaceManager.getInterface().execute(request)) {
+        try (CloseableHttpResponse response = this.HTTP_INTERFACE_MANAGER.getInterface().execute(request)) {
             Document document = Jsoup.parse(response.getEntity().getContent(), null, "");
             Element element = document.selectFirst("meta[name=desktop-music-app/config/environment]");
             if (element == null) throw new IOException("Could not find token");
@@ -121,7 +122,7 @@ public class AppleMusicSourceManager extends DelegatingSourceManager implements 
         HttpGet request = new HttpGet(uri);
         request.addHeader("Authorization", "Bearer " + getToken());
         request.addHeader("Origin", "https://music.apple.com");
-        return HttpClientTools.fetchResponseAsJson(this.httpInterfaceManager.getInterface(), request);
+        return HttpClientTools.fetchResponseAsJson(this.HTTP_INTERFACE_MANAGER.getInterface(), request);
     }
 
     private AudioItem getFirstSearchResultAsTrack(String identifier) throws IOException {
@@ -200,30 +201,35 @@ public class AppleMusicSourceManager extends DelegatingSourceManager implements 
                         attributes.get("durationInMillis").asLong(0),
                         json.get("id").text(),
                         false,
-                        attributes.get("url").text(),
-                        artwork.get("url").text().replace("{w}", artwork.get("width").text()).replace("{h}", artwork.get("height").text()),
-                        attributes.get("isrc").text()
-                ), this);
+                        attributes.get("url").text()
+                ),
+                attributes.get("isrc").text(),
+                artwork.get("url").text().replace("{w}", artwork.get("width").text()).replace("{h}", artwork.get("height").text()),
+                this);
     }
 
     @Override
-    public AudioTrack decodeTrack(AudioTrackInfo audioTrackInfo, DataInput dataInput)  {
-        return new AppleMusicAudioTrack(audioTrackInfo, this);
+    public AudioTrack decodeTrack(AudioTrackInfo audioTrackInfo, DataInput dataInput) throws IOException {
+        return new AppleMusicAudioTrack(audioTrackInfo,
+                DataFormatTools.readNullableText(dataInput),
+                DataFormatTools.readNullableText(dataInput),
+                this
+        );
     }
 
     @Override
     public void shutdown() {
-        ExceptionTools.closeWithWarnings(httpInterfaceManager);
+        ExceptionTools.closeWithWarnings(HTTP_INTERFACE_MANAGER);
     }
 
     @Override
     public void configureRequests(Function<RequestConfig, RequestConfig> configurator) {
-        httpInterfaceManager.configureRequests(configurator);
+        HTTP_INTERFACE_MANAGER.configureRequests(configurator);
     }
 
     @Override
     public void configureBuilder(Consumer<HttpClientBuilder> configurator) {
-        httpInterfaceManager.configureBuilder(configurator);
+        HTTP_INTERFACE_MANAGER.configureBuilder(configurator);
     }
 
 }

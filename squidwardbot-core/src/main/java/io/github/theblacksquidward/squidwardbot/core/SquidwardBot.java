@@ -18,6 +18,7 @@ public class SquidwardBot {
     private final Reflections REFLECTIONS;
     private final String SPOTIFY_CLIENT_ID;
     private final String SPOTIFY_CLIENT_SECRET;
+    private final String DEEZER_MASTER_DECRYPTION_KEY;
     private final Long OWNER_ID;
 
     public SquidwardBot(String accessToken,
@@ -25,12 +26,14 @@ public class SquidwardBot {
                         String version,
                         String spotifyClientId,
                         String spotifyClientSecret,
+                        String deezerMasterDecryptionKey,
                         Long ownerId) throws InterruptedException {
         instance = this;
         this.REFLECTIONS = reflections;
         this.VERSION = version;
         this.SPOTIFY_CLIENT_ID = spotifyClientId;
         this.SPOTIFY_CLIENT_SECRET = spotifyClientSecret;
+        this.DEEZER_MASTER_DECRYPTION_KEY = deezerMasterDecryptionKey;
         this.OWNER_ID = ownerId;
         ModuleRegistry.getInstance().captureAndInitModules(reflections);
         CommandManager.captureAndRegisterCommands(REFLECTIONS);
@@ -49,6 +52,10 @@ public class SquidwardBot {
 
     public String getSpotifyClientSecret() {
         return SPOTIFY_CLIENT_SECRET;
+    }
+
+    public String getDeezerMasterDecryptionKey() {
+        return DEEZER_MASTER_DECRYPTION_KEY;
     }
 
     public String getVersion() {

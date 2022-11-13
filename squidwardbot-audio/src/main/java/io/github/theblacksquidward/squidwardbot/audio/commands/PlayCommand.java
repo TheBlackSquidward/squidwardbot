@@ -8,6 +8,8 @@ import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
+import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioTrack;
+import io.github.theblacksquidward.squidwardbot.audio.source.delegating.DelegatingAudioTrack;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
@@ -86,11 +88,11 @@ public class PlayCommand extends AbstractAudioCommand {
                 embedBuilder.setThumbnail(hit.getThumbnailUrl());
                 embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
                 embedBuilder.setTitle(hit.getTitleWithFeatured(), audioTrackInfo.uri);
-            } else {
-                embedBuilder.setThumbnail(audioTrackInfo.artworkUrl);
-                embedBuilder.setFooter(audioTrackInfo.author);
-                embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
             }
+            if(audioTrack instanceof DelegatingAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkUrl());
+            if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkUrl());
+            embedBuilder.setFooter(audioTrackInfo.author);
+            embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
             event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
             super.trackLoaded(audioTrack);
         }

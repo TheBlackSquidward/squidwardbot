@@ -25,9 +25,10 @@ public class Bootstrap {
         OptionSpec<String> optionSpec = optionParser.accepts("discordBotAccessToken").withRequiredArg().required();
         OptionSpec<String> optionSpec1 = optionParser.accepts("spotifyClientId").withRequiredArg().required();
         OptionSpec<String> optionSpec2 = optionParser.accepts("spotifyClientSecret").withRequiredArg().required();
-        OptionSpec<String> optionSpec3 = optionParser.accepts("githubPersonalToken").withRequiredArg();
-        OptionSpec<String> optionSpec4 = optionParser.accepts("githubUserId").withRequiredArg();
-        OptionSpec<String> optionSpec5 = optionParser.accepts("ownerIdAsLong").withRequiredArg();
+        OptionSpec<String> optionSpec3 = optionParser.accepts("deezerMasterDecryptionKey").withRequiredArg().required();
+        OptionSpec<String> optionSpec4 = optionParser.accepts("githubPersonalToken").withRequiredArg();
+        OptionSpec<String> optionSpec5 = optionParser.accepts("githubUserId").withRequiredArg();
+        OptionSpec<String> optionSpec6 = optionParser.accepts("ownerIdAsLong").withRequiredArg();
         OptionSpec<String> nonOptions = optionParser.nonOptions();
         OptionSet optionSet = optionParser.parse(args);
         List<String> list = optionSet.valuesOf(nonOptions);
@@ -37,15 +38,16 @@ public class Bootstrap {
         String discordBotAccessToken = parseArgument(optionSet, optionSpec);
         String spotifyClientId = parseArgument(optionSet, optionSpec1);
         String spotifyClientSecret = parseArgument(optionSet, optionSpec2);
-        String githubPersonalToken = parseArgument(optionSet, optionSpec3);
-        String githubUserId = parseArgument(optionSet, optionSpec4);
-        String ownerId = parseArgument(optionSet, optionSpec5);
+        String deezerMasterDecryptionKey = parseArgument(optionSet, optionSpec3);
+        String githubPersonalToken = parseArgument(optionSet, optionSpec4);
+        String githubUserId = parseArgument(optionSet, optionSpec5);
+        String ownerId = parseArgument(optionSet, optionSpec6);
         Long ownerIdAsLong = ownerId == null ? null : Long.parseLong(ownerId);
         final Reflections REFLECTIONS = new Reflections("io.github.theblacksquidward");
         LOGGER.info("Starting SquidwardBot (Version {})", version);
         final SquidwardBot SQUIDWARD_BOT;
         try {
-            SQUIDWARD_BOT = new SquidwardBot(discordBotAccessToken, REFLECTIONS, version, spotifyClientId, spotifyClientSecret, ownerIdAsLong);
+            SQUIDWARD_BOT = new SquidwardBot(discordBotAccessToken, REFLECTIONS, version, spotifyClientId, spotifyClientSecret, deezerMasterDecryptionKey, ownerIdAsLong);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

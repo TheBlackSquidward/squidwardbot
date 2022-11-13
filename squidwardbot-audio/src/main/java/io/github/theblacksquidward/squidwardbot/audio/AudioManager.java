@@ -10,6 +10,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.source.GeneralSearchSourceManager;
 import io.github.theblacksquidward.squidwardbot.audio.source.applemusic.AppleMusicSourceManager;
+import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerSourceManager;
 import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifySourceManager;
 import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.core.constants.Constants;
@@ -32,9 +33,10 @@ public class AudioManager {
 
     public static void init() {
         AUDIO_PLAYER_MANAGER.registerSourceManager(new SpotifySourceManager(AUDIO_PLAYER_MANAGER, SquidwardBot.getInstance().getSpotifyClientId(), SquidwardBot.getInstance().getSpotifyClientSecret()));
-        AUDIO_PLAYER_MANAGER.registerSourceManager(new AppleMusicSourceManager(AUDIO_PLAYER_MANAGER));
         AUDIO_PLAYER_MANAGER.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
+        AUDIO_PLAYER_MANAGER.registerSourceManager(new DeezerSourceManager(SquidwardBot.getInstance().getDeezerMasterDecryptionKey()));
         AUDIO_PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager());
+        AUDIO_PLAYER_MANAGER.registerSourceManager(new AppleMusicSourceManager(AUDIO_PLAYER_MANAGER));
         AUDIO_PLAYER_MANAGER.registerSourceManager(new GeneralSearchSourceManager());
         AUDIO_PLAYER_MANAGER.getConfiguration().setFilterHotSwapEnabled(true);
     }

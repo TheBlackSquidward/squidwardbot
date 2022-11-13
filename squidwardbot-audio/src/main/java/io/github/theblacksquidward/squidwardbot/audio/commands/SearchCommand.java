@@ -1,5 +1,7 @@
 package io.github.theblacksquidward.squidwardbot.audio.commands;
 
+import com.github.topisenpai.lavasrc.deezer.DeezerAudioTrack;
+import com.github.topisenpai.lavasrc.mirror.MirroringAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -18,9 +20,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.time.Instant;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Command
 public class SearchCommand extends AbstractAudioCommand {
@@ -58,7 +58,8 @@ public class SearchCommand extends AbstractAudioCommand {
                 embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
                 embedBuilder.setTitle(hit.getTitleWithFeatured(), audioTrackInfo.uri);
             } else {
-                embedBuilder.setThumbnail(audioTrackInfo.artworkUrl);
+                if(audioTrack instanceof MirroringAudioTrack mirroringAudioTrack) embedBuilder.setThumbnail(mirroringAudioTrack.getArtworkURL());
+                if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkURL());
                 embedBuilder.setFooter(audioTrackInfo.author);
                 embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
             }

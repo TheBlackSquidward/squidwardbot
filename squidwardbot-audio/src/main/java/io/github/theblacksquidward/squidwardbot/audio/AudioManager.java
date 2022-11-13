@@ -1,5 +1,7 @@
 package io.github.theblacksquidward.squidwardbot.audio;
 
+import com.github.topisenpai.lavasrc.applemusic.AppleMusicSourceManager;
+import com.github.topisenpai.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -9,8 +11,6 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.source.GeneralSearchSourceManager;
-import io.github.theblacksquidward.squidwardbot.audio.source.applemusic.AppleMusicSourceManager;
-import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifySourceManager;
 import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.core.constants.Constants;
 import net.dv8tion.jda.api.entities.Guild;
@@ -31,8 +31,8 @@ public class AudioManager {
     private static final Map<Long, GuildAudioManager> GUILD_AUDIO_MANAGERS = new HashMap<>();
 
     public static void init() {
-        AUDIO_PLAYER_MANAGER.registerSourceManager(new SpotifySourceManager(AUDIO_PLAYER_MANAGER, SquidwardBot.getInstance().getSpotifyClientId(), SquidwardBot.getInstance().getSpotifyClientSecret()));
-        AUDIO_PLAYER_MANAGER.registerSourceManager(new AppleMusicSourceManager(AUDIO_PLAYER_MANAGER));
+        AUDIO_PLAYER_MANAGER.registerSourceManager(new SpotifySourceManager(null, SquidwardBot.getInstance().getSpotifyClientId(), SquidwardBot.getInstance().getSpotifyClientSecret(), "US", AUDIO_PLAYER_MANAGER));
+        AUDIO_PLAYER_MANAGER.registerSourceManager(new AppleMusicSourceManager(null, "us", AUDIO_PLAYER_MANAGER));
         AUDIO_PLAYER_MANAGER.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         AUDIO_PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager());
         AUDIO_PLAYER_MANAGER.registerSourceManager(new GeneralSearchSourceManager());

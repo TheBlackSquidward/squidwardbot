@@ -1,5 +1,7 @@
 package io.github.theblacksquidward.squidwardbot.audio.commands;
 
+import com.github.topisenpai.lavasrc.deezer.DeezerAudioTrack;
+import com.github.topisenpai.lavasrc.mirror.MirroringAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import genius.SongSearch;
@@ -48,21 +50,23 @@ public class NowPlayingCommand extends AbstractAudioCommand {
         return "Returns the currently playing song.";
     }
 
-    private MessageEmbed getCurrentTrackEmbed(Guild guild, AudioTrack currentTrack) {
-        AudioTrackInfo currentTrackInfo = currentTrack.getInfo();
+    private MessageEmbed getCurrentTrackEmbed(Guild guild, AudioTrack audioTrack) {
+        AudioTrackInfo audioTrackInfo = audioTrack.getInfo();
         SongSearch.Hit hit = getCurrentlyPlayingHit(guild);
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTimestamp(Instant.now())
                 .setColor(ColorConstants.PRIMARY_COLOR)
-                .setDescription(getProgress(currentTrack));
+                .setDescription(getProgress(audioTrack));
         if(hit != null) {
             embedBuilder.setThumbnail(hit.getThumbnailUrl());
             embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
-            embedBuilder.setTitle(hit.getTitleWithFeatured(), currentTrackInfo.uri);
+            embedBuilder.setTitle(hit.getTitleWithFeatured(), audioTrackInfo.uri);
+        } else {
+            if(audioTrack instanceof MirroringAudioTrack mirroringAudioTrack) embedBuilder.setThumbnail(mirroringAudioTrack.getArtworkURL());
+            if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkURL());
+            embedBuilder.setFooter(audioTrackInfo.author);
+            embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
         }
-        embedBuilder.setThumbnail(currentTrackInfo.artworkUrl);
-        embedBuilder.setFooter(currentTrackInfo.author);
-        embedBuilder.setTitle(currentTrackInfo.title, currentTrackInfo.uri);
         return embedBuilder.build();
     }
 

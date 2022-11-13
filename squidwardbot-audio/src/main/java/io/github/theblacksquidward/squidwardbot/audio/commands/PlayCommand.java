@@ -1,7 +1,5 @@
 package io.github.theblacksquidward.squidwardbot.audio.commands;
 
-import com.github.topisenpai.lavasrc.deezer.DeezerAudioTrack;
-import com.github.topisenpai.lavasrc.mirror.MirroringAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -89,8 +87,7 @@ public class PlayCommand extends AbstractAudioCommand {
                 embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
                 embedBuilder.setTitle(hit.getTitleWithFeatured(), audioTrackInfo.uri);
             } else {
-                if(audioTrack instanceof MirroringAudioTrack mirroringAudioTrack) embedBuilder.setThumbnail(mirroringAudioTrack.getArtworkURL());
-                if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkURL());
+                embedBuilder.setThumbnail(audioTrackInfo.artworkUrl);
                 embedBuilder.setFooter(audioTrackInfo.author);
                 embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
             }

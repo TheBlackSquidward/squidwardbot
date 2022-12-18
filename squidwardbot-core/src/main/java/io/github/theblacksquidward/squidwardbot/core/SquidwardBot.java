@@ -1,5 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.core;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.github.theblacksquidward.squidwardbot.core.commands.CommandManager;
 import io.github.theblacksquidward.squidwardbot.core.modules.ModuleRegistry;
 import net.dv8tion.jda.api.JDA;
@@ -7,6 +8,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 public class SquidwardBot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SquidwardBot.class);
@@ -21,23 +23,19 @@ public class SquidwardBot {
     private final String DEEZER_MASTER_DECRYPTION_KEY;
     private final Long OWNER_ID;
 
-    public SquidwardBot(String accessToken,
+    public SquidwardBot(Dotenv dotenv,
                         Reflections reflections,
-                        String version,
-                        String spotifyClientId,
-                        String spotifyClientSecret,
-                        String deezerMasterDecryptionKey,
-                        Long ownerId) throws InterruptedException {
+                        String version) throws InterruptedException {
         instance = this;
         this.REFLECTIONS = reflections;
         this.VERSION = version;
-        this.SPOTIFY_CLIENT_ID = spotifyClientId;
-        this.SPOTIFY_CLIENT_SECRET = spotifyClientSecret;
-        this.DEEZER_MASTER_DECRYPTION_KEY = deezerMasterDecryptionKey;
-        this.OWNER_ID = ownerId;
+        this.SPOTIFY_CLIENT_ID = dotenv.get("SPOTIFY_CLIENT_ID");
+        this.SPOTIFY_CLIENT_SECRET = dotenv.get("SPOTIFY_CLIENT_SECRET");
+        this.DEEZER_MASTER_DECRYPTION_KEY = dotenv.get("DEEZER_MASTER_DECRYPTION_KEY");
+        this.OWNER_ID = Long.parseLong(dotenv.get("OWNER_ID"));
         ModuleRegistry.getInstance().captureAndInitModules(reflections);
         CommandManager.captureAndRegisterCommands(REFLECTIONS);
-        final JDABuilder jdaBuilder = JDABuilder.createDefault(accessToken);
+        final JDABuilder jdaBuilder = JDABuilder.createDefault(dotenv.get("DISCORD_BOT_TOKEN"));
         ModuleRegistry.getInstance().forEachPlugin(module -> module.onJDABuild(jdaBuilder));
         JDA = jdaBuilder.build().awaitReady();
     }

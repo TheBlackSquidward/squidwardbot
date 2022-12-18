@@ -2,6 +2,11 @@
 build
 .gradle
 
+# Docker
+Dockerfile
+entrypoint.sh
+.dockerignore
+
 # Secrets
 src/main/resources/.env
 

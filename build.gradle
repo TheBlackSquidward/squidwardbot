@@ -51,7 +51,7 @@ dependencies {
     }
 }
 
-task fatJar(type: Jar) {
+tasks.register('fatJar') {
     dependsOn configurations.moduleJar
     manifest {
         attributes(

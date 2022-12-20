@@ -2,7 +2,7 @@ FROM gradle:7.5.1-jdk18 as builder
 WORKDIR /home/gradle/source/
 
 COPY ./ ./
-RUN gradle fatJar
+RUN gradle jar
 RUN ls -Rla
 
 FROM eclipse-temurin:18-jre

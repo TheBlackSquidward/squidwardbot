@@ -51,21 +51,22 @@ dependencies {
     }
 }
 
-tasks.register('fatJar') {
-    dependsOn configurations.moduleJar
-    manifest {
-        attributes(
-                'Implementation-Title': 'SquidwardBot',
-                'Implementation-Version': SQUIDWARDBOT_VERSION,
-                'Main-Class': 'io.github.theblacksquidward.squidwardbot.Bootstrap'
-        )
-    }
-    archiveName 'SquidwardBot.jar'
-    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-    from {
-        configurations.moduleJar.collect {
-            zipTree(it)
+tasks.configureEach {
+    jar {
+        dependsOn configurations.moduleJar
+        manifest {
+            attributes(
+                    'Implementation-Title': 'SquidwardBot',
+                    'Implementation-Version': SQUIDWARDBOT_VERSION,
+                    'Main-Class': 'io.github.theblacksquidward.squidwardbot.Bootstrap'
+            )
+        }
+        archiveName 'SquidwardBot.jar'
+        duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        from {
+            configurations.moduleJar.collect {
+                zipTree(it)
+            }
         }
     }
-    with jar
 }

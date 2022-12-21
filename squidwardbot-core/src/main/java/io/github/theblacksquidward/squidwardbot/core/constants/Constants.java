@@ -5,8 +5,11 @@ import com.google.gson.GsonBuilder;
 import core.GLA;
 import okhttp3.OkHttpClient;
 
+import java.util.Random;
+
 public class Constants {
 
+    public static final Random RANDOM = new Random();
     public static final Gson GSON = new GsonBuilder()
             .disableHtmlEscaping()
             .setPrettyPrinting()

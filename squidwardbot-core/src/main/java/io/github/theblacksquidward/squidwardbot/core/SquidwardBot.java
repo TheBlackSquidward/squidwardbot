@@ -17,20 +17,14 @@ public class SquidwardBot {
 
     private final JDA JDA;
     private final String VERSION;
-    private final String SPOTIFY_CLIENT_ID;
-    private final String SPOTIFY_CLIENT_SECRET;
-    private final String DEEZER_MASTER_DECRYPTION_KEY;
-    private final Long OWNER_ID;
+    private final Dotenv DOTENV;
 
     public SquidwardBot(Dotenv dotenv,
                         Reflections reflections,
                         String version) throws InterruptedException {
         instance = this;
+        this.DOTENV = dotenv;
         this.VERSION = version;
-        this.SPOTIFY_CLIENT_ID = dotenv.get("SPOTIFY_CLIENT_ID");
-        this.SPOTIFY_CLIENT_SECRET = dotenv.get("SPOTIFY_CLIENT_SECRET");
-        this.DEEZER_MASTER_DECRYPTION_KEY = dotenv.get("DEEZER_MASTER_DECRYPTION_KEY");
-        this.OWNER_ID = Long.parseLong(dotenv.get("OWNER_ID"));
         ModuleRegistry.getInstance().captureAndInitModules(reflections);
         CommandManager.captureAndRegisterCommands(reflections);
         final JDABuilder jdaBuilder = JDABuilder.createDefault(dotenv.get("DISCORD_BOT_TOKEN"));
@@ -43,15 +37,19 @@ public class SquidwardBot {
     }
 
     public String getSpotifyClientId() {
-        return SPOTIFY_CLIENT_ID;
+        return DOTENV.get("SPOTIFY_CLIENT_ID");
     }
 
     public String getSpotifyClientSecret() {
-        return SPOTIFY_CLIENT_SECRET;
+        return DOTENV.get("SPOTIFY_CLIENT_SECRET");
     }
 
     public String getDeezerMasterDecryptionKey() {
-        return DEEZER_MASTER_DECRYPTION_KEY;
+        return DOTENV.get("DEEZER_MASTER_DECRYPTION_KEY");
+    }
+
+    public String getTenorApiKey() {
+        return DOTENV.get("TENOR_API_KEY");
     }
 
     public String getVersion() {
@@ -59,6 +57,6 @@ public class SquidwardBot {
     }
 
     public Long getOwnerId() {
-        return OWNER_ID;
+        return Long.parseLong(DOTENV.get("OWNER_ID"));
     }
 }

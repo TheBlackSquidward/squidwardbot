@@ -7,7 +7,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//TODO logs
 public class BaseAudioLoadResultImpl implements AudioLoadResultHandler {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(BaseAudioLoadResultImpl.class);
@@ -19,18 +18,13 @@ public class BaseAudioLoadResultImpl implements AudioLoadResultHandler {
     }
 
     @Override
-    public void trackLoaded(AudioTrack track) {
-
-    }
+    public void trackLoaded(AudioTrack track) {}
 
     @Override
-    public void playlistLoaded(AudioPlaylist playlist) {
-
-    }
+    public void playlistLoaded(AudioPlaylist playlist) {}
 
     @Override
-    public void noMatches() {
-    }
+    public void noMatches() {}
 
     @Override
     public void loadFailed(FriendlyException exception) {

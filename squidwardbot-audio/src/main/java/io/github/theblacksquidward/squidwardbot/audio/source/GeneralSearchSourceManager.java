@@ -1,5 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.audio.source;
 
+import com.github.topisenpai.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
@@ -7,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifySourceManager;
 
 import java.io.DataInput;
 import java.io.DataOutput;

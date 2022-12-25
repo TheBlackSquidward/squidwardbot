@@ -1,5 +1,7 @@
 package io.github.theblacksquidward.squidwardbot.audio.commands;
 
+import com.github.topisenpai.lavasrc.deezer.DeezerAudioTrack;
+import com.github.topisenpai.lavasrc.mirror.MirroringAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -8,8 +10,6 @@ import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
-import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioTrack;
-import io.github.theblacksquidward.squidwardbot.audio.source.delegating.DelegatingAudioTrack;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
@@ -20,9 +20,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.time.Instant;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Command
 public class SearchCommand extends AbstractAudioCommand {
@@ -60,8 +58,8 @@ public class SearchCommand extends AbstractAudioCommand {
                 embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
                 embedBuilder.setTitle(hit.getTitleWithFeatured(), audioTrackInfo.uri);
             }
-            if(audioTrack instanceof DelegatingAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkUrl());
-            if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkUrl());
+            if(audioTrack instanceof MirroringAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkURL());
+            if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkURL());
             embedBuilder.setFooter(audioTrackInfo.author);
             embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
             embedBuilder.addField("Identifier", identifier, false);

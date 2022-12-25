@@ -1,11 +1,11 @@
 package io.github.theblacksquidward.squidwardbot.audio.commands;
 
+import com.github.topisenpai.lavasrc.deezer.DeezerAudioTrack;
+import com.github.topisenpai.lavasrc.mirror.MirroringAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
-import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioTrack;
-import io.github.theblacksquidward.squidwardbot.audio.source.delegating.DelegatingAudioTrack;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
@@ -62,8 +62,8 @@ public class NowPlayingCommand extends AbstractAudioCommand {
             embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
             embedBuilder.setTitle(hit.getTitleWithFeatured(), currentTrackInfo.uri);
         }
-        if(currentTrack instanceof DelegatingAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkUrl());
-        if(currentTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkUrl());
+        if(currentTrack instanceof MirroringAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkURL());
+        if(currentTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkURL());
         embedBuilder.setFooter(currentTrackInfo.author);
         embedBuilder.setTitle(currentTrackInfo.title, currentTrackInfo.uri);
         return embedBuilder.build();

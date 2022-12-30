@@ -44,6 +44,10 @@ public class SquidwardBot {
         return DOTENV.get("SPOTIFY_CLIENT_SECRET");
     }
 
+    public String getAppleMusicMediaApiToken() {
+        return DOTENV.get("APPLE_MUSIC_MEDIA_API_TOKEN");
+    }
+
     public String getDeezerMasterDecryptionKey() {
         return DOTENV.get("DEEZER_MASTER_DECRYPTION_KEY");
     }

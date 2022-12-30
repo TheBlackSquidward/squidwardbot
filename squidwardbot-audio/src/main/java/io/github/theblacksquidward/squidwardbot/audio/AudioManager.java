@@ -1,5 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.audio;
 
+import com.github.topisenpai.lavasrc.applemusic.AppleMusicSourceManager;
 import com.github.topisenpai.lavasrc.deezer.DeezerAudioSourceManager;
 import com.github.topisenpai.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
@@ -35,7 +36,7 @@ public class AudioManager {
         AUDIO_PLAYER_MANAGER.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         AUDIO_PLAYER_MANAGER.registerSourceManager(new DeezerAudioSourceManager(SquidwardBot.getInstance().getDeezerMasterDecryptionKey()));
         AUDIO_PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager());
-        //TODO impl Apple Music AUDIO_PLAYER_MANAGER.registerSourceManager(new AppleMusicSourceManager(AUDIO_PLAYER_MANAGER));
+        AUDIO_PLAYER_MANAGER.registerSourceManager(new AppleMusicSourceManager(null, SquidwardBot.getInstance().getAppleMusicMediaApiToken(), "us", AUDIO_PLAYER_MANAGER));
         AUDIO_PLAYER_MANAGER.registerSourceManager(new GeneralSearchSourceManager());
         AUDIO_PLAYER_MANAGER.getConfiguration().setFilterHotSwapEnabled(true);
     }

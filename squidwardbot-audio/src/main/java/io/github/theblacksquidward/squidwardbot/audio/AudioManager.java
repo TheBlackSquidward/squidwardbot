@@ -1,8 +1,5 @@
 package io.github.theblacksquidward.squidwardbot.audio;
 
-import com.github.topisenpai.lavasrc.applemusic.AppleMusicSourceManager;
-import com.github.topisenpai.lavasrc.deezer.DeezerAudioSourceManager;
-import com.github.topisenpai.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -12,6 +9,9 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.source.GeneralSearchSourceManager;
+import io.github.theblacksquidward.squidwardbot.audio.source.applemusic.AppleMusicSourceManager;
+import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioSourceManager;
+import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifySourceManager;
 import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.core.constants.Constants;
 import net.dv8tion.jda.api.entities.Guild;

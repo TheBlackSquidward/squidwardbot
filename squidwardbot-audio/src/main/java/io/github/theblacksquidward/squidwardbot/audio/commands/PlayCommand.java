@@ -1,15 +1,16 @@
 package io.github.theblacksquidward.squidwardbot.audio.commands;
 
-import com.github.topisenpai.lavasrc.deezer.DeezerAudioTrack;
-import com.github.topisenpai.lavasrc.mirror.MirroringAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
+import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioTrack;
+import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAudioTrack;
+import io.github.theblacksquidward.squidwardbot.audio.track.AudioPlaylistInfo;
+import io.github.theblacksquidward.squidwardbot.audio.track.CustomAudioPlaylist;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
@@ -83,14 +84,8 @@ public class PlayCommand extends AbstractAudioCommand {
             embedBuilder.setTimestamp(Instant.now());
             embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
             embedBuilder.setDescription("Successfully queued the track " + audioTrackInfo.title + " by " + audioTrackInfo.author + " [" + StringUtils.millisecondsFormatted(audioTrack.getDuration()) + "] at position #" + AudioManager.getPositionInQueue(event.getGuild(), audioTrack) + " in the queue.");
-            SongSearch.Hit hit = getCurrentlyPlayingHit(event.getGuild());
-            if (hit != null) {
-                embedBuilder.setThumbnail(hit.getThumbnailUrl());
-                embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
-                embedBuilder.setTitle(hit.getTitleWithFeatured(), audioTrackInfo.uri);
-            }
-            if(audioTrack instanceof MirroringAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkURL());
-            if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkURL());
+            if(audioTrack instanceof MirroringAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkUrl());
+            if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkUrl());
             embedBuilder.setFooter(audioTrackInfo.author);
             embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
             event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
@@ -106,8 +101,15 @@ public class PlayCommand extends AbstractAudioCommand {
                     .toList();
             embedBuilder.setTimestamp(Instant.now());
             embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
-            embedBuilder.setTitle(audioPlaylist.getName());
             embedBuilder.setDescription(StringUtils.getIndentedStringList(formattedPlaylistTracks));
+            if (audioPlaylist instanceof CustomAudioPlaylist customAudioPlaylist) {
+                AudioPlaylistInfo audioPlaylistInfo = customAudioPlaylist.getInfo();
+                embedBuilder.setThumbnail(audioPlaylistInfo.getArtworkUrl());
+                embedBuilder.setFooter(audioPlaylistInfo.getArtist(), audioPlaylistInfo.getArtistArtworkUrl());
+                embedBuilder.setTitle(audioPlaylist.getName(), audioPlaylistInfo.getUri());
+            } else {
+                embedBuilder.setTitle(audioPlaylist.getName());
+            }
             event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
             super.playlistLoaded(audioPlaylist);
         }

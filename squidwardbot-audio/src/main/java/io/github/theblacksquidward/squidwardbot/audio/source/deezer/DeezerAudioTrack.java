@@ -22,25 +22,12 @@ import java.security.NoSuchAlgorithmException;
 
 public class DeezerAudioTrack extends DelegatedAudioTrack {
 
-    private final String isrc;
-    private final String artworkUrl;
     private final DeezerAudioSourceManager sourceManager;
 
-    public DeezerAudioTrack(AudioTrackInfo trackInfo, String isrc, String artworkUrl, DeezerAudioSourceManager sourceManager) {
+    public DeezerAudioTrack(AudioTrackInfo trackInfo, DeezerAudioSourceManager sourceManager) {
         super(trackInfo);
-        this.isrc = isrc;
-        this.artworkUrl = artworkUrl;
         this.sourceManager = sourceManager;
     }
-
-    public String getISRC() {
-        return isrc;
-    }
-
-    public String getArtworkUrl() {
-        return artworkUrl;
-    }
-
 
     private URI getTrackMediaURI() throws IOException, URISyntaxException {
         HttpPost getSessionID = new HttpPost(DeezerAudioSourceManager.PRIVATE_API_BASE + "?method=deezer.ping&input=3&api_version=1.0&api_token=");
@@ -90,7 +77,7 @@ public class DeezerAudioTrack extends DelegatedAudioTrack {
 
     @Override
     protected AudioTrack makeShallowClone() {
-        return new DeezerAudioTrack(trackInfo, isrc, artworkUrl, sourceManager);
+        return new DeezerAudioTrack(trackInfo, sourceManager);
     }
 
     @Override

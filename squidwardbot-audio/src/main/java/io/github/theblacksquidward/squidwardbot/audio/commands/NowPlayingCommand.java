@@ -2,10 +2,7 @@ package io.github.theblacksquidward.squidwardbot.audio.commands;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
-import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioTrack;
-import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAudioTrack;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
@@ -37,7 +34,7 @@ public class NowPlayingCommand extends AbstractAudioCommand {
             event.getHook().sendMessageEmbeds(createMusicReply("There is no song currently playing...")).queue();
             return;
         }
-        event.getHook().sendMessageEmbeds(getCurrentTrackEmbed(guild, currentTrack)).queue();
+        event.getHook().sendMessageEmbeds(getCurrentTrackEmbed(currentTrack)).queue();
     }
 
     @Override
@@ -50,21 +47,14 @@ public class NowPlayingCommand extends AbstractAudioCommand {
         return "Returns the currently playing song.";
     }
 
-    private MessageEmbed getCurrentTrackEmbed(Guild guild, AudioTrack currentTrack) {
+    private MessageEmbed getCurrentTrackEmbed(AudioTrack currentTrack) {
         AudioTrackInfo currentTrackInfo = currentTrack.getInfo();
-        SongSearch.Hit hit = getCurrentlyPlayingHit(guild);
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTimestamp(Instant.now())
                 .setColor(ColorConstants.PRIMARY_COLOR)
                 .setDescription(getProgress(currentTrack));
-        if(hit != null) {
-            embedBuilder.setThumbnail(hit.getThumbnailUrl());
-            embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
-            embedBuilder.setTitle(hit.getTitleWithFeatured(), currentTrackInfo.uri);
-        }
-        if(currentTrack instanceof MirroringAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkUrl());
-        if(currentTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkUrl());
-        embedBuilder.setFooter(currentTrackInfo.author);
+        embedBuilder.setThumbnail(currentTrackInfo.artworkUrl);
+        embedBuilder.setFooter(currentTrackInfo.author, currentTrackInfo.authorArtworkUrl);
         embedBuilder.setTitle(currentTrackInfo.title, currentTrackInfo.uri);
         return embedBuilder.build();
     }

@@ -1,7 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.audio.source.spotify;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
@@ -75,11 +74,7 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
 
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
-        return new SpotifyAudioTrack(trackInfo,
-                DataFormatTools.readNullableText(input),
-                DataFormatTools.readNullableText(input),
-                this
-        );
+        return new SpotifyAudioTrack(trackInfo, this);
     }
 
     @Override
@@ -270,13 +265,13 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
         return json == null ? AudioReference.NO_TRACK : parseTrack(json);
     }
 
-    private List<AudioTrack> parseTracks(JsonBrowser json) {
+    private List<AudioTrack> parseTracks(JsonBrowser json) throws IOException{
         return json.get("tracks").values().stream()
                 .map(this::parseTrack)
                 .collect(Collectors.toList());
     }
 
-    private List<AudioTrack> parseTrackItems(JsonBrowser json) {
+    private List<AudioTrack> parseTrackItems(JsonBrowser json) throws IOException{
         return json.get("items").values().stream()
                 .filter(item -> !item.isNull() && !item.get("is_local").asBoolean(false))
                 .map(this::parseTrack)
@@ -284,6 +279,11 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
     }
 
     private AudioTrack parseTrack(JsonBrowser json) {
+        String authorArtworkUrl = null;
+        try {
+            JsonBrowser jsonBrowser = getJson(json.get("artists").index(0).get("href").text());
+            authorArtworkUrl = jsonBrowser.get("images").index(0).get("url").text();
+        } catch (IOException ex) {}
         return new SpotifyAudioTrack(
                 new AudioTrackInfo(
                         json.get("name").text(),
@@ -291,10 +291,11 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
                         json.get("duration_ms").asLong(0),
                         json.get("id").text(),
                         false,
-                        json.get("external_urls").get("spotify").text()
+                        json.get("external_urls").get("spotify").text(),
+                        json.get("album").get("images").index(0).get("url").text(),
+                        json.get("external_ids").get("isrc").text(),
+                        authorArtworkUrl
                 ),
-                json.get("external_ids").get("isrc").text(),
-                json.get("album").get("images").index(0).get("url").text(),
                 this
         );
     }

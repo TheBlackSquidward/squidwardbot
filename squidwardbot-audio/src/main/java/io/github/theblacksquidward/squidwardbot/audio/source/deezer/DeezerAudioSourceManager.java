@@ -2,7 +2,6 @@ package io.github.theblacksquidward.squidwardbot.audio.source.deezer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
@@ -119,9 +118,11 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
                 json.get("duration").as(Long.class) * 1000,
                 id,
                 false,
-                "https://deezer.com/track/" + id),
-                json.get("isrc").text(),
+                "https://deezer.com/track/" + id,
                 json.get("album").get("cover_xl").text(),
+                json.get("isrc").text(),
+                json.get("artist").get("picture").text()
+                ),
                 this
         );
     }
@@ -173,18 +174,12 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
 
     @Override
     public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
-        DeezerAudioTrack deezerAudioTrack = (DeezerAudioTrack) track;
-        DataFormatTools.writeNullableText(output, deezerAudioTrack.getISRC());
-        DataFormatTools.writeNullableText(output, deezerAudioTrack.getArtworkUrl());
+        // Nothing special to encode
     }
 
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
-        return new DeezerAudioTrack(trackInfo,
-                DataFormatTools.readNullableText(input),
-                DataFormatTools.readNullableText(input),
-                this
-        );
+        return new DeezerAudioTrack(trackInfo, this);
     }
 
     @Override

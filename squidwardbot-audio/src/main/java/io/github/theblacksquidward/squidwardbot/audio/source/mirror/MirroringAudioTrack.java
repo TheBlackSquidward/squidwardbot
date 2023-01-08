@@ -19,23 +19,11 @@ public abstract class MirroringAudioTrack extends DelegatedAudioTrack {
 
     private static final Logger log = LoggerFactory.getLogger(MirroringAudioTrack.class);
 
-    protected final String isrc;
-    protected final String artworkUrl;
     protected final MirroringAudioSourceManager sourceManager;
 
-    public MirroringAudioTrack(AudioTrackInfo trackInfo, String isrc, String artworkUrl, MirroringAudioSourceManager sourceManager) {
+    public MirroringAudioTrack(AudioTrackInfo trackInfo, MirroringAudioSourceManager sourceManager) {
         super(trackInfo);
-        this.isrc = isrc;
-        this.artworkUrl = artworkUrl;
         this.sourceManager = sourceManager;
-    }
-
-    public String getISRC() {
-        return this.isrc;
-    }
-
-    public String getArtworkUrl() {
-        return this.artworkUrl;
     }
 
     private String getTrackTitle() {
@@ -62,8 +50,8 @@ public abstract class MirroringAudioTrack extends DelegatedAudioTrack {
             }
 
             if (provider.contains(ISRC_PATTERN)) {
-                if (this.isrc != null) {
-                    provider = provider.replace(ISRC_PATTERN, this.isrc);
+                if (this.trackInfo.isrc != null) {
+                    provider = provider.replace(ISRC_PATTERN, this.trackInfo.isrc);
                 } else {
                     log.debug("Ignoring identifier \"" + provider + "\" because this track does not have an ISRC!");
                     continue;

@@ -1,7 +1,6 @@
 package io.github.theblacksquidward.squidwardbot.audio.source.applemusic;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
@@ -69,11 +68,7 @@ public class AppleMusicSourceManager extends MirroringAudioSourceManager impleme
 
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
-        return new AppleMusicAudioTrack(trackInfo,
-                DataFormatTools.readNullableText(input),
-                DataFormatTools.readNullableText(input),
-                this
-        );
+        return new AppleMusicAudioTrack(trackInfo, this);
     }
 
     @Override
@@ -229,10 +224,11 @@ public class AppleMusicSourceManager extends MirroringAudioSourceManager impleme
                         attributes.get("durationInMillis").asLong(0),
                         json.get("id").text(),
                         false,
-                        attributes.get("url").text()
-                ),
-                attributes.get("isrc").text(),
-                artwork.get("url").text().replace("{w}", artwork.get("width").text()).replace("{h}", artwork.get("height").text()),
+                        attributes.get("url").text(),
+                        artwork.get("url").text().replace("{w}", artwork.get("width").text()).replace("{h}", artwork.get("height").text()),
+                        attributes.get("isrc").text(),
+                        null
+                        ),
                 this
         );
     }

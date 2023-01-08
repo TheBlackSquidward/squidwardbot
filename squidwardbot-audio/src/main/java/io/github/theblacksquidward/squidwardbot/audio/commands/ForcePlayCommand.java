@@ -4,12 +4,9 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
-import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioTrack;
-import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAudioTrack;
 import io.github.theblacksquidward.squidwardbot.audio.track.AudioPlaylistInfo;
 import io.github.theblacksquidward.squidwardbot.audio.track.CustomAudioPlaylist;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
@@ -85,14 +82,7 @@ public class ForcePlayCommand extends AbstractAudioCommand {
             embedBuilder.setTimestamp(Instant.now());
             embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
             embedBuilder.setDescription("Successfully force loaded the track " + audioTrackInfo.title + " by " + audioTrackInfo.author + " [" + StringUtils.millisecondsFormatted(audioTrack.getDuration()) + "] to the queue.");
-            SongSearch.Hit hit = getCurrentlyPlayingHit(event.getGuild());
-            if (hit != null) {
-                embedBuilder.setThumbnail(hit.getThumbnailUrl());
-                embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
-                embedBuilder.setTitle(hit.getTitleWithFeatured(), audioTrackInfo.uri);
-            }
-            if(audioTrack instanceof MirroringAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkUrl());
-            if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkUrl());
+            embedBuilder.setThumbnail(audioTrackInfo.artworkUrl);
             embedBuilder.setFooter(audioTrackInfo.author);
             embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
             event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
@@ -112,7 +102,7 @@ public class ForcePlayCommand extends AbstractAudioCommand {
             if (audioPlaylist instanceof CustomAudioPlaylist customAudioPlaylist) {
                 AudioPlaylistInfo audioPlaylistInfo = customAudioPlaylist.getInfo();
                 embedBuilder.setThumbnail(audioPlaylistInfo.getArtworkUrl());
-                embedBuilder.setFooter(audioPlaylistInfo.getArtist(), audioPlaylistInfo.getArtistArtworkUrl());
+                embedBuilder.setFooter(audioPlaylistInfo.getOwner(), audioPlaylistInfo.getOwnerThumbnailUrl());
                 embedBuilder.setTitle(audioPlaylist.getName(), audioPlaylistInfo.getUri());
             } else {
                 embedBuilder.setTitle(audioPlaylist.getName());

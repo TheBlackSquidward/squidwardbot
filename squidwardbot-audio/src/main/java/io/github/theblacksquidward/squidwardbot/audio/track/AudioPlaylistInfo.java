@@ -6,14 +6,14 @@ package io.github.theblacksquidward.squidwardbot.audio.track;
 public class AudioPlaylistInfo {
 
     private final String artworkUrl;
-    private final String artist;
-    private final String artistArtworkUrl;
+    private final String owner;
+    private final String ownerThumbnailUrl;
     private final String uri;
 
-    public AudioPlaylistInfo(String artworkUrl, String artist, String artistArtworkUrl, String uri) {
+    public AudioPlaylistInfo(String artworkUrl, String owner, String ownerThumbnailUrl, String uri) {
         this.artworkUrl = artworkUrl;
-        this.artist = artist;
-        this.artistArtworkUrl = artistArtworkUrl;
+        this.owner = owner;
+        this.ownerThumbnailUrl = ownerThumbnailUrl;
         this.uri = uri;
     }
 
@@ -21,12 +21,12 @@ public class AudioPlaylistInfo {
         return artworkUrl;
     }
 
-    public String getArtist() {
-        return artist;
+    public String getOwner() {
+        return owner;
     }
 
-    public String getArtistArtworkUrl() {
-        return artistArtworkUrl;
+    public String getOwnerThumbnailUrl() {
+        return ownerThumbnailUrl;
     }
 
     public String getUri() {

@@ -2,7 +2,6 @@ package io.github.theblacksquidward.squidwardbot.audio.source.mirror;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import java.io.DataOutput;
@@ -40,9 +39,7 @@ public abstract class MirroringAudioSourceManager implements AudioSourceManager 
 
     @Override
     public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
-        var isrcAudioTrack = ((MirroringAudioTrack) track);
-        DataFormatTools.writeNullableText(output, isrcAudioTrack.getISRC());
-        DataFormatTools.writeNullableText(output, isrcAudioTrack.getArtworkUrl());
+        // Nothing special to decode
     }
 
 }

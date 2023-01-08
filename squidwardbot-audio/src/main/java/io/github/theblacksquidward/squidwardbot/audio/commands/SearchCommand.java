@@ -4,12 +4,9 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import genius.SongSearch;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
 import io.github.theblacksquidward.squidwardbot.audio.BaseAudioLoadResultImpl;
 import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
-import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioTrack;
-import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAudioTrack;
 import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
@@ -51,16 +48,8 @@ public class SearchCommand extends AbstractAudioCommand {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTimestamp(Instant.now());
             embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
-
-            SongSearch.Hit hit = getHit(event.getGuild(), audioTrack);
-            if(hit != null) {
-                embedBuilder.setThumbnail(hit.getThumbnailUrl());
-                embedBuilder.setFooter(hit.getArtist().getName(), hit.getArtist().getImageUrl());
-                embedBuilder.setTitle(hit.getTitleWithFeatured(), audioTrackInfo.uri);
-            }
-            if(audioTrack instanceof MirroringAudioTrack delegatingAudioTrack) embedBuilder.setThumbnail(delegatingAudioTrack.getArtworkUrl());
-            if(audioTrack instanceof DeezerAudioTrack deezerAudioTrack) embedBuilder.setThumbnail(deezerAudioTrack.getArtworkUrl());
-            embedBuilder.setFooter(audioTrackInfo.author);
+            embedBuilder.setThumbnail(audioTrackInfo.artworkUrl);
+            embedBuilder.setFooter(audioTrackInfo.author, audioTrackInfo.authorArtworkUrl);
             embedBuilder.setTitle(audioTrackInfo.title, audioTrackInfo.uri);
             embedBuilder.addField("Identifier", identifier, false);
             embedBuilder.addField("Duration", StringUtils.millisecondsFormatted(audioTrackInfo.length), false);

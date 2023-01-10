@@ -7,7 +7,9 @@ import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterfaceManager;
 import com.sedmelluq.discord.lavaplayer.track.*;
+import io.github.theblacksquidward.squidwardbot.audio.source.mirror.DefaultMirroringAudioTrackResolver;
 import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAudioSourceManager;
+import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAudioTrackResolver;
 import io.github.theblacksquidward.squidwardbot.audio.track.AudioPlaylistInfo;
 import io.github.theblacksquidward.squidwardbot.audio.track.CustomAudioPlaylist;
 import org.apache.http.client.config.RequestConfig;
@@ -18,6 +20,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -49,7 +52,11 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
     private Instant tokenExpire;
 
     public SpotifySourceManager(String[] providers, String clientId, String clientSecret, String countryCode, AudioPlayerManager audioPlayerManager) {
-        super(providers, audioPlayerManager);
+        this(clientId, clientSecret, countryCode, audioPlayerManager, new DefaultMirroringAudioTrackResolver(providers));
+    }
+
+    public SpotifySourceManager(String clientId, String clientSecret, String countryCode, AudioPlayerManager audioPlayerManager, MirroringAudioTrackResolver mirroringAudioTrackResolver) {
+        super(audioPlayerManager, mirroringAudioTrackResolver);
 
         if (clientId == null || clientId.isEmpty()) {
             throw new IllegalArgumentException("Spotify client id must be set");
@@ -73,8 +80,18 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
     }
 
     @Override
-    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
+    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
         return new SpotifyAudioTrack(trackInfo, this);
+    }
+
+    @Override
+    public boolean isTrackEncodable(AudioTrack track) {
+        return true;
+    }
+
+    @Override
+    public void encodeTrack(AudioTrack track, DataOutput output) {
+        // Nothing special to encode.
     }
 
     @Override
@@ -278,6 +295,7 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
                 .collect(Collectors.toList());
     }
 
+    //TODO
     private AudioTrack parseTrack(JsonBrowser json) {
         String authorArtworkUrl = null;
         try {

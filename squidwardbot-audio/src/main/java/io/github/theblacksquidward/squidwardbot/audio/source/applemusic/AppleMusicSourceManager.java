@@ -7,7 +7,9 @@ import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterfaceManager;
 import com.sedmelluq.discord.lavaplayer.track.*;
+import io.github.theblacksquidward.squidwardbot.audio.source.mirror.DefaultMirroringAudioTrackResolver;
 import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAudioSourceManager;
+import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAudioTrackResolver;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -19,6 +21,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -42,13 +45,17 @@ public class AppleMusicSourceManager extends MirroringAudioSourceManager impleme
     public static final String API_BASE = "https://api.music.apple.com/v1/";
     private final HttpInterfaceManager httpInterfaceManager = HttpClientTools.createDefaultThreadLocalManager();
     private final String countryCode;
-    private String token;
+    private String mediaAPIToken;
     private String origin;
     private Instant tokenExpire;
 
-    public AppleMusicSourceManager(String[] providers, String mediaAPIToken, String countryCode, AudioPlayerManager audioPlayerManager) {
-        super(providers, audioPlayerManager);
-        token = mediaAPIToken;
+    public AppleMusicSourceManager(String[] providers, String mediaApiToken, String countryCode, AudioPlayerManager audioPlayerManager) {
+        this(mediaApiToken, countryCode, audioPlayerManager, new DefaultMirroringAudioTrackResolver(providers));
+    }
+
+    public AppleMusicSourceManager(String mediaAPIToken, String countryCode, AudioPlayerManager audioPlayerManager, MirroringAudioTrackResolver mirroringAudioTrackResolver) {
+        super(audioPlayerManager, mirroringAudioTrackResolver);
+        this.mediaAPIToken = mediaAPIToken;
         try {
             parseTokenData();
         } catch (IOException e) {
@@ -67,8 +74,18 @@ public class AppleMusicSourceManager extends MirroringAudioSourceManager impleme
     }
 
     @Override
-    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
+    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
         return new AppleMusicAudioTrack(trackInfo, this);
+    }
+
+    @Override
+    public boolean isTrackEncodable(AudioTrack track) {
+        return true;
+    }
+
+    @Override
+    public void encodeTrack(AudioTrack track, DataOutput output) {
+        // Nothing special to encode.
     }
 
     @Override
@@ -84,30 +101,34 @@ public class AppleMusicSourceManager extends MirroringAudioSourceManager impleme
             String identifier = matcher.group("identifier");
 
             switch (matcher.group("type")) {
-                case "song":
+                case "song" -> {
                     return getSong(identifier, countryCode);
-                case "album":
+                }
+                case "album" -> {
                     String identifier2 = matcher.group("identifier2");
                     if (identifier2 == null || identifier2.isEmpty()) {
                         return getAlbum(identifier, countryCode);
                     }
                     return getSong(identifier2, countryCode);
-                case "playlist":
+                }
+                case "playlist" -> {
                     return getPlaylist(identifier, countryCode);
-                case "artist":
+                }
+                case "artist" -> {
                     return getArtist(identifier, countryCode);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return AudioReference.NO_TRACK;
     }
 
     public void parseTokenData() throws IOException {
-        if (token == null || token.isEmpty()) {
+        if (mediaAPIToken == null || mediaAPIToken.isEmpty()) {
             return;
         }
-        JsonBrowser json = JsonBrowser.parse(new String(Base64.getDecoder().decode(token.split("\\.")[1])));
+        JsonBrowser json = JsonBrowser.parse(new String(Base64.getDecoder().decode(mediaAPIToken.split("\\.")[1])));
         tokenExpire = Instant.ofEpochSecond(json.get("exp").asLong(0));
         origin = json.get("root_https_origin").index(0).text();
     }
@@ -126,7 +147,7 @@ public class AppleMusicSourceManager extends MirroringAudioSourceManager impleme
                     String tokenScript = IOUtils.toString(indexResponse.getEntity().getContent(), StandardCharsets.UTF_8);
                     Matcher tokenMatcher = TOKEN_SCRIPT_PATTERN.matcher(tokenScript);
                     if (tokenMatcher.find()) {
-                        token = tokenMatcher.group("token");
+                        mediaAPIToken = tokenMatcher.group("token");
                         parseTokenData();
                         return;
                     }
@@ -137,14 +158,14 @@ public class AppleMusicSourceManager extends MirroringAudioSourceManager impleme
         throw new IllegalStateException("Cannot find token script url");
     }
 
-    public String getToken() throws IOException {
-        if (token == null || tokenExpire == null || tokenExpire.isBefore(Instant.now())) requestToken();
-        return token;
+    public String getMediaAPIToken() throws IOException {
+        if (mediaAPIToken == null || tokenExpire == null || tokenExpire.isBefore(Instant.now())) requestToken();
+        return mediaAPIToken;
     }
 
     public JsonBrowser getJson(String uri) throws IOException {
         HttpGet request = new HttpGet(uri);
-        request.addHeader("Authorization", "Bearer " + getToken());
+        request.addHeader("Authorization", "Bearer " + getMediaAPIToken());
         if (origin != null && !origin.isEmpty()) request.addHeader("Origin", "https://" + origin);
         return HttpClientTools.fetchResponseAsJson(httpInterfaceManager.getInterface(), request);
     }

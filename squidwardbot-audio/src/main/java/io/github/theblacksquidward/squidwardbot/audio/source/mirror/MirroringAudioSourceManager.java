@@ -5,12 +5,12 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import java.io.DataOutput;
-import java.io.IOException;
 
 public abstract class MirroringAudioSourceManager implements AudioSourceManager {
 
     public static final String ISRC_PATTERN = "%ISRC%";
     public static final String QUERY_PATTERN = "%QUERY%";
+
     protected final AudioPlayerManager audioPlayerManager;
     protected String[] providers = {
             "ytsearch:\"" + ISRC_PATTERN + "\"",
@@ -38,7 +38,7 @@ public abstract class MirroringAudioSourceManager implements AudioSourceManager 
     }
 
     @Override
-    public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
+    public void encodeTrack(AudioTrack track, DataOutput output) {
         // Nothing special to decode
     }
 

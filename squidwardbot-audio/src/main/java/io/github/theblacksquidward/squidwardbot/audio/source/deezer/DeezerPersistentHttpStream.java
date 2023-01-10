@@ -2,6 +2,7 @@ package io.github.theblacksquidward.squidwardbot.audio.source.deezer;
 
 import com.sedmelluq.discord.lavaplayer.tools.io.ByteBufferInputStream;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
+import com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream;
 import org.apache.http.HttpResponse;
 
 import javax.crypto.BadPaddingException;

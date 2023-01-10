@@ -153,7 +153,7 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
     }
 
     public AudioItem getTrack(String identifier) throws IOException {
-        JsonBrowser json = this.getJson(PUBLIC_API_BASE + "/track/" + identifier);
+        JsonBrowser json = getJson(PUBLIC_API_BASE + "/track/" + identifier);
         return json == null ? AudioReference.NO_TRACK : parseTrack(json);
     }
 
@@ -163,7 +163,7 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
     }
 
     public AudioItem getArtist(String identifier) throws IOException {
-        JsonBrowser json = this.getJson(PUBLIC_API_BASE + "/artist/" + identifier + "/top?limit=50");
+        JsonBrowser json = getJson(PUBLIC_API_BASE + "/artist/" + identifier + "/top?limit=50");
         return json == null || json.get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(json.get("data").index(0).get("artist").get("name").text() + "'s Top Tracks", parseTracks(json), null, false);
     }
 

@@ -8,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import genius.SongSearch;
-import io.github.theblacksquidward.squidwardbot.audio.source.GeneralSearchSourceManager;
 import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioSourceManager;
 import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifySourceManager;
 import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
@@ -35,7 +34,6 @@ public class AudioManager {
         AUDIO_PLAYER_MANAGER.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         AUDIO_PLAYER_MANAGER.registerSourceManager(new DeezerAudioSourceManager(SquidwardBot.getInstance().getDeezerMasterDecryptionKey()));
         AUDIO_PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager());
-        AUDIO_PLAYER_MANAGER.registerSourceManager(new GeneralSearchSourceManager());
         AUDIO_PLAYER_MANAGER.getConfiguration().setFilterHotSwapEnabled(true);
     }
 

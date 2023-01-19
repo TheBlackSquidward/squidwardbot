@@ -205,9 +205,9 @@ public class PlayCommand extends AbstractAudioCommand {
             embedBuilder.setDescription(StringUtils.getIndentedStringList(formattedPlaylistTracks));
             if (audioPlaylist instanceof CustomAudioPlaylist customAudioPlaylist) {
                 AudioPlaylistInfo audioPlaylistInfo = customAudioPlaylist.getInfo();
-                embedBuilder.setThumbnail(audioPlaylistInfo.getArtworkUrl());
-                embedBuilder.setFooter(audioPlaylistInfo.getOwner(), audioPlaylistInfo.getOwnerThumbnailUrl());
-                embedBuilder.setTitle(audioPlaylist.getName(), audioPlaylistInfo.getUri());
+                embedBuilder.setThumbnail(audioPlaylistInfo.artworkUrl());
+                embedBuilder.setFooter(audioPlaylistInfo.owner(), audioPlaylistInfo.ownerThumbnailUrl());
+                embedBuilder.setTitle(audioPlaylist.getName(), audioPlaylistInfo.uri());
             } else {
                 embedBuilder.setTitle(audioPlaylist.getName());
             }

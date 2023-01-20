@@ -86,8 +86,7 @@ public class PlayCommand extends AbstractAudioCommand {
                 JsonBrowser jsonBrowser = JsonBrowser.parse(responseText);
                 if(jsonBrowser.isNull()) return;
 
-                jsonBrowser
-                        .get("contents")
+                jsonBrowser.get("contents")
                         .get("tabbedSearchResultsRenderer")
                         .get("tabs")
                         .index(0)
@@ -116,8 +115,8 @@ public class PlayCommand extends AbstractAudioCommand {
                                         .get("playNavigationEndpoint").get("watchPlaylistEndpoint").get("playlistId").text();
 
                             if (videoId != null) value = YoutubeConstants.WATCH_URL_PREFIX + videoId;
-                            else if (browseId != null && browseId.startsWith("UC")) value = "https://music.youtube.com/channel/" + browseId;
-                            else if (playlistId != null) value = "https://music.youtube.com/playlist?list=" + playlistId;
+                            else if (browseId != null && browseId.startsWith("UC")) value = YoutubeConstants.MUSIC_CHANNEL_URL_PREFIX + browseId;
+                            else if (playlistId != null) value = YoutubeConstants.MUSIC_PLAYLIST_URL_PREFIX + playlistId;
 
                             //TODO: Implement a way to send all give choices irrespective of size.
                             if (name.length() < 100) choices.add(new net.dv8tion.jda.api.interactions.commands.Command.Choice(name, value));

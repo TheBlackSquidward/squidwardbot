@@ -5,4 +5,5 @@ include 'squidwardbot-audio'
 include 'squidwardbot-misc'
 include 'squidwardbot-moderation'
 include 'squidwardbot-destiny'
+include 'squidwardbot-fun'
 

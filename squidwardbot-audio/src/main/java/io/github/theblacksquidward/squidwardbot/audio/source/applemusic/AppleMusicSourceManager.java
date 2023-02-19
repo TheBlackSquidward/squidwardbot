@@ -177,7 +177,12 @@ public class AppleMusicSourceManager extends MirroringAudioSourceManager impleme
 
     public AudioItem getAllSearchResultsAsPlaylist(String query) throws IOException {
         List<AudioTrack> searchResults = getSearchResults(query);
-        return searchResults.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist("Apple Music Search Results For: " + query, searchResults, null, true);
+        return searchResults.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
+                new AudioPlaylistInfo("Apple Music Search Results For: " + query, null, null),
+                searchResults,
+                null,
+                true
+        );
     }
 
     private List<AudioTrack> getSearchResults(String query) throws IOException {
@@ -199,7 +204,12 @@ public class AppleMusicSourceManager extends MirroringAudioSourceManager impleme
             page = getJson(API_BASE + "catalog/" + countryCode + "/albums/" + identifier + "/tracks?limit=" + MAX_PAGE_ITEMS + "&offset=" + offset);
         }
 
-        return tracks.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(json.get("data").index(0).get("attributes").get("name").text(), tracks, null, false);
+        return tracks.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
+                new AudioPlaylistInfo(json.get("data").index(0).get("attributes").get("name").text(), null, null),
+                tracks,
+                null,
+                false
+        );
     }
 
     public AudioItem getPlaylist(String identifier, String countryCode) throws IOException {
@@ -216,12 +226,22 @@ public class AppleMusicSourceManager extends MirroringAudioSourceManager impleme
             page = getJson(API_BASE + "catalog/" + countryCode + "/playlists/" + identifier + "/tracks?limit=" + MAX_PAGE_ITEMS + "&offset=" + offset);
         }
 
-        return tracks.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(json.get("data").index(0).get("attributes").get("name").text(), tracks, null, false);
+        return tracks.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
+                new AudioPlaylistInfo(json.get("data").index(0).get("attributes").get("name").text(), null, null),
+                tracks,
+                null,
+                false
+        );
     }
 
     public AudioItem getArtist(String identifier, String countryCode) throws IOException {
         JsonBrowser json = getJson(API_BASE + "catalog/" + countryCode + "/artists/" + identifier + "/view/top-songs");
-        return json == null || json.get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(json.get("data").index(0).get("attributes").get("artistName").text() + "'s Top Tracks", parseTracks(json), null, false);
+        return json == null || json.get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
+                new AudioPlaylistInfo(json.get("data").index(0).get("attributes").get("artistName").text() + "'s Top Tracks", null, null),
+                parseTracks(json),
+                null,
+                false
+        );
     }
 
     public AudioItem getSong(String identifier, String countryCode) throws IOException {

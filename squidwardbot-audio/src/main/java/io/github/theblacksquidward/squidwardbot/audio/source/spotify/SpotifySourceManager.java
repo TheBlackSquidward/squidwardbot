@@ -10,8 +10,6 @@ import com.sedmelluq.discord.lavaplayer.track.*;
 import io.github.theblacksquidward.squidwardbot.audio.source.mirror.DefaultMirroringAudioTrackResolver;
 import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAudioSourceManager;
 import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAudioTrackResolver;
-import io.github.theblacksquidward.squidwardbot.audio.track.AudioPlaylistInfo;
-import io.github.theblacksquidward.squidwardbot.audio.track.CustomAudioPlaylist;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -152,7 +150,11 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
     public AudioItem getAllSearchResultsAsPlaylist(String query) throws IOException {
         List<AudioTrack> searchResults = getSearchResults(query);
         return searchResults.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
-                "Spotify Search Results For: " + query,
+                new AudioPlaylistInfo(
+                        "Spotify Search Results For: " + query,
+                        null,
+                        null
+                ),
                 searchResults,
                 null,
                 true
@@ -172,7 +174,11 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
     public AudioItem getAllRecommendationResultsAsPlaylist(String query) throws IOException{
         List<AudioTrack> recommendationResults = getRecommendationResults(query);
         return recommendationResults.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
-                "Recommendation Results For: " + query,
+                new AudioPlaylistInfo(
+                    "Recommendation Results For: " + query,
+                        null,
+                        null
+                        ),
                 recommendationResults,
                 null,
                 false
@@ -209,16 +215,15 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
 
         JsonBrowser artistJson = getJson(albumJson.get("artists").index(0).get("href").text());
 
-        return tracks.isEmpty() ? AudioReference.NO_TRACK : new CustomAudioPlaylist(
-                albumJson.get("name").text(), tracks,
-                null,
-                false,
+        return tracks.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
                 new AudioPlaylistInfo(
-                    albumJson.get("images").index(0).get("url").text(),
-                    artistJson.get("name").text(),
-                    artistJson.get("images").index(0).get("url").text(),
-                    albumJson.get("external_urls").get("spotify").text()
-                )
+                        albumJson.get("name").text(),
+                        null,
+                        null
+                ),
+                tracks,
+                null,
+                false
         );
     }
 
@@ -246,34 +251,30 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
 
         JsonBrowser ownerJson = getJson(playlistJson.get("owner").get("href").text());
 
-        return tracks.isEmpty() ? AudioReference.NO_TRACK : new CustomAudioPlaylist(
-                playlistJson.get("name").text(),
+        return tracks.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
+                new AudioPlaylistInfo(
+                        playlistJson.get("name").text(),
+                        null,
+                        null
+                ),
                 tracks,
                 null ,
-                false,
-                new AudioPlaylistInfo(
-                        playlistJson.get("images").index(0).get("url").text(),
-                        ownerJson.get("display_name").text(),
-                        ownerJson.get("images").index(0).get("url").text(),
-                        playlistJson.get("external_urls").get("spotify").text()
-                )
+                false
         );
     }
 
     public AudioItem getArtist(String identifier) throws IOException {
         JsonBrowser artistJson = getJson(API_BASE + "artists/" + identifier);
         JsonBrowser artistTopTracksJson = getJson(API_BASE + "artists/" + identifier + "/top-tracks?market=" + countryCode);
-        return artistJson == null || artistTopTracksJson == null || artistTopTracksJson.get("tracks").values().isEmpty() ? AudioReference.NO_TRACK : new CustomAudioPlaylist(
-                artistJson.get("name").text() + "'s Top Tracks",
+        return artistJson == null || artistTopTracksJson == null || artistTopTracksJson.get("tracks").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
+                new AudioPlaylistInfo(
+                        artistJson.get("name").text() + "'s Top Tracks",
+                        null,
+                        null
+                ),
                 parseTracks(artistTopTracksJson),
                 null,
-                false,
-                new AudioPlaylistInfo(
-                        artistJson.get("images").index(0).get("url").text(),
-                        artistJson.get("name").text(),
-                        artistJson.get("images").index(0).get("url").text(),
-                        artistJson.get("external_urls").get("spotify").text()
-                )
+                false
         );
     }
 

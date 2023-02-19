@@ -139,7 +139,12 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
 
     public AudioItem getAllSearchResultsAsPlaylist(String query) throws IOException {
         List<AudioTrack> searchResults = getSearchResults(query);
-        return searchResults.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist("Deezer Search Results For: " + query, searchResults, null, true);
+        return searchResults.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
+                new AudioPlaylistInfo("Deezer Search Results For: " + query, null, null),
+                searchResults,
+                null,
+                true
+        );
     }
 
     private List<AudioTrack> getSearchResults(String query) throws IOException {
@@ -149,7 +154,12 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
 
     public AudioItem getAlbum(String identifier) throws IOException {
         JsonBrowser json = getJson(PUBLIC_API_BASE + "/album/" + identifier);
-        return json == null || json.get("tracks").get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(json.get("title").text(), parseTracks(json.get("tracks")), null, false);
+        return json == null || json.get("tracks").get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
+                new AudioPlaylistInfo(json.get("title").text(), null, null),
+                parseTracks(json.get("tracks")),
+                null,
+                false
+        );
     }
 
     public AudioItem getTrack(String identifier) throws IOException {
@@ -159,12 +169,22 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
 
     public AudioItem getPlaylist(String identifier) throws IOException {
         JsonBrowser json = getJson(PUBLIC_API_BASE + "/playlist/" + identifier);
-        return json == null || json.get("tracks").get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(json.get("title").text(), parseTracks(json.get("tracks")), null, false);
+        return json == null || json.get("tracks").get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
+                new AudioPlaylistInfo(json.get("title").text(), null, null),
+                parseTracks(json.get("tracks")),
+                null,
+                false
+        );
     }
 
     public AudioItem getArtist(String identifier) throws IOException {
         JsonBrowser json = getJson(PUBLIC_API_BASE + "/artist/" + identifier + "/top?limit=50");
-        return json == null || json.get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(json.get("data").index(0).get("artist").get("name").text() + "'s Top Tracks", parseTracks(json), null, false);
+        return json == null || json.get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
+                new AudioPlaylistInfo(json.get("data").index(0).get("artist").get("name").text() + "'s Top Tracks", null, null),
+                parseTracks(json),
+                null,
+                false
+        );
     }
 
     @Override

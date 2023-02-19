@@ -1,7 +1,7 @@
 dependencies {
     implementation project(':squidwardbot-core')
 
-    implementation 'com.github.TheBlackSquidward:lavaplayer-fork:dev~author-artwork-url-SNAPSHOT'
+    implementation 'com.github.TheBlackSquidward:lavaplayer-fork:9db5273c0c'
     implementation 'com.sedmelluq:jda-nas:1.1.0'
     implementation 'com.github.LowLevelSubmarine:GeniusLyricsAPI:1.0.3'
     implementation 'org.jsoup:jsoup:1.15.3'

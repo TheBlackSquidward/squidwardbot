@@ -52,7 +52,7 @@ public abstract class MirroringAudioTrack extends DelegatedAudioTrack {
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                LOGGER.debug("Playlist loaded: " + playlist.getName());
+                LOGGER.debug("Playlist loaded: " + playlist.getAudioPlaylistInfo().getName());
                 completableFuture.complete(playlist);
             }
 

@@ -1,7 +1,10 @@
 package io.github.theblacksquidward.squidwardbot.core.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -25,6 +28,11 @@ public class StringUtils {
                 minutes > 0 ? String.format("%02d", minutes) + ":" : "00:",
                 seconds > 0 ? String.format("%02d", seconds) : "00").trim();
         return ret.endsWith(":") ? ret.substring(0, ret.length() - 1) : ret;
+    }
+
+    public static boolean startsWithAny(final @NotNull String input, final @NotNull String... searchStrings) {
+        if (input.isEmpty()) return false;
+        return Arrays.stream(searchStrings).anyMatch(input::startsWith);
     }
 
     public static String formatTime(OffsetDateTime time) {

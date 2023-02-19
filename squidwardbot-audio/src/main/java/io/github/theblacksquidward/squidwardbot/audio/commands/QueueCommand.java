@@ -3,7 +3,6 @@ package io.github.theblacksquidward.squidwardbot.audio.commands;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
-import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,7 +13,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 import java.util.List;
 
-@Command
 public class QueueCommand extends AbstractAudioCommand {
 
     private static final int MAX_TRACKS_ON_PAGE = 20;

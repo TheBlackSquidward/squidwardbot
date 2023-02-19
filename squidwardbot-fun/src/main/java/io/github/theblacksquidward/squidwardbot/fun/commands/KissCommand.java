@@ -1,6 +1,5 @@
 package io.github.theblacksquidward.squidwardbot.fun.commands;
 
-import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -11,7 +10,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.awt.*;
 import java.util.List;
 
-@Command
 public class KissCommand extends AbstractGifCommand{
 
     @Override

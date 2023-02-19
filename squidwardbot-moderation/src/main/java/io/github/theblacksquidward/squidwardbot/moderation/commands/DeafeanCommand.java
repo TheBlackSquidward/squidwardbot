@@ -1,6 +1,5 @@
 package io.github.theblacksquidward.squidwardbot.moderation.commands;
 
-import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -10,7 +9,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.List;
 
-@Command
 public class DeafeanCommand extends SquidwardBotCommand {
 
     @Override

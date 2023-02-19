@@ -37,7 +37,7 @@ public class ModuleRegistry {
         ));
         timer.stop();
         LOGGER.info("Successfully found and registered {} modules in {}.", getModules().size(), timer);
-        forEachPlugin(ISquidwardBotModule::onModuleRegister);
+        forEachPlugin(ISquidwardBotModule::onModuleInit);
     }
 
     public static ModuleRegistry getInstance() {

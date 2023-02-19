@@ -1,7 +1,7 @@
 package io.github.theblacksquidward.squidwardbot.core;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import io.github.theblacksquidward.squidwardbot.core.commands.CommandManager;
+import io.github.theblacksquidward.squidwardbot.core.commands.CommandRegistry;
 import io.github.theblacksquidward.squidwardbot.core.modules.ModuleRegistry;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 public class SquidwardBot {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SquidwardBot.class);
+
+    private final CommandRegistry commandRegistry = new CommandRegistry();
 
     private static SquidwardBot instance;
 
@@ -26,7 +28,7 @@ public class SquidwardBot {
         this.DOTENV = dotenv;
         this.VERSION = version;
         ModuleRegistry.getInstance().captureAndInitModules(reflections);
-        CommandManager.captureAndRegisterCommands(reflections);
+        ModuleRegistry.getInstance().forEachPlugin(module -> module.registerCommands(commandRegistry));
         final JDABuilder jdaBuilder = JDABuilder.createDefault(dotenv.get("DISCORD_BOT_TOKEN"));
         ModuleRegistry.getInstance().forEachPlugin(module -> module.onJDABuild(jdaBuilder));
         JDA = jdaBuilder.build().awaitReady();

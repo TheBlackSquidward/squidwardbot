@@ -1,6 +1,7 @@
 package io.github.theblacksquidward.squidwardbot.core;
 
-import io.github.theblacksquidward.squidwardbot.core.commands.CommandManager;
+import io.github.theblacksquidward.squidwardbot.core.commands.CommandRegistry;
+import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotCommand;
 import io.github.theblacksquidward.squidwardbot.core.constants.Constants;
 import io.github.theblacksquidward.squidwardbot.core.modules.ISquidwardBotModule;
 import io.github.theblacksquidward.squidwardbot.core.modules.ModuleEventHandler;
@@ -8,14 +9,17 @@ import io.github.theblacksquidward.squidwardbot.core.modules.SquidwardBotModule;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Set;
 
 @SquidwardBotModule
 public class CoreModule implements ISquidwardBotModule {
@@ -34,8 +38,18 @@ public class CoreModule implements ISquidwardBotModule {
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .setActivity(Activity.playing("SquidwardBot | /help"))
                 .addEventListeners(
-                        new CommandManager(),
                         new ModuleEventHandler());
+    }
+
+    @Override
+    public void onJDAReady(ReadyEvent event) {
+        Set<SquidwardBotCommand> commands = CommandRegistry.getCommands();
+        event.getJDA().getGuilds().forEach(guild -> {
+            final CommandListUpdateAction commandListUpdateAction = guild.updateCommands();
+            commands.forEach(cmd -> commandListUpdateAction.addCommands(cmd.getCommandData()));
+            commandListUpdateAction.queue();
+        });
+        commands.forEach(event.getJDA()::addEventListener);
     }
 
     @Override

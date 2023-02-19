@@ -1,8 +1,7 @@
 package io.github.theblacksquidward.squidwardbot.misc.commands;
 
 import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
-import io.github.theblacksquidward.squidwardbot.core.commands.Command;
-import io.github.theblacksquidward.squidwardbot.core.commands.CommandManager;
+import io.github.theblacksquidward.squidwardbot.core.commands.CommandRegistry;
 import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotCommand;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
@@ -15,7 +14,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import javax.annotation.Nullable;
 import java.time.Instant;
 
-@Command
 public class BotInfoCommand extends SquidwardBotCommand {
 
     @Override
@@ -54,7 +52,7 @@ public class BotInfoCommand extends SquidwardBotCommand {
         embedBuilder.addField("Categories", String.valueOf(jda.getCategoryCache().size()), true);
         embedBuilder.addField("Channels", String.valueOf(jda.getVoiceChannelCache().size() + jda.getTextChannelCache().size()
                 + jda.getThreadChannelCache().size()), true);
-        embedBuilder.addField("Slash Commands", String.valueOf(CommandManager.getCommands().size()), true);
+        embedBuilder.addField("Slash Commands", String.valueOf(CommandRegistry.getCommandsSize()), true);
         embedBuilder.addField("Bot Owner", jda.getUserById(SquidwardBot.getInstance().getOwnerId()).getAsMention(), false);
 
         embedBuilder.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl());

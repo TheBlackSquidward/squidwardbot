@@ -3,7 +3,6 @@ package io.github.theblacksquidward.squidwardbot.audio.commands;
 import genius.SongSearch;
 import genius.SongSearch.Hit;
 import io.github.theblacksquidward.squidwardbot.audio.AudioManager;
-import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -22,7 +21,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Command
 public class LyricsCommand extends AbstractAudioCommand{
 
     private static final Map<Long, Hit> ID_LYRIC_MAP = new HashMap<>();

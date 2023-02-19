@@ -1,6 +1,5 @@
 package io.github.theblacksquidward.squidwardbot.misc.commands;
 
-import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotCommand;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
@@ -11,7 +10,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 import java.time.Instant;
 
-@Command
 public class ServerInfoCommand extends SquidwardBotCommand {
 
     @Override

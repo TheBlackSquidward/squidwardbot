@@ -18,7 +18,6 @@ import io.github.theblacksquidward.squidwardbot.audio.TrackScheduler;
 import io.github.theblacksquidward.squidwardbot.audio.source.applemusic.AppleMusicSourceManager;
 import io.github.theblacksquidward.squidwardbot.audio.source.deezer.DeezerAudioSourceManager;
 import io.github.theblacksquidward.squidwardbot.audio.source.spotify.SpotifySourceManager;
-import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -41,7 +40,6 @@ import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@Command
 public class PlayCommand extends AbstractAudioCommand {
 
     private static final String[] PREFIXES = {

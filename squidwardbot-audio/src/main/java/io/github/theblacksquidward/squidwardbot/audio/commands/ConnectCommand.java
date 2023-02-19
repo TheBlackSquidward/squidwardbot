@@ -1,6 +1,5 @@
 package io.github.theblacksquidward.squidwardbot.audio.commands;
 
-import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -14,7 +13,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.List;
 
-@Command
 public class ConnectCommand extends AbstractAudioCommand {
 
     @Override

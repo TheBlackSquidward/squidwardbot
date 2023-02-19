@@ -1,10 +1,8 @@
 package io.github.theblacksquidward.squidwardbot.misc.commands;
 
-import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-@Command
 public class PingCommand extends SquidwardBotCommand {
 
     @Override

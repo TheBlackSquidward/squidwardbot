@@ -1,6 +1,5 @@
 package io.github.theblacksquidward.squidwardbot.misc.commands;
 
-import io.github.theblacksquidward.squidwardbot.core.commands.Command;
 import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotCommand;
 import io.github.theblacksquidward.squidwardbot.core.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -17,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Instant;
 import java.util.List;
 
-@Command
 public class UserInfoCommand extends SquidwardBotCommand {
 
     @Override

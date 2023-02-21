@@ -5,11 +5,13 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collections;
 import java.util.List;
 
-public interface ISquidwardBotCommand {
+@ApiStatus.Internal
+interface ISquidwardBotCommand {
 
     void onSlashCommand(SlashCommandInteractionEvent event);
 

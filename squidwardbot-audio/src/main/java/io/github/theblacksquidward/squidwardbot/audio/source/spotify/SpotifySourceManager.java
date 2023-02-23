@@ -283,13 +283,13 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
         return json == null ? AudioReference.NO_TRACK : parseTrack(json);
     }
 
-    private List<AudioTrack> parseTracks(JsonBrowser json) throws IOException{
+    private List<AudioTrack> parseTracks(JsonBrowser json) {
         return json.get("tracks").values().stream()
                 .map(this::parseTrack)
                 .collect(Collectors.toList());
     }
 
-    private List<AudioTrack> parseTrackItems(JsonBrowser json) throws IOException{
+    private List<AudioTrack> parseTrackItems(JsonBrowser json) {
         return json.get("items").values().stream()
                 .filter(item -> !item.isNull() && !item.get("is_local").asBoolean(false))
                 .map(this::parseTrack)

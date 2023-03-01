@@ -17,7 +17,6 @@ public class SquidwardBot {
 
     private static SquidwardBot instance;
 
-    private final JDA JDA;
     private final String VERSION;
     private final Dotenv DOTENV;
 
@@ -31,7 +30,7 @@ public class SquidwardBot {
         ModuleRegistry.getInstance().forEachPlugin(module -> module.registerCommands(commandRegistry));
         final JDABuilder jdaBuilder = JDABuilder.createDefault(dotenv.get("DISCORD_BOT_TOKEN"));
         ModuleRegistry.getInstance().forEachPlugin(module -> module.onJDABuild(jdaBuilder));
-        JDA = jdaBuilder.build().awaitReady();
+        jdaBuilder.build().awaitReady();
     }
 
     public static SquidwardBot getInstance() {

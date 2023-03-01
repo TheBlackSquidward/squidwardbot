@@ -12,15 +12,12 @@ public class Bootstrap {
 
     public static void main(String[] args) {
         String version = Bootstrap.class.getPackage().getImplementationVersion();
-        if(version == null) {
-            version = "IN-DEV";
-        }
+        if(version == null) version = "IN-DEV";
         final Dotenv DOTENV = Dotenv.load();
         final Reflections REFLECTIONS = new Reflections("io.github.theblacksquidward");
         LOGGER.info("Starting SquidwardBot (Version {})", version);
-        final SquidwardBot SQUIDWARD_BOT;
         try {
-            SQUIDWARD_BOT = new SquidwardBot(DOTENV, REFLECTIONS, version);
+            new SquidwardBot(DOTENV, REFLECTIONS, version);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

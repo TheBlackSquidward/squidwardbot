@@ -13,7 +13,7 @@ allprojects {
     }
 
     dependencies {
-        implementation 'org.jetbrains:annotations:24.0.0'
+        implementation 'org.jetbrains:annotations:24.0.1'
         implementation 'ch.qos.logback:logback-classic:1.4.5'
         implementation 'net.dv8tion:JDA:5.0.0-beta.4'
         implementation 'org.reflections:reflections:0.10.2'

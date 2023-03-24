@@ -153,6 +153,9 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
                 new AudioPlaylistInfo(
                         "Spotify Search Results For: " + query,
                         null,
+                        null,
+                        //TODO
+                        null,
                         null
                 ),
                 searchResults,
@@ -176,6 +179,9 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
         return recommendationResults.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
                 new AudioPlaylistInfo(
                     "Recommendation Results For: " + query,
+                        null,
+                        null,
+                        //TODO
                         null,
                         null
                         ),
@@ -219,6 +225,9 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
                 new AudioPlaylistInfo(
                         albumJson.get("name").text(),
                         null,
+                        null,
+                        //TODO
+                        null,
                         null
                 ),
                 tracks,
@@ -255,6 +264,9 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
                 new AudioPlaylistInfo(
                         playlistJson.get("name").text(),
                         null,
+                        null,
+                        //TODO
+                        null,
                         null
                 ),
                 tracks,
@@ -269,6 +281,9 @@ public class SpotifySourceManager extends MirroringAudioSourceManager implements
         return artistJson == null || artistTopTracksJson == null || artistTopTracksJson.get("tracks").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
                 new AudioPlaylistInfo(
                         artistJson.get("name").text() + "'s Top Tracks",
+                        null,
+                        null,
+                        //TODO
                         null,
                         null
                 ),

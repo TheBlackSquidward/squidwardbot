@@ -140,7 +140,8 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
     public AudioItem getAllSearchResultsAsPlaylist(String query) throws IOException {
         List<AudioTrack> searchResults = getSearchResults(query);
         return searchResults.isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
-                new AudioPlaylistInfo("Deezer Search Results For: " + query, null, null),
+                //TODO
+                new AudioPlaylistInfo("Deezer Search Results For: " + query, null, null, null, null),
                 searchResults,
                 null,
                 true
@@ -155,7 +156,8 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
     public AudioItem getAlbum(String identifier) throws IOException {
         JsonBrowser json = getJson(PUBLIC_API_BASE + "/album/" + identifier);
         return json == null || json.get("tracks").get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
-                new AudioPlaylistInfo(json.get("title").text(), null, null),
+                //TODO
+                new AudioPlaylistInfo(json.get("title").text(), null, null, null, null),
                 parseTracks(json.get("tracks")),
                 null,
                 false
@@ -170,7 +172,8 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
     public AudioItem getPlaylist(String identifier) throws IOException {
         JsonBrowser json = getJson(PUBLIC_API_BASE + "/playlist/" + identifier);
         return json == null || json.get("tracks").get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
-                new AudioPlaylistInfo(json.get("title").text(), null, null),
+                //TODO
+                new AudioPlaylistInfo(json.get("title").text(), null, null, null, null),
                 parseTracks(json.get("tracks")),
                 null,
                 false
@@ -180,7 +183,8 @@ public class DeezerAudioSourceManager implements AudioSourceManager, HttpConfigu
     public AudioItem getArtist(String identifier) throws IOException {
         JsonBrowser json = getJson(PUBLIC_API_BASE + "/artist/" + identifier + "/top?limit=50");
         return json == null || json.get("data").values().isEmpty() ? AudioReference.NO_TRACK : new BasicAudioPlaylist(
-                new AudioPlaylistInfo(json.get("data").index(0).get("artist").get("name").text() + "'s Top Tracks", null, null),
+                //TODO
+                new AudioPlaylistInfo(json.get("data").index(0).get("artist").get("name").text() + "'s Top Tracks", null, null, null, null),
                 parseTracks(json),
                 null,
                 false

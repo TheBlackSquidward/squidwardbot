@@ -200,8 +200,8 @@ public class PlayCommand extends AbstractAudioCommand {
             embedBuilder.setTimestamp(Instant.now());
             embedBuilder.setColor(ColorConstants.PRIMARY_COLOR);
             embedBuilder.setDescription(StringUtils.getIndentedStringList(formattedPlaylistTracks));
-            // embedBuilder.setThumbnail(audioPlaylistInfo.artworkUrl());
-            // embedBuilder.setFooter(audioPlaylistInfo.owner(), audioPlaylistInfo.ownerThumbnailUrl());
+            embedBuilder.setThumbnail(audioPlaylistInfo.getPlaylistArtworkUrl());
+            embedBuilder.setFooter(audioPlaylistInfo.getOwner(), audioPlaylistInfo.getOwnerArtworkUrl());
             embedBuilder.setFooter(audioPlaylistInfo.getOwner());
             embedBuilder.setTitle(audioPlaylistInfo.getName(), audioPlaylistInfo.getUri());
             event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
@@ -223,7 +223,6 @@ public class PlayCommand extends AbstractAudioCommand {
                             "\nException: " + exception.getMessage())).queue();
             super.loadFailed(exception);
         }
-
     }
 
 }

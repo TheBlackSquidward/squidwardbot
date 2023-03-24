@@ -25,7 +25,7 @@ allprojects {
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(18)
+            languageVersion = JavaLanguageVersion.of(19)
         }
     }
 
@@ -57,7 +57,7 @@ tasks.configureEach {
                     'Main-Class': 'io.github.theblacksquidward.squidwardbot.Bootstrap'
             )
         }
-        archiveName 'SquidwardBot.jar'
+        archiveFileName.set("SquidwardBot.jar")
         duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         from {
             configurations.moduleJar.collect {

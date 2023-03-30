@@ -3,7 +3,6 @@ WORKDIR /home/gradle/source/
 
 COPY ./ ./
 RUN gradle jar
-RUN ls -Rla
 
 FROM eclipse-temurin:19.0.2_7-jre
 WORKDIR /opt/SquidwardBot/

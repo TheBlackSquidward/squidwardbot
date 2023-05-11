@@ -61,7 +61,7 @@ public class CoreModule implements ISquidwardBotModule {
         try {
             okHttpClient.cache().close();
         } catch (IOException | NullPointerException exception) {
-            LOGGER.error("Could not successfully shutdown OkHttpClient.");
+            LOGGER.error("Could not shutdown OkHttpClient.");
         }
     }
 

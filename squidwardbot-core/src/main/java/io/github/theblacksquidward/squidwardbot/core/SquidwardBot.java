@@ -3,7 +3,6 @@ package io.github.theblacksquidward.squidwardbot.core;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.theblacksquidward.squidwardbot.core.commands.CommandRegistry;
 import io.github.theblacksquidward.squidwardbot.core.modules.ModuleRegistry;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -17,18 +16,23 @@ public class SquidwardBot {
 
     private static SquidwardBot instance;
 
-    private final String VERSION;
-    private final Dotenv DOTENV;
+    private final boolean inDev;
+    private final String version;
+    private final Dotenv dotenv;
 
-    public SquidwardBot(Dotenv dotenv,
+    public SquidwardBot(boolean inDev,
+                        Dotenv dotenv,
                         Reflections reflections,
                         String version) throws InterruptedException {
         instance = this;
-        this.DOTENV = dotenv;
-        this.VERSION = version;
+        this.inDev = inDev;
+        this.dotenv = dotenv;
+        this.version = version;
         ModuleRegistry.getInstance().captureAndInitModules(reflections);
         ModuleRegistry.getInstance().forEachPlugin(module -> module.registerCommands(commandRegistry));
-        final JDABuilder jdaBuilder = JDABuilder.createDefault(dotenv.get("DISCORD_BOT_TOKEN"));
+        final JDABuilder jdaBuilder = JDABuilder.createDefault(
+                inDev ? dotenv.get("DISCORD_BOT_DEV_TOKEN") : dotenv.get("DISCORD_BOT_TOKEN")
+        );
         ModuleRegistry.getInstance().forEachPlugin(module -> module.onJDABuild(jdaBuilder));
         jdaBuilder.build().awaitReady();
     }
@@ -38,30 +42,34 @@ public class SquidwardBot {
     }
 
     public String getSpotifyClientId() {
-        return DOTENV.get("SPOTIFY_CLIENT_ID");
+        return dotenv.get("SPOTIFY_CLIENT_ID");
     }
 
     public String getSpotifyClientSecret() {
-        return DOTENV.get("SPOTIFY_CLIENT_SECRET");
+        return dotenv.get("SPOTIFY_CLIENT_SECRET");
     }
 
     public String getAppleMusicMediaApiToken() {
-        return DOTENV.get("APPLE_MUSIC_MEDIA_API_TOKEN");
+        return dotenv.get("APPLE_MUSIC_MEDIA_API_TOKEN");
     }
 
     public String getDeezerMasterDecryptionKey() {
-        return DOTENV.get("DEEZER_MASTER_DECRYPTION_KEY");
+        return dotenv.get("DEEZER_MASTER_DECRYPTION_KEY");
     }
 
     public String getTenorApiKey() {
-        return DOTENV.get("TENOR_API_KEY");
+        return dotenv.get("TENOR_API_KEY");
+    }
+
+    public boolean isInDev() {
+        return inDev;
     }
 
     public String getVersion() {
-        return VERSION;
+        return version;
     }
 
     public Long getOwnerId() {
-        return Long.parseLong(DOTENV.get("OWNER_ID"));
+        return Long.parseLong(dotenv.get("OWNER_ID"));
     }
 }

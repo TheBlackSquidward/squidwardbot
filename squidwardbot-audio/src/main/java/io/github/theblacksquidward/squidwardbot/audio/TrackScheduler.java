@@ -32,6 +32,7 @@ public class TrackScheduler extends AudioEventAdapter {
     private BlockingDeque<AudioTrack> queue;
 
     private boolean isRepeating = false;
+    private BlockingDeque<AudioTrack> repeatingQueue;
 
     private boolean isNightcore = false;
     private boolean isSlowed = false;
@@ -47,6 +48,7 @@ public class TrackScheduler extends AudioEventAdapter {
     public TrackScheduler(AudioPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
         this.queue = new LinkedBlockingDeque<>();
+        this.repeatingQueue = new LinkedBlockingDeque<>();
     }
 
     public boolean isRepeating() {
@@ -55,6 +57,24 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public void toggleRepeating() {
         this.isRepeating = !this.isRepeating;
+        if (isRepeating) {
+            queue.forEach(track -> repeatingQueue.offer(track));
+            repeatingQueue.offer(getCurrentlyPlayingTrack().makeClone());
+            queue.clear();
+        } else {
+            while (!repeatingQueue.isEmpty()) {
+                queue.offer(repeatingQueue.poll());
+            }
+            queue.pollLast();
+        }
+    }
+
+    public BlockingDeque<AudioTrack> getQueue() {
+        return queue;
+    }
+
+    public BlockingDeque<AudioTrack> getRepeatingQueue() {
+        return repeatingQueue;
     }
 
     public float getTempo() {
@@ -185,13 +205,28 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public void queueTrack(AudioTrack track) {
         if(!this.audioPlayer.startTrack(track, true)) {
-            this.queue.offer(track);
+            if (isRepeating) {
+                this.repeatingQueue.offer(track);
+            } else {
+                this.queue.offer(track);
+            }
+        }
+    }
+
+    public void removeTrack(int position) {
+        if (isRepeating) {
+            List<AudioTrack> tracks = new ArrayList<>(repeatingQueue);
+            tracks.remove(position - 1);
+            repeatingQueue = new LinkedBlockingDeque<>(tracks);
+        } else {
+            List<AudioTrack> tracks = new ArrayList<>(queue);
+            tracks.remove(position - 1);
+            queue = new LinkedBlockingDeque<>(tracks);
         }
     }
 
     public void clearQueue() {
-        List<AudioTrack> newQueue = new ArrayList<>();
-        queue.drainTo(newQueue);
+        queue.clear();
     }
 
     public boolean isQueueEmpty() {
@@ -224,10 +259,20 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public void nextTrack() {
-        if(!queue.isEmpty()) {
-            this.audioPlayer.startTrack(this.queue.poll(), false);
+        if (isRepeating) {
+            if(!repeatingQueue.isEmpty()) {
+                final AudioTrack audioTrack = repeatingQueue.poll();
+                this.audioPlayer.startTrack(audioTrack, false);
+                repeatingQueue.offer(audioTrack.makeClone());
+            } else {
+                this.audioPlayer.startTrack(null, false);
+            }
         } else {
-            this.audioPlayer.startTrack(null, false);
+            if(!queue.isEmpty()) {
+                this.audioPlayer.startTrack(this.queue.poll(), false);
+            } else {
+                this.audioPlayer.startTrack(null, false);
+            }
         }
     }
 
@@ -264,9 +309,6 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack audioTrack, AudioTrackEndReason endReason) {
         if(endReason.mayStartNext) {
-            if(isRepeating) {
-                addTrackAtHead(audioTrack.makeClone());
-            }
             nextTrack();
         }
     }

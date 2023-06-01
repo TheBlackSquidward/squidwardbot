@@ -29,11 +29,13 @@ public class AudioModule implements ISquidwardBotModule {
         commandRegistry.registerCommand(new PauseCommand());
         commandRegistry.registerCommand(new PlayCommand());
         commandRegistry.registerCommand(new QueueCommand());
+        commandRegistry.registerCommand(new RemoveCommand());
         commandRegistry.registerCommand(new RepeatCommand());
         commandRegistry.registerCommand(new SearchCommand());
         commandRegistry.registerCommand(new ShuffleCommand());
         commandRegistry.registerCommand(new SkipCommand());
         commandRegistry.registerCommand(new SlowCommand());
+        commandRegistry.registerCommand(new StopCommand());
         commandRegistry.registerCommand(new UnpauseCommand());
         commandRegistry.registerCommand(new VolumeCommand());
     }

@@ -1,3 +1,5 @@
 dependencies {
+    implementation 'org.postgresql:postgresql:42.6.0'
+
     implementation 'com.github.LowLevelSubmarine:GeniusLyricsAPI:1.0.3'
 }

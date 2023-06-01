@@ -3,10 +3,15 @@ package io.github.theblacksquidward.squidwardbot.core;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.theblacksquidward.squidwardbot.core.commands.CommandRegistry;
 import io.github.theblacksquidward.squidwardbot.core.modules.ModuleRegistry;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class SquidwardBot {
 
@@ -14,62 +19,92 @@ public class SquidwardBot {
 
     private final CommandRegistry commandRegistry = new CommandRegistry();
 
-    private static SquidwardBot instance;
+    private static SquidwardBot instance = null;
 
-    private final boolean inDev;
-    private final String version;
-    private final Dotenv dotenv;
+    private final String VERSION;
+    private final Dotenv DOTENV;
+    private final Connection databaseConnection;
 
     public SquidwardBot(boolean inDev,
                         Dotenv dotenv,
                         Reflections reflections,
-                        String version) throws InterruptedException {
+                        String version) throws InterruptedException, SQLException {
         instance = this;
-        this.inDev = inDev;
-        this.dotenv = dotenv;
-        this.version = version;
+        this.DOTENV = dotenv;
+        this.VERSION = version;
+        this.databaseConnection = DriverManager.getConnection("jdbc:postgresql://" + dotenv.get("DATABASE_URL") + "/" + dotenv.get("DATABASE_NAME"),
+                    dotenv.get("DATABASE_USERNAME"), dotenv.get("DATABASE_PASSWORD"));
         ModuleRegistry.getInstance().captureAndInitModules(reflections);
         ModuleRegistry.getInstance().forEachPlugin(module -> module.registerCommands(commandRegistry));
-        final JDABuilder jdaBuilder = JDABuilder.createDefault(
-                inDev ? dotenv.get("DISCORD_BOT_DEV_TOKEN") : dotenv.get("DISCORD_BOT_TOKEN")
-        );
+        final JDABuilder jdaBuilder = JDABuilder.createDefault(dotenv.get("DISCORD_BOT_TOKEN"));
         ModuleRegistry.getInstance().forEachPlugin(module -> module.onJDABuild(jdaBuilder));
         jdaBuilder.build().awaitReady();
     }
 
     public static SquidwardBot getInstance() {
+        if (instance == null) throw new RuntimeException("The instance of SquidwardBot does not exist!");
         return instance;
     }
 
+    public Connection getDatabaseConnection() {
+        return databaseConnection;
+    }
+
     public String getSpotifyClientId() {
-        return dotenv.get("SPOTIFY_CLIENT_ID");
+        return DOTENV.get("SPOTIFY_CLIENT_ID");
     }
 
     public String getSpotifyClientSecret() {
-        return dotenv.get("SPOTIFY_CLIENT_SECRET");
+        return DOTENV.get("SPOTIFY_CLIENT_SECRET");
     }
 
     public String getAppleMusicMediaApiToken() {
-        return dotenv.get("APPLE_MUSIC_MEDIA_API_TOKEN");
+        return DOTENV.get("APPLE_MUSIC_MEDIA_API_TOKEN");
     }
 
     public String getDeezerMasterDecryptionKey() {
-        return dotenv.get("DEEZER_MASTER_DECRYPTION_KEY");
+        return DOTENV.get("DEEZER_MASTER_DECRYPTION_KEY");
     }
 
     public String getTenorApiKey() {
-        return dotenv.get("TENOR_API_KEY");
-    }
-
-    public boolean isInDev() {
-        return inDev;
+        return DOTENV.get("TENOR_API_KEY");
     }
 
     public String getVersion() {
-        return version;
+        return VERSION;
     }
 
     public Long getOwnerId() {
-        return Long.parseLong(dotenv.get("OWNER_ID"));
+        return Long.parseLong(DOTENV.get("OWNER_ID"));
     }
+
+    // TODO: reaname
+    public Long getLoggingServerId() {
+        return Long.parseLong(DOTENV.get("HARRY_SERVER_ID"));
+    }
+
+    public Long getWeebsServerId() {
+        return Long.parseLong(DOTENV.get("WEEBS_SERVER_ID"));
+    }
+
+    public Long getRoleUpdateChannelId() {
+        return Long.parseLong(DOTENV.get("LOGGING_ROLE_CHANNEL_ID"));
+    }
+
+    public Long getMemberUpdateChannelId() {
+        return Long.parseLong(DOTENV.get("MEMBER_UPDATE_CHANNEL_ID"));
+    }
+
+    public Long getVoiceUpdateChannelId() {
+        return Long.parseLong(DOTENV.get("VC_UPDATE_CHANNEL_ID"));
+    }
+
+    public Long getChannelUpdateChannelId() {
+        return Long.parseLong(DOTENV.get("CHANNEL_UPDATE_CHANNEL_ID"));
+    }
+
+    public Long getMessageUpdateChannelId() {
+        return Long.parseLong(DOTENV.get("MESSAGE_UPDATE_CHANNEL_ID"));
+    }
+
 }

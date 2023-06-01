@@ -6,6 +6,9 @@ import io.github.theblacksquidward.squidwardbot.core.modules.SquidwardBotModule;
 import io.github.theblacksquidward.squidwardbot.moderation.commands.DeafeanCommand;
 import io.github.theblacksquidward.squidwardbot.moderation.commands.UndeafenCommand;
 import io.github.theblacksquidward.squidwardbot.moderation.commands.UnnickCommand;
+import io.github.theblacksquidward.squidwardbot.moderation.event.WelcomeMessageEventHandler;
+import io.github.theblacksquidward.squidwardbot.moderation.event.logging.*;
+import net.dv8tion.jda.api.JDABuilder;
 
 @SquidwardBotModule
 public class ModerationModule implements ISquidwardBotModule {
@@ -20,6 +23,18 @@ public class ModerationModule implements ISquidwardBotModule {
         commandRegistry.registerCommand(new DeafeanCommand());
         commandRegistry.registerCommand(new UndeafenCommand());
         commandRegistry.registerCommand(new UnnickCommand());
+    }
+
+    @Override
+    public void onJDABuild(JDABuilder jdaBuilder) {
+        jdaBuilder.addEventListeners(
+                new RoleUpdateEventHandler(),
+                new MemberUpdateEventHandler(),
+                new VoiceChannelUpdateEventHandler(),
+                new MessageUpdateEventHandler(),
+                new ChannelUpdateEventHandler(),
+                new WelcomeMessageEventHandler()
+        );
     }
 
 }

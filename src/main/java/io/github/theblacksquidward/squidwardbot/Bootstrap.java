@@ -10,7 +10,7 @@ public class Bootstrap {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Bootstrap.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String version = Bootstrap.class.getPackage().getImplementationVersion();
         final boolean inDev = version == null;
         final Dotenv dotenv = Dotenv.load();

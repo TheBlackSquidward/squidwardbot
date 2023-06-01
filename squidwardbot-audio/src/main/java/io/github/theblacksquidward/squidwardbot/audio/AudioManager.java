@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingDeque;
 
 public class AudioManager {
 
@@ -62,12 +63,16 @@ public class AudioManager {
         getOrCreate(guild).getTrackScheduler().toggleRepeating();
     }
 
-    public static boolean isQueueEmpty(@NotNull Guild guild) {
-        return getOrCreate(guild).getTrackScheduler().isQueueEmpty();
+    public static BlockingDeque<AudioTrack> getQueue(@NotNull Guild guild) {
+        return getOrCreate(guild).getTrackScheduler().getQueue();
     }
 
-    public static int getQueueSize(@NotNull Guild guild) {
-        return getOrCreate(guild).getTrackScheduler().getQueueSize();
+    public static BlockingDeque<AudioTrack> getRepeatingQueue(@NotNull Guild guild) {
+        return getOrCreate(guild).getTrackScheduler().getRepeatingQueue();
+    }
+
+    public static void removeTrack(@NotNull Guild guild, int position) {
+        getOrCreate(guild).getTrackScheduler().removeTrack(position);
     }
 
     public static void shuffleQueue(@NotNull Guild guild) {

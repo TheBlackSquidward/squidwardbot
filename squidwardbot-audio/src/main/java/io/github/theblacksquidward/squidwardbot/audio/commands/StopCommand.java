@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class ShuffleCommand extends AbstractAudioCommand {
+public class StopCommand extends AbstractAudioCommand {
 
     @Override
     public void onSlashCommand(SlashCommandInteractionEvent event) {
@@ -17,33 +17,26 @@ public class ShuffleCommand extends AbstractAudioCommand {
         }
         final AudioChannel audioChannel = event.getMember().getVoiceState().getChannel();
         if(!event.getGuild().getAudioManager().isConnected()) {
-            event.getHook().sendMessageEmbeds(createMusicReply("The bot must be connected to a voice channel to shuffle the queue.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("The bot must be connected to a voice channel to stop it.")).queue();
             return;
         }
         if(event.getMember().getVoiceState().getChannel().getIdLong() != audioChannel.getIdLong()) {
-            event.getHook().sendMessageEmbeds(createMusicReply("You must be in the same voice channel as the bot to shuffle the queue.")).queue();
+            event.getHook().sendMessageEmbeds(createMusicReply("You must be in the same voice channel as the bot to stop it.")).queue();
             return;
         }
-        if (AudioManager.isRepeating(guild)) {
-            event.getHook().sendMessageEmbeds(createMusicReply("You cannot shuffle the repeating queue.")).queue();
-        } else {
-            if(AudioManager.getQueue(guild).isEmpty()) {
-                event.getHook().sendMessageEmbeds(createMusicReply("Could not shuffle the queue as it is currently empty.")).queue();
-                return;
-            }
-            AudioManager.shuffleQueue(guild);
-            event.getHook().sendMessageEmbeds(createMusicReply("Successfully shuffled the queue.")).queue();
-        }
+        AudioManager.clearQueue(guild);
+        AudioManager.skipTrack(guild);
+        event.getHook().sendMessageEmbeds(createMusicReply("Successfully stopped the bot.")).queue();
     }
 
     @Override
     public String getName() {
-        return "shuffle";
+        return "stop";
     }
 
     @Override
     public String getDescription() {
-        return "Shuffles the current queue.";
+        return "Stops the currently playing song and clears the queue. Does not disconnect the bot.";
     }
 
 }

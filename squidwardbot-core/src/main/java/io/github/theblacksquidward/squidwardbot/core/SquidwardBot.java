@@ -1,16 +1,16 @@
 package io.github.theblacksquidward.squidwardbot.core;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.theblacksquidward.squidwardbot.core.commands.CommandRegistry;
 import io.github.theblacksquidward.squidwardbot.core.modules.ModuleRegistry;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class SquidwardBot {
@@ -23,7 +23,9 @@ public class SquidwardBot {
 
     private final String VERSION;
     private final Dotenv DOTENV;
-    private final Connection databaseConnection;
+
+    private final MongoClient mongoClient;
+    private final MongoDatabase mongoDatabase;
 
     public SquidwardBot(boolean inDev,
                         Dotenv dotenv,
@@ -32,8 +34,8 @@ public class SquidwardBot {
         instance = this;
         this.DOTENV = dotenv;
         this.VERSION = version;
-        this.databaseConnection = DriverManager.getConnection("jdbc:postgresql://" + dotenv.get("DATABASE_URL") + "/" + dotenv.get("DATABASE_NAME"),
-                    dotenv.get("DATABASE_USERNAME"), dotenv.get("DATABASE_PASSWORD"));
+        this.mongoClient = MongoClients.create("mongodb+srv://" + dotenv.get("MONGODB_USERNAME") + ":" + dotenv.get("MONGODB_PASSWORD") + "@squidwardbot.nd0ncel.mongodb.net/?retryWrites=true&w=majority");
+        this.mongoDatabase = mongoClient.getDatabase("squidwardbot");
         ModuleRegistry.getInstance().captureAndInitModules(reflections);
         ModuleRegistry.getInstance().forEachPlugin(module -> module.registerCommands(commandRegistry));
         final JDABuilder jdaBuilder = JDABuilder.createDefault(dotenv.get("DISCORD_BOT_TOKEN"));
@@ -46,8 +48,12 @@ public class SquidwardBot {
         return instance;
     }
 
-    public Connection getDatabaseConnection() {
-        return databaseConnection;
+    public MongoClient getMongoClient() {
+        return mongoClient;
+    }
+
+    public MongoDatabase getMongoDatabase() {
+        return mongoDatabase;
     }
 
     public String getSpotifyClientId() {
@@ -79,7 +85,7 @@ public class SquidwardBot {
     }
 
     // TODO: reaname
-    public Long getLoggingServerId() {
+    public Long getGlobalLoggingServerId() {
         return Long.parseLong(DOTENV.get("HARRY_SERVER_ID"));
     }
 

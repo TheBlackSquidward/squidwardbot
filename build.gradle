@@ -13,9 +13,19 @@ allprojects {
     }
 
     dependencies {
+        // JDA
+        implementation 'net.dv8tion:JDA:5.0.0-beta.12'
+
+        // Annotations
         implementation 'org.jetbrains:annotations:24.0.1'
+
+        // Logging
         implementation 'ch.qos.logback:logback-classic:1.4.7'
-        implementation 'net.dv8tion:JDA:5.0.0-beta.9'
+
+        // Database
+        implementation 'org.mongodb:mongodb-driver-sync:4.10.1'
+
+        // Other Useful Libraries
         implementation 'org.reflections:reflections:0.10.2'
         implementation 'com.google.guava:guava:32.0.1-jre'
         implementation 'com.google.code.gson:gson:2.10.1'
@@ -25,7 +35,7 @@ allprojects {
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(19)
+            languageVersion = JavaLanguageVersion.of(17)
         }
     }
 

@@ -1,10 +1,10 @@
-FROM gradle:8.0.2-jdk19 as builder
+FROM gradle:8.1.1-jdk17 as builder
 WORKDIR /home/gradle/source/
 
 COPY ./ ./
 RUN gradle jar
 
-FROM eclipse-temurin:19.0.2_7-jre
+FROM eclipse-temurin:17.0.7_7-jre
 WORKDIR /opt/SquidwardBot/
 
 COPY --from=builder /home/gradle/source/build/libs/SquidwardBot.jar ./

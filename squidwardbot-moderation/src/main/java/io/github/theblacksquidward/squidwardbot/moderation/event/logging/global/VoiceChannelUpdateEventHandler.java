@@ -1,4 +1,4 @@
-package io.github.theblacksquidward.squidwardbot.moderation.event.logging;
+package io.github.theblacksquidward.squidwardbot.moderation.event.logging.global;
 
 import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
@@ -23,7 +23,7 @@ public class VoiceChannelUpdateEventHandler extends ListenerAdapter {
         boolean hasJoined = event.getChannelJoined() != null;
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getVoiceUpdateChannelId());
 
         EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -49,7 +49,7 @@ public class VoiceChannelUpdateEventHandler extends ListenerAdapter {
         boolean isGuildMuted = event.isGuildMuted();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getVoiceUpdateChannelId());
 
         EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -75,7 +75,7 @@ public class VoiceChannelUpdateEventHandler extends ListenerAdapter {
         boolean isGuildDeafened = event.isGuildDeafened();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getVoiceUpdateChannelId());
 
         EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -102,7 +102,7 @@ public class VoiceChannelUpdateEventHandler extends ListenerAdapter {
         boolean isSelfMuted = event.isSelfMuted();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getVoiceUpdateChannelId());
 
         EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -128,7 +128,7 @@ public class VoiceChannelUpdateEventHandler extends ListenerAdapter {
         boolean isSelfDeafened = event.isSelfDeafened();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getVoiceUpdateChannelId());
 
         EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -154,7 +154,7 @@ public class VoiceChannelUpdateEventHandler extends ListenerAdapter {
         boolean isStreaming = event.isStream();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getVoiceUpdateChannelId());
 
         EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -181,7 +181,7 @@ public class VoiceChannelUpdateEventHandler extends ListenerAdapter {
         boolean isSendingVideo = event.isSendingVideo();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getVoiceUpdateChannelId());
 
         EmbedBuilder embedBuilder = new EmbedBuilder()

@@ -1,4 +1,4 @@
-package io.github.theblacksquidward.squidwardbot.moderation.event.logging;
+package io.github.theblacksquidward.squidwardbot.moderation.event.logging.global;
 
 import io.github.theblacksquidward.squidwardbot.core.SquidwardBot;
 import io.github.theblacksquidward.squidwardbot.core.constants.ColorConstants;
@@ -25,7 +25,7 @@ public class RoleUpdateEventHandler extends ListenerAdapter {
         Guild guild = event.getGuild();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getRoleUpdateChannelId());
 
         MessageEmbed embed = new EmbedBuilder()
@@ -45,7 +45,7 @@ public class RoleUpdateEventHandler extends ListenerAdapter {
         Guild guild = event.getGuild();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getRoleUpdateChannelId());
 
         MessageEmbed embed = new EmbedBuilder()
@@ -65,7 +65,7 @@ public class RoleUpdateEventHandler extends ListenerAdapter {
         Guild guild = event.getGuild();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getRoleUpdateChannelId());
 
         MessageEmbed embed = new EmbedBuilder()
@@ -85,7 +85,7 @@ public class RoleUpdateEventHandler extends ListenerAdapter {
         Guild guild = event.getGuild();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getRoleUpdateChannelId());
 
         MessageEmbed embed = new EmbedBuilder()
@@ -105,7 +105,7 @@ public class RoleUpdateEventHandler extends ListenerAdapter {
         Guild guild = event.getGuild();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getRoleUpdateChannelId());
 
         EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -127,7 +127,7 @@ public class RoleUpdateEventHandler extends ListenerAdapter {
         Guild guild = event.getGuild();
 
         TextChannel channel = event.getJDA()
-                .getGuildById(SquidwardBot.getInstance().getLoggingServerId())
+                .getGuildById(SquidwardBot.getInstance().getGlobalLoggingServerId())
                 .getTextChannelById(SquidwardBot.getInstance().getRoleUpdateChannelId());
 
         MessageEmbed embed = new EmbedBuilder()

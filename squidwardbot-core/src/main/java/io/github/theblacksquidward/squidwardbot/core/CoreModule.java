@@ -1,8 +1,12 @@
 package io.github.theblacksquidward.squidwardbot.core;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import io.github.theblacksquidward.squidwardbot.core.commands.CommandRegistry;
 import io.github.theblacksquidward.squidwardbot.core.commands.SquidwardBotCommand;
 import io.github.theblacksquidward.squidwardbot.core.constants.Constants;
+import io.github.theblacksquidward.squidwardbot.core.events.GuildDBEvent;
+import io.github.theblacksquidward.squidwardbot.core.models.GuildModel;
 import io.github.theblacksquidward.squidwardbot.core.modules.ISquidwardBotModule;
 import io.github.theblacksquidward.squidwardbot.core.modules.ModuleEventHandler;
 import io.github.theblacksquidward.squidwardbot.core.modules.SquidwardBotModule;
@@ -16,6 +20,7 @@ import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,12 +45,14 @@ public class CoreModule implements ISquidwardBotModule {
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .setActivity(Activity.playing("SquidwardBot | /help"))
                 .addEventListeners(
-                        new ModuleEventHandler()
+                        new ModuleEventHandler(),
+                        new GuildDBEvent()
                 );
     }
 
     @Override
     public void onJDAReady(ReadyEvent event) {
+        // Register Commands
         Set<SquidwardBotCommand> commands = CommandRegistry.getCommands();
         event.getJDA().getGuilds().forEach(guild -> {
             final CommandListUpdateAction commandListUpdateAction = guild.updateCommands();
@@ -53,6 +60,24 @@ public class CoreModule implements ISquidwardBotModule {
             commandListUpdateAction.queue();
         });
         commands.forEach(event.getJDA()::addEventListener);
+
+        // Cache guilds
+        final MongoCollection<GuildModel> guildCollection = SquidwardBot.getInstance().getMongoDatabase().getCollection("guilds", GuildModel.class);
+        event.getJDA().getGuilds().forEach(guild -> {
+            if (guildCollection.find(Filters.eq("guild_id", guild.getIdLong())).first() == null) {
+                guildCollection.insertOne(
+                    new GuildModel(
+                        new ObjectId(),
+                        guild.getIdLong(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    )
+                );
+            }
+        });
     }
 
     @Override

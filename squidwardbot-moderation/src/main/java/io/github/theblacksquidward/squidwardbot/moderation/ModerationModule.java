@@ -7,7 +7,9 @@ import io.github.theblacksquidward.squidwardbot.moderation.commands.DeafeanComma
 import io.github.theblacksquidward.squidwardbot.moderation.commands.UndeafenCommand;
 import io.github.theblacksquidward.squidwardbot.moderation.commands.UnnickCommand;
 import io.github.theblacksquidward.squidwardbot.moderation.event.WelcomeMessageEventHandler;
-import io.github.theblacksquidward.squidwardbot.moderation.event.logging.*;
+import io.github.theblacksquidward.squidwardbot.moderation.event.logging.global.*;
+import io.github.theblacksquidward.squidwardbot.moderation.event.logging.guild.GuildChannelUpdateEventHandler;
+import io.github.theblacksquidward.squidwardbot.moderation.event.logging.guild.GuildMemberUpdateEventHandler;
 import net.dv8tion.jda.api.JDABuilder;
 
 @SquidwardBotModule
@@ -29,10 +31,12 @@ public class ModerationModule implements ISquidwardBotModule {
     public void onJDABuild(JDABuilder jdaBuilder) {
         jdaBuilder.addEventListeners(
                 new RoleUpdateEventHandler(),
-                new MemberUpdateEventHandler(),
+                new GlobalMemberUpdateEventHandler(),
                 new VoiceChannelUpdateEventHandler(),
                 new MessageUpdateEventHandler(),
-                new ChannelUpdateEventHandler(),
+                new GlobalChannelUpdateEventHandler(),
+                new GuildChannelUpdateEventHandler(),
+                new GuildMemberUpdateEventHandler(),
                 new WelcomeMessageEventHandler()
         );
     }

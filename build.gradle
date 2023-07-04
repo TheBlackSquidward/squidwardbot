@@ -19,7 +19,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:24.0.1'
 
     // Logging
-    implementation 'ch.qos.logback:logback-classic:1.4.7'
+    implementation 'ch.qos.logback:logback-classic:1.4.8'
 
     // Database
     implementation 'org.mongodb:mongodb-driver-sync:4.10.1'

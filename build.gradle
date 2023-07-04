@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 
 group 'io.github.theblacksquidward'
-version SQUIDWARDBOT_VERSION
+version '0.1.9'
 
 repositories {
     mavenCentral()
@@ -61,4 +61,8 @@ compileJava.options.encoding = "UTF-8"
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+}
+
+jar {
+    archiveFileName.set('SquidwardBot.jar')
 }

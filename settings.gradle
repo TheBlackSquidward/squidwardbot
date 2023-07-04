@@ -1,11 +1,2 @@
 rootProject.name = 'SquidwardBot'
 
-include 'squidwardbot-core'
-include 'squidwardbot-audio'
-include 'squidwardbot-misc'
-include 'squidwardbot-moderation'
-include 'squidwardbot-destiny'
-include 'squidwardbot-fun'
-include 'squidwardbot-rainbowsix'
-include 'squidwardbot-voicemaster'
-

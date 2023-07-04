@@ -1,6 +1,7 @@
 name: Public Docker Image
 
 on:
+  workflow_dispatch:
   release:
     types:
       - published

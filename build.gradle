@@ -1,97 +1,64 @@
-allprojects {
-    apply plugin: 'java'
-    apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'idea'
 
-    group 'io.github.theblacksquidward'
-    version SQUIDWARDBOT_VERSION
+group 'io.github.theblacksquidward'
+version SQUIDWARDBOT_VERSION
 
-    repositories {
-        mavenCentral()
-        jcenter()
-        maven { url 'https://m2.dv8tion.net/releases' }
-        maven { url 'https://jitpack.io' }
-    }
-
-    dependencies {
-        // JDA
-        implementation 'net.dv8tion:JDA:5.0.0-beta.12'
-
-        // Annotations
-        implementation 'org.jetbrains:annotations:24.0.1'
-
-        // Logging
-        implementation 'ch.qos.logback:logback-classic:1.4.7'
-
-        // Database
-        implementation 'org.mongodb:mongodb-driver-sync:4.10.1'
-
-        // Other Useful Libraries
-        implementation 'org.reflections:reflections:0.10.2'
-        implementation 'com.google.guava:guava:32.0.1-jre'
-        implementation 'com.google.code.gson:gson:2.10.1'
-        implementation 'io.github.cdimascio:dotenv-java:3.0.0'
-        implementation 'org.apache.commons:commons-text:1.10.0'
-        implementation 'com.github.TheBlackSquidward:lavaplayer-fork:2fc265ad79'
-
-        implementation("com.sedmelluq:jda-nas:1.1.0") {
-            exclude module: 'udp-queue'
-        }
-        implementation("club.minnced:udpqueue-native-linux-x86-64:0.2.6")
-        implementation("club.minnced:udpqueue-native-linux-x86:0.2.6")
-        implementation("club.minnced:udpqueue-native-linux-aarch64:0.2.6")
-        implementation("club.minnced:udpqueue-native-linux-arm:0.2.6")
-        implementation("club.minnced:udpqueue-native-win-x86-64:0.2.6")
-        implementation("club.minnced:udpqueue-native-win-x86:0.2.6")
-        implementation("club.minnced:udpqueue-native-darwin:0.2.6")
-
-        implementation 'com.github.LowLevelSubmarine:GeniusLyricsAPI:1.0.3'
-        implementation 'org.jsoup:jsoup:1.15.4'
-        implementation 'commons-io:commons-io:2.11.0'
-
-        implementation("com.fasterxml.jackson.core:jackson-core:2.15.0")
-        implementation("com.fasterxml.jackson.core:jackson-databind:2.15.0")
-    }
-
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
-        }
-    }
-
-    compileJava.options.encoding = "UTF-8"
-
-    tasks.withType(JavaCompile) {
-        options.encoding = "UTF-8"
-    }
-}
-
-configurations {
-    moduleJar
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'https://m2.dv8tion.net/releases' }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    subprojects.each {
-        moduleJar project(it.path)
-        implementation project(it.path)
+    // JDA
+    implementation 'net.dv8tion:JDA:5.0.0-beta.12'
+
+    // Annotations
+    implementation 'org.jetbrains:annotations:24.0.1'
+
+    // Logging
+    implementation 'ch.qos.logback:logback-classic:1.4.7'
+
+    // Database
+    implementation 'org.mongodb:mongodb-driver-sync:4.10.1'
+
+    // Other Useful Libraries
+    implementation 'org.reflections:reflections:0.10.2'
+    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+    implementation 'org.apache.commons:commons-text:1.10.0'
+    implementation 'com.github.TheBlackSquidward:lavaplayer-fork:2fc265ad79'
+
+    implementation("com.sedmelluq:jda-nas:1.1.0") {
+        exclude module: 'udp-queue'
+    }
+    implementation("club.minnced:udpqueue-native-linux-x86-64:0.2.6")
+    implementation("club.minnced:udpqueue-native-linux-x86:0.2.6")
+    implementation("club.minnced:udpqueue-native-linux-aarch64:0.2.6")
+    implementation("club.minnced:udpqueue-native-linux-arm:0.2.6")
+    implementation("club.minnced:udpqueue-native-win-x86-64:0.2.6")
+    implementation("club.minnced:udpqueue-native-win-x86:0.2.6")
+    implementation("club.minnced:udpqueue-native-darwin:0.2.6")
+
+    implementation 'com.github.LowLevelSubmarine:GeniusLyricsAPI:1.0.3'
+    implementation 'org.jsoup:jsoup:1.15.4'
+    implementation 'commons-io:commons-io:2.11.0'
+
+    implementation("com.fasterxml.jackson.core:jackson-core:2.15.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.0")
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(20)
     }
 }
 
-tasks.configureEach {
-    jar {
-        dependsOn configurations.moduleJar
-        manifest {
-            attributes(
-                    'Implementation-Title': 'SquidwardBot',
-                    'Implementation-Version': SQUIDWARDBOT_VERSION,
-                    'Main-Class': 'io.github.theblacksquidward.squidwardbot.Bootstrap'
-            )
-        }
-        archiveFileName.set("SquidwardBot.jar")
-        duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-        from {
-            configurations.moduleJar.collect {
-                zipTree(it)
-            }
-        }
-    }
+compileJava.options.encoding = "UTF-8"
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }

@@ -10,12 +10,8 @@ permissions:
     contents: read
     packages: write
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: theblacksquidward/squidwardbot
-
 jobs:
-  publish:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -35,22 +31,30 @@ jobs:
           arguments: build
       - name: List files
         run: ls -Rla
-      - name: Log in to the Container registry
-        uses: docker/login-action@v2.2.0
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1.10.0
         with:
-          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Set up Docker BuildX
-        uses: docker/setup-buildx-action@v1.5.0
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v2.6.0
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Container Registry
+        uses: docker/login-action@v1.10.0
         with:
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          build-args: |
-            JAR_FILE=build/libs/*.jar
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract Docker Image Metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v3.5.0
+        with:
+          images: |
+            theblacksquidward/squidwardbot
+            ghcr.io/${{ github.repository }}
+      - name: Build and Push Docker Images
+        uses: docker/build-push-action@v2.7.0
+        with:
           context: .
-          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
 

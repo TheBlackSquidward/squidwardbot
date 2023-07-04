@@ -1,17 +1,55 @@
 name: Public Docker Image
 
 on:
-  push:
-    branches: [master]
+  release:
+    types:
+      - published
 
 permissions:
     contents: read
     packages: write
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: theblacksquidward/squidwardbot
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3.5.3
+      - name: Set up JDK 20
+        uses: actions/setup-java@v3.11.0
+        with:
+          java-version: '20'
+          distribution: 'temurin'
+      - name: Grant Execute Permission for Gradlew
+        run: chmod +x gradlew
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1.0.6
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2.5.1
+        with:
+          arguments: build
+      - name: List files
+        run: ls -Rla
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2.2.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Set up Docker BuildX
+        uses: docker/setup-buildx-action@v1.5.0
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v2.6.0
+        with:
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          build-args: |
+            JAR_FILE=build/libs/*.jar
+          context: .
+          file: ./Dockerfile
 
 

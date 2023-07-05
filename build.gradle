@@ -60,5 +60,12 @@ tasks.withType(JavaCompile) {
 }
 
 jar {
+    manifest {
+        attributes(
+                'Implementation-Title': 'SquidwardBot',
+                'Implementation-Version': version,
+                'Main-Class': 'io.github.theblacksquidward.SquidwardBot'
+        )
+    }
     archiveFileName.set('SquidwardBot.jar')
 }

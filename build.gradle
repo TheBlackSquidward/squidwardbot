@@ -31,7 +31,7 @@ dependencies {
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
     implementation 'org.apache.commons:commons-text:1.10.0'
     implementation 'com.github.TheBlackSquidward:lavaplayer-fork:2fc265ad79'
-    implementation 'net.sf.jopt-simple:jopt-simple:4.7'
+    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
     implementation("com.sedmelluq:jda-nas:1.1.0") { exclude module: 'udp-queue' }
     implementation("club.minnced:udpqueue-native-linux-x86-64:0.2.6")
     implementation("club.minnced:udpqueue-native-linux-x86:0.2.6")

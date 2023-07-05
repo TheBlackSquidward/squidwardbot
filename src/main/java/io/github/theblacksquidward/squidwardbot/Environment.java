@@ -1,8 +1,18 @@
 package io.github.theblacksquidward.squidwardbot;
 
+import com.google.common.base.Stopwatch;
 import io.github.cdimascio.dotenv.Dotenv;
+import io.github.cdimascio.dotenv.DotenvEntry;
+import io.github.theblacksquidward.squidwardbot.utils.StringUtils;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import org.jetbrains.annotations.UnmodifiableView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Environment {
 
@@ -15,15 +25,38 @@ public class Environment {
         return INSTANCE;
     }
 
-    public void loadDotenv() {
+    public void loadDotenv(String[] args) {
         if (this.env != null)
             throw new IllegalStateException("Environment already loaded!");
-        this.env = Dotenv.load();
+        LOGGER.info("Loading environment...");
+        final Stopwatch timer = Stopwatch.createStarted();
+        OptionParser optionParser = new OptionParser();
+        OptionSpec<String> envFilePathOptionSpec = optionParser.accepts("env").withRequiredArg().required().ofType(String.class);
+        OptionSet optionSet = optionParser.parse(args);
+        String filePath = envFilePathOptionSpec.value(optionSet);
+        this.env = Dotenv.configure().directory(filePath).load();
+        LOGGER.debug("Loaded environment variables: {}", StringUtils.getIndentedStringList(getEnvironmnetKeys()));
+        timer.stop();
+        LOGGER.info("Successfully loaded environment in {}. Successfully loaded {} environment variables.", timer.elapsed().toMillis(), getEnvironmentEntryCount());
     }
 
     public void printEnvironment() {
         this.env.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE)
                 .forEach(entry -> LOGGER.debug(entry.getKey() + "=" + entry.getValue()));
+    }
+
+    @UnmodifiableView
+    public Set<String> getEnvironmnetKeys() {
+        return env.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE).stream().map(DotenvEntry::getKey).collect(Collectors.toUnmodifiableSet());
+    }
+
+    @UnmodifiableView
+    public Set<String> getEnvironmnetValues() {
+        return env.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE).stream().map(DotenvEntry::getValue).collect(Collectors.toUnmodifiableSet());
+    }
+
+    public int getEnvironmentEntryCount() {
+        return env.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE).size();
     }
 
     public boolean getBoolean(String key) throws IllegalStateException {

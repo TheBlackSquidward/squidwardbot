@@ -3,7 +3,7 @@ build
 .gradle
 
 # Secrets
-src/main/resources/.env
+env/.env
 
 # IntelliJ IDEA
 out

@@ -2,8 +2,8 @@ package io.github.theblacksquidward.squidwardbot;
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import io.github.theblacksquidward.squidwardbot.core.commands.CommandRegistry;
-import io.github.theblacksquidward.squidwardbot.database.SquidwardBotDatabase;
 import io.github.theblacksquidward.squidwardbot.core.events.EventListenerRegistry;
+import io.github.theblacksquidward.squidwardbot.database.SquidwardBotDatabase;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -26,14 +26,14 @@ public class SquidwardBot {
     private static String version;
 
     public static void main(String[] args) {
+        Environment.getInstance().loadDotenv(args);
+
+        final Reflections reflections = new Reflections("io.github.theblacksquidward");
+
         String version = SquidwardBot.class.getPackage().getImplementationVersion();
         final boolean inDev = version == null;
         if (inDev) version = "IN-DEV";
         SquidwardBot.version = version;
-
-        final Reflections reflections = new Reflections("io.github.theblacksquidward");
-
-        Environment.getInstance().loadDotenv();
 
         SquidwardBotDatabase.init();
 

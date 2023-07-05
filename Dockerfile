@@ -3,4 +3,4 @@ WORKDIR /opt/SquidwardBot/
 
 COPY /build/libs/SquidwardBot.jar SquidwardBot.jar
 
-ENTRYPOINT ["java", "-jar", "SquidwardBot.jar"]
+ENTRYPOINT ["java", "-jar", "SquidwardBot.jar", "--env", "./env/.env"]

@@ -60,6 +60,8 @@ tasks.withType(JavaCompile) {
 }
 
 jar {
+    archiveFileName.set('SquidwardBot.jar')
+
     manifest {
         attributes(
                 'Implementation-Title': 'SquidwardBot',
@@ -67,5 +69,8 @@ jar {
                 'Main-Class': 'io.github.theblacksquidward.squidwardbot.SquidwardBot'
         )
     }
-    archiveFileName.set('SquidwardBot.jar')
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

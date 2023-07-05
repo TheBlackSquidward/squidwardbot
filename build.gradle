@@ -64,7 +64,7 @@ jar {
         attributes(
                 'Implementation-Title': 'SquidwardBot',
                 'Implementation-Version': version,
-                'Main-Class': 'io.github.theblacksquidward.SquidwardBot'
+                'Main-Class': 'io.github.theblacksquidward.squidwardbot.SquidwardBot'
         )
     }
     archiveFileName.set('SquidwardBot.jar')

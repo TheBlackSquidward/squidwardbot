@@ -61,6 +61,7 @@ tasks.withType(JavaCompile) {
 
 jar {
     archiveFileName.set('SquidwardBot.jar')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     manifest {
         attributes(

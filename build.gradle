@@ -22,7 +22,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.4.8'
 
     // Database
-    implementation 'org.mongodb:mongodb-driver-sync:4.10.1'
+    implementation 'org.mongodb:mongodb-driver-sync:4.10.2'
 
     // Other Useful Libraries
     implementation 'org.reflections:reflections:0.10.2'

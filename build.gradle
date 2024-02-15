@@ -39,7 +39,7 @@ dependencies {
     implementation("club.minnced:udpqueue-native-linux-arm:0.2.6")
     implementation("club.minnced:udpqueue-native-win-x86-64:0.2.6")
     implementation("club.minnced:udpqueue-native-win-x86:0.2.6")
-    implementation("club.minnced:udpqueue-native-darwin:0.2.6")
+    implementation("club.minnced:udpqueue-native-darwin:0.2.7")
     implementation 'com.github.LowLevelSubmarine:GeniusLyricsAPI:1.0.3'
     implementation 'org.jsoup:jsoup:1.16.1'
     implementation 'commons-io:commons-io:2.13.0'

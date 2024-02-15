@@ -35,7 +35,7 @@ dependencies {
     implementation("com.sedmelluq:jda-nas:1.1.0") { exclude module: 'udp-queue' }
     implementation("club.minnced:udpqueue-native-linux-x86-64:0.2.6")
     implementation("club.minnced:udpqueue-native-linux-x86:0.2.6")
-    implementation("club.minnced:udpqueue-native-linux-aarch64:0.2.6")
+    implementation("club.minnced:udpqueue-native-linux-aarch64:0.2.7")
     implementation("club.minnced:udpqueue-native-linux-arm:0.2.6")
     implementation("club.minnced:udpqueue-native-win-x86-64:0.2.6")
     implementation("club.minnced:udpqueue-native-win-x86:0.2.6")

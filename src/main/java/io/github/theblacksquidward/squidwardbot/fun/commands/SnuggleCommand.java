@@ -1,4 +1,3 @@
 package io.github.theblacksquidward.squidwardbot.fun.commands;
 
-public class SnuggleCommand {
-}
+public class SnuggleCommand {}

@@ -1,97 +1,97 @@
 plugins {
-    id 'java'
-    id 'idea'
-    id 'com.diffplug.spotless' version "6.25.0"
+	id 'java'
+	id 'idea'
+	id 'com.diffplug.spotless' version "6.25.0"
 }
 
 group 'io.github.theblacksquidward'
 version '0.2.6'
 
 repositories {
-    mavenCentral()
-    jcenter()
-    maven { url 'https://m2.dv8tion.net/releases' }
-    maven { url 'https://jitpack.io' }
+	mavenCentral()
+	jcenter()
+	maven { url 'https://m2.dv8tion.net/releases' }
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    // JDA
-    implementation 'net.dv8tion:JDA:5.0.0-beta.20'
+	// JDA
+	implementation 'net.dv8tion:JDA:5.0.0-beta.20'
 
-    // Annotations
-    implementation 'org.jetbrains:annotations:24.1.0'
+	// Annotations
+	implementation 'org.jetbrains:annotations:24.1.0'
 
-    // Logging
-    implementation 'ch.qos.logback:logback-classic:1.4.14'
+	// Logging
+	implementation 'ch.qos.logback:logback-classic:1.4.14'
 
-    // Database
-    implementation 'org.mongodb:mongodb-driver-sync:4.11.1'
+	// Database
+	implementation 'org.mongodb:mongodb-driver-sync:4.11.1'
 
-    // Other Useful Libraries
-    implementation 'org.reflections:reflections:0.10.2'
-    implementation 'com.google.guava:guava:33.0.0-jre'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
-    implementation 'org.apache.commons:commons-text:1.11.0'
-    implementation 'com.github.TheBlackSquidward:lavaplayer-fork:2fc265ad79'
-    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
-    implementation("com.sedmelluq:jda-nas:1.1.0") { exclude module: 'udp-queue' }
-    implementation("club.minnced:udpqueue-native-linux-x86-64:0.2.7")
-    implementation("club.minnced:udpqueue-native-linux-x86:0.2.7")
-    implementation("club.minnced:udpqueue-native-linux-aarch64:0.2.7")
-    implementation("club.minnced:udpqueue-native-linux-arm:0.2.7")
-    implementation("club.minnced:udpqueue-native-win-x86-64:0.2.7")
-    implementation("club.minnced:udpqueue-native-win-x86:0.2.7")
-    implementation("club.minnced:udpqueue-native-darwin:0.2.7")
-    implementation 'com.github.LowLevelSubmarine:GeniusLyricsAPI:1.0.3'
-    implementation 'org.jsoup:jsoup:1.17.2'
-    implementation 'commons-io:commons-io:2.15.1'
-    implementation("com.fasterxml.jackson.core:jackson-core:2.16.1")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
+	// Other Useful Libraries
+	implementation 'org.reflections:reflections:0.10.2'
+	implementation 'com.google.guava:guava:33.0.0-jre'
+	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+	implementation 'org.apache.commons:commons-text:1.11.0'
+	implementation 'com.github.TheBlackSquidward:lavaplayer-fork:2fc265ad79'
+	implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
+	implementation("com.sedmelluq:jda-nas:1.1.0") { exclude module: 'udp-queue' }
+	implementation("club.minnced:udpqueue-native-linux-x86-64:0.2.7")
+	implementation("club.minnced:udpqueue-native-linux-x86:0.2.7")
+	implementation("club.minnced:udpqueue-native-linux-aarch64:0.2.7")
+	implementation("club.minnced:udpqueue-native-linux-arm:0.2.7")
+	implementation("club.minnced:udpqueue-native-win-x86-64:0.2.7")
+	implementation("club.minnced:udpqueue-native-win-x86:0.2.7")
+	implementation("club.minnced:udpqueue-native-darwin:0.2.7")
+	implementation 'com.github.LowLevelSubmarine:GeniusLyricsAPI:1.0.3'
+	implementation 'org.jsoup:jsoup:1.17.2'
+	implementation 'commons-io:commons-io:2.15.1'
+	implementation("com.fasterxml.jackson.core:jackson-core:2.16.1")
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
 }
 
 compileJava.options.encoding = "UTF-8"
 
 tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
+	options.encoding = "UTF-8"
 }
 
 jar {
-    archiveFileName.set('SquidwardBot.jar')
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	archiveFileName.set('SquidwardBot.jar')
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    manifest {
-        attributes(
-                'Implementation-Title': 'SquidwardBot',
-                'Implementation-Version': version,
-                'Main-Class': 'io.github.theblacksquidward.squidwardbot.SquidwardBot'
-        )
-    }
+	manifest {
+		attributes(
+				'Implementation-Title': 'SquidwardBot',
+				'Implementation-Version': version,
+				'Main-Class': 'io.github.theblacksquidward.squidwardbot.SquidwardBot'
+		)
+	}
 
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
 }
 
 spotless {
-    format 'misc', {
-        target '*.gradle', '.gitignore'
-        trimTrailingWhitespace()
-        indentWithTabs()
-        endWithNewline()
-    }
+	format 'misc', {
+		target '*.gradle', '.gitignore'
+		trimTrailingWhitespace()
+		indentWithTabs()
+		endWithNewline()
+	}
 
-    java {
-        importOrder()
-        formatAnnotations()
-        removeUnusedImports()
+	java {
+		importOrder()
+		formatAnnotations()
+		removeUnusedImports()
 
-        googleJavaFormat('1.19.2')
-    }
+		googleJavaFormat('1.19.2')
+	}
 }

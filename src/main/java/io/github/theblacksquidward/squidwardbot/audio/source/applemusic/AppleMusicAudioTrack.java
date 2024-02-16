@@ -6,13 +6,12 @@ import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAud
 
 public class AppleMusicAudioTrack extends MirroringAudioTrack {
 
-    public AppleMusicAudioTrack(AudioTrackInfo trackInfo, AppleMusicSourceManager sourceManager) {
-        super(trackInfo, sourceManager);
-    }
+  public AppleMusicAudioTrack(AudioTrackInfo trackInfo, AppleMusicSourceManager sourceManager) {
+    super(trackInfo, sourceManager);
+  }
 
-    @Override
-    protected AudioTrack makeShallowClone() {
-        return new AppleMusicAudioTrack(trackInfo, (AppleMusicSourceManager) sourceManager);
-    }
-
+  @Override
+  protected AudioTrack makeShallowClone() {
+    return new AppleMusicAudioTrack(trackInfo, (AppleMusicSourceManager) sourceManager);
+  }
 }

@@ -6,13 +6,12 @@ import io.github.theblacksquidward.squidwardbot.audio.source.mirror.MirroringAud
 
 public class SpotifyAudioTrack extends MirroringAudioTrack {
 
-    public SpotifyAudioTrack(AudioTrackInfo trackInfo, SpotifySourceManager sourceManager) {
-        super(trackInfo, sourceManager);
-    }
+  public SpotifyAudioTrack(AudioTrackInfo trackInfo, SpotifySourceManager sourceManager) {
+    super(trackInfo, sourceManager);
+  }
 
-    @Override
-    protected AudioTrack makeShallowClone() {
-        return new SpotifyAudioTrack(trackInfo, (SpotifySourceManager) sourceManager);
-    }
-
+  @Override
+  protected AudioTrack makeShallowClone() {
+    return new SpotifyAudioTrack(trackInfo, (SpotifySourceManager) sourceManager);
+  }
 }

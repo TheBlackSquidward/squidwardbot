@@ -8,19 +8,19 @@ import net.dv8tion.jda.api.EmbedBuilder;
 
 public abstract class AbstractGifCommand extends SquidwardBotCommand {
 
-    private static final TenorAPI tenorAPI = new TenorAPI(Constants.OK_HTTP_CLIENT, Environment.getInstance().getTenorApiKey());
+  private static final TenorAPI tenorAPI =
+      new TenorAPI(Constants.OK_HTTP_CLIENT, Environment.getInstance().getTenorApiKey());
 
-    public EmbedBuilder getGifEmbedBuilder(String query) {
-        return new EmbedBuilder().setImage(tenorAPI.search(query).getRandomGif().getUrl());
-    }
+  public EmbedBuilder getGifEmbedBuilder(String query) {
+    return new EmbedBuilder().setImage(tenorAPI.search(query).getRandomGif().getUrl());
+  }
 
-    public EmbedBuilder getLonelyEmbedBuilder() {
-        return getGifEmbedBuilder("anime lonely");
-    }
+  public EmbedBuilder getLonelyEmbedBuilder() {
+    return getGifEmbedBuilder("anime lonely");
+  }
 
-    public String getRandomMessage(String[] messages) {
-        int random = Constants.RANDOM.nextInt(messages.length);
-        return messages[random];
-    }
-
+  public String getRandomMessage(String[] messages) {
+    int random = Constants.RANDOM.nextInt(messages.length);
+    return messages[random];
+  }
 }

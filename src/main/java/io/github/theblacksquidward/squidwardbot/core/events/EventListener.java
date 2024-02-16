@@ -1,4 +1,3 @@
 package io.github.theblacksquidward.squidwardbot.core.events;
 
-public @interface EventListener {
-}
+public @interface EventListener {}

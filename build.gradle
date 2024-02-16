@@ -91,5 +91,7 @@ spotless {
         importOrder()
         formatAnnotations()
         removeUnusedImports()
+
+        googleJavaFormat('1.19.2')
     }
 }

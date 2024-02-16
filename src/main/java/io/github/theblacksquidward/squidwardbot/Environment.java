@@ -4,6 +4,8 @@ import com.google.common.base.Stopwatch;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvEntry;
 import io.github.theblacksquidward.squidwardbot.utils.StringUtils;
+import java.util.Set;
+import java.util.stream.Collectors;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -11,19 +13,16 @@ import org.jetbrains.annotations.UnmodifiableView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 public class Environment {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Environment.class);
-
     private static final Environment INSTANCE = new Environment();
-    private Dotenv env;
 
     public static Environment getInstance() {
         return INSTANCE;
     }
+
+    private Dotenv env;
 
     public void loadDotenv(String[] args) {
         if (this.env != null)
@@ -35,7 +34,7 @@ public class Environment {
         OptionSet optionSet = optionParser.parse(args);
         String filePath = envFilePathOptionSpec.value(optionSet);
         this.env = Dotenv.configure().directory(filePath).load();
-        LOGGER.debug("Loaded environment variables: {}", StringUtils.getIndentedStringList(getEnvironmnetKeys()));
+        LOGGER.debug("Loaded environment variables: {}", StringUtils.getIndentedStringList(getEnvironmentKeys()));
         timer.stop();
         LOGGER.info("Successfully loaded environment in {}. Successfully loaded {} environment variables.", timer.elapsed().toMillis(), getEnvironmentEntryCount());
     }
@@ -46,13 +45,19 @@ public class Environment {
     }
 
     @UnmodifiableView
-    public Set<String> getEnvironmnetKeys() {
-        return env.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE).stream().map(DotenvEntry::getKey).collect(Collectors.toUnmodifiableSet());
+    public Set<String> getEnvironmentKeys() {
+        return env.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE)
+                .stream()
+                .map(DotenvEntry::getKey)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @UnmodifiableView
-    public Set<String> getEnvironmnetValues() {
-        return env.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE).stream().map(DotenvEntry::getValue).collect(Collectors.toUnmodifiableSet());
+    public Set<String> getEnvironmentValues() {
+        return env.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE)
+                .stream()
+                .map(DotenvEntry::getValue)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     public int getEnvironmentEntryCount() {

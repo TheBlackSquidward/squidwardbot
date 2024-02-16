@@ -88,6 +88,8 @@ spotless {
     }
 
     java {
+        importOrder()
         formatAnnotations()
+        removeUnusedImports()
     }
 }

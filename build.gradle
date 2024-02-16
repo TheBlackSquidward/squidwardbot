@@ -1,11 +1,15 @@
-apply plugin: 'java'
-apply plugin: 'idea'
+plugins {
+    id 'java'
+    id 'idea'
+    id 'com.diffplug.spotless' version "6.25.0"
+}
 
 group 'io.github.theblacksquidward'
 version '0.2.6'
 
 repositories {
     mavenCentral()
+    jcenter()
     maven { url 'https://m2.dv8tion.net/releases' }
     maven { url 'https://jitpack.io' }
 }
@@ -72,5 +76,18 @@ jar {
 
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+spotless {
+    format 'misc', {
+        target '*.gradle', '.gitignore'
+        trimTrailingWhitespace()
+        indentWithTabs()
+        endWithNewline()
+    }
+
+    java {
+        formatAnnotations()
     }
 }

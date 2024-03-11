@@ -1,4 +1,3 @@
 package io.github.theblacksquidward.squidwardbot.fun.commands;
 
-public class KillCommand {
-}
+public class KillCommand {}

@@ -4,20 +4,19 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class SquidwardBotCommand extends ListenerAdapter implements ISquidwardBotCommand{
+public abstract class SquidwardBotCommand extends ListenerAdapter implements ISquidwardBotCommand {
 
-    @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        if(event.isFromGuild()) {
-            if(event.getName().equalsIgnoreCase(getName())) {
-                onSlashCommand(event);
-            }
-        }
+  @Override
+  public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+    if (event.isFromGuild()) {
+      if (event.getName().equalsIgnoreCase(getName())) {
+        onSlashCommand(event);
+      }
     }
+  }
 
-    @Override
-    public String toString() {
-        return getName();
-    }
-
+  @Override
+  public String toString() {
+    return getName();
+  }
 }

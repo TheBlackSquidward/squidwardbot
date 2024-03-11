@@ -10,9 +10,10 @@ import org.jetbrains.annotations.NotNull;
 @EventListener
 public class ShutdownEventListener extends SquidwardBotEventListener {
 
-  @Override
-  public void onShutdown(@NotNull ShutdownEvent event) {
-    Constants.LOGGER.info("Shutting down....");
-    ShutdownHooks.runShutdownHooks();
-  }
+    @Override
+    public void onShutdown(@NotNull ShutdownEvent event) {
+        Constants.LOGGER.info("Shutting down....");
+        ShutdownHooks.runShutdownHooks();
+    }
+
 }

@@ -5,18 +5,19 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 public class UnnickCommand extends SquidwardBotCommand {
 
-  @Override
-  public void onSlashCommand(SlashCommandInteractionEvent event) {
-    // TODO impl
-  }
+    @Override
+    public void onSlashCommand(SlashCommandInteractionEvent event) {
+        //TODO impl
+    }
 
-  @Override
-  public String getName() {
-    return "unnick";
-  }
+    @Override
+    public String getName() {
+        return "unnick";
+    }
 
-  @Override
-  public String getDescription() {
-    return "Removes the nickname of the user.";
-  }
+    @Override
+    public String getDescription() {
+        return "Removes the nickname of the user.";
+    }
+
 }

@@ -7,22 +7,20 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 @Command
 public class PingCommand extends SquidwardBotCommand {
 
-  @Override
-  public void onSlashCommand(SlashCommandInteractionEvent event) {
-    event.deferReply().queue();
-    event
-        .getHook()
-        .sendMessage("Pong! Gateway Ping: " + event.getJDA().getGatewayPing() + "ms")
-        .queue();
-  }
+    @Override
+    public void onSlashCommand(SlashCommandInteractionEvent event) {
+        event.deferReply().queue();
+        event.getHook().sendMessage("Pong! Gateway Ping: " + event.getJDA().getGatewayPing() + "ms").queue();
+    }
 
-  @Override
-  public String getName() {
-    return "ping";
-  }
+    @Override
+    public String getName() {
+        return "ping";
+    }
 
-  @Override
-  public String getDescription() {
-    return "Gets the ping of the bot.";
-  }
+    @Override
+    public String getDescription() {
+        return "Gets the ping of the bot.";
+    }
+
 }

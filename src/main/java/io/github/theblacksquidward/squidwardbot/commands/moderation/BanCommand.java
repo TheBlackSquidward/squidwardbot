@@ -1,3 +1,4 @@
 package io.github.theblacksquidward.squidwardbot.commands.moderation;
 
-public class BanCommand {}
+public class BanCommand {
+}

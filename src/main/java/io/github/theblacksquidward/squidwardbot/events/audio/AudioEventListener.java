@@ -9,8 +9,9 @@ import org.jetbrains.annotations.NotNull;
 @EventListener
 public class AudioEventListener extends SquidwardBotEventListener {
 
-  @Override
-  public void onReady(@NotNull ReadyEvent event) {
-    AudioManager.init();
-  }
+    @Override
+    public void onReady(@NotNull ReadyEvent event) {
+        AudioManager.init();
+    }
+
 }

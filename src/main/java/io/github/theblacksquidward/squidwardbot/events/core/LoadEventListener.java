@@ -9,8 +9,9 @@ import org.jetbrains.annotations.NotNull;
 @EventListener
 public class LoadEventListener extends SquidwardBotEventListener {
 
-  @Override
-  public void onReady(@NotNull ReadyEvent event) {
-    Constants.LOGGER.info("Successfully loaded SquidwardBot!");
-  }
+    @Override
+    public void onReady(@NotNull ReadyEvent event) {
+        Constants.LOGGER.info("Successfully loaded SquidwardBot!");
+    }
+
 }
